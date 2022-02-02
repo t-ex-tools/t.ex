@@ -1,6 +1,16 @@
 var DisconnectMeEvaluator = function(mParser) {
   let parser = new mParser();
 
+  let isThirdParty = (r) => {
+    try {
+      let source = new URL(r.source);
+      let target = new URL(r.url);
+      return source.hostname !== target.hostname;
+    } catch (err) {
+      return false;
+    }    
+  }  
+
   return {
     parser: () => parser,
 

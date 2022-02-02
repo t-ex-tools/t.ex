@@ -5,35 +5,25 @@ self.importScripts("../model/labelers/DisconnectMeParser.js");
 self.importScripts("../model/labelers/DisconnectMeEvaluator.js");
 self.importScripts("../model/labelers/EasyListParser.js");
 self.importScripts("../model/labelers/EasyListEvaluator.js");
-self.importScripts("../model/labelers/MyListParser.js");
-self.importScripts("../model/labelers/MyListEvaluator.js");
-self.importScripts("../model/BlockList.js");
+self.importScripts("../model/labelers/BlockList.js");
 
-const urls = [
-  "https://easylist.to/easylist/easylist.txt",
-  "https://easylist.to/easylist/easyprivacy.txt",
-  // this.location.origin + "/app/resources/DdgRadarRules.json",
-  "https://raw.githubusercontent.com/disconnectme/disconnect-tracking-protection/master/services.json",
-  this.location.origin + "/app/resources/MySimpleKeyWordRules.txt",
-];
-
-let blocklists = [
-  new BlockList("EasyList", urls[0], EasyListEvaluator(EasyListParser)),
-  new BlockList("EasyPrivacy", urls[1], EasyListEvaluator(EasyListParser)),
-  // new BlockList("DuckDuckGo Tracker Rader", urls[2], DdgRadarEvaluator(DdgRadarParser)),
-  new BlockList("Disconnect.me", urls[3], DisconnectMeEvaluator(DisconnectMeParser)),
-  new BlockList("MyList", urls[4], MyListEvaluator(MyListParser)),
-];
-
-var isThirdParty = (r) => {
-  try {
-    let source = new URL(r.source);
-    let target = new URL(r.url);
-    return source.hostname !== target.hostname;
-  } catch (err) {
-    return false;
-  }    
-}
+let blocklists = [{
+  name: "EasyList",
+  url: "https://easylist.to/easylist/easylist.txt",
+  evaluator: EasyListEvaluator(EasyListParser)
+}, {
+  name: "EasyPrivacy",
+  url: "https://easylist.to/easylist/easyprivacy.txt",
+  evaluator: EasyListEvaluator(EasyListParser)
+},{
+  name: "Disconnect.me",
+  url: "https://raw.githubusercontent.com/disconnectme/disconnect-tracking-protection/master/services.json",
+  evaluator: DisconnectMeEvaluator(DisconnectMeParser)
+},{
+  name: "EasyList",
+  url: "https://easylist.to/easylist/easylist.txt",
+  evaluator: EasyListEvaluator(EasyListParser)
+}].map((e) => new BlockList(e.name, e.url, e.evaluator));
 
 self.addEventListener("message", (msg) => {
   if (msg.data.port && msg.data.data) {
