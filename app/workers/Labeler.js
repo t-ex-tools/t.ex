@@ -1,11 +1,11 @@
 self.importScripts("../libraries/lz-string/lz-string.min.js");
-self.importScripts("../model/labelers/DdgRadarParser.js");
-self.importScripts("../model/labelers/DdgRadarEvaluator.js");
-self.importScripts("../model/labelers/DisconnectMeParser.js");
-self.importScripts("../model/labelers/DisconnectMeEvaluator.js");
-self.importScripts("../model/labelers/EasyListParser.js");
-self.importScripts("../model/labelers/EasyListEvaluator.js");
-self.importScripts("../model/labelers/BlockList.js");
+self.importScripts("../model/labeler-core/DdgRadarParser.js");
+self.importScripts("../model/labeler-core/DdgRadarEvaluator.js");
+self.importScripts("../model/labeler-core/DisconnectMeParser.js");
+self.importScripts("../model/labeler-core/DisconnectMeEvaluator.js");
+self.importScripts("../model/labeler-core/EasyListParser.js");
+self.importScripts("../model/labeler-core/EasyListEvaluator.js");
+self.importScripts("../model/labeler-core/BlockList.js");
 
 let blocklists = [{
   name: "EasyList",
