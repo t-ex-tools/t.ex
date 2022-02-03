@@ -1,12 +1,14 @@
-self.importScripts("../libraries/lz-string/lz-string.min.js");
+import LZString from "../libraries/lz-string/lz-string.min.js";
 
 import EasyListParser from "../model/labeler-core/EasyListParser.js";
 import EasyListEvaluator from "../model/labeler-core/EasyListEvaluator.js";
 import DisconnectMeParser from "../model/labeler-core/DisconnectMeParser.js";
 import DisconnectMeEvaluator from "../model/labeler-core/DisconnectMeEvaluator.js";
-import BlockList from "../model/BlockList.js";
+import BlockList from "../model/labeler-core/BlockList.js";
 
-let blocklists = [{
+let blocklists = [];
+
+[{
   name: "EasyList",
   url: "https://easylist.to/easylist/easylist.txt",
   evaluator: EasyListEvaluator(EasyListParser)
@@ -14,15 +16,15 @@ let blocklists = [{
   name: "EasyPrivacy",
   url: "https://easylist.to/easylist/easyprivacy.txt",
   evaluator: EasyListEvaluator(EasyListParser)
-},{
+}, {
   name: "Disconnect.me",
   url: "https://raw.githubusercontent.com/disconnectme/disconnect-tracking-protection/master/services.json",
   evaluator: DisconnectMeEvaluator(DisconnectMeParser)
-},{
-  name: "EasyList",
-  url: "https://easylist.to/easylist/easylist.txt",
-  evaluator: EasyListEvaluator(EasyListParser)
-}].map((e) => new BlockList(e.name, e.url, e.evaluator));
+}].forEach((e) => {
+  fetch(e.url)
+    .then((response) => response.text())
+    .then((rawList) => blocklists.push(new BlockList(e.name, rawList, e.evaluator)));
+});
 
 self.addEventListener("message", (msg) => {
   if (msg.data.port && msg.data.data) {

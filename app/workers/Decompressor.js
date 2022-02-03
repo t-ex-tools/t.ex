@@ -1,4 +1,4 @@
-self.importScripts("../libraries/lz-string/lz-string.min.js");
+import LZString from "../libraries/lz-string/lz-string.min.js";
 
 self.addEventListener("message", (msg) => {
   if (msg.data.port && msg.data.data) {
