@@ -1,5 +1,5 @@
 var Util = (() => {
-  let Labeler = new Worker(chrome.extension.getURL("app/workers/Labeler.js"));
+  let Labeler = new Worker(chrome.extension.getURL("app/workers/Labeler.js"), { type: "module" });
   let Decompressor = new Worker(chrome.extension.getURL("app/workers/Decompressor.js"));
 
   let load = (() => {})();
