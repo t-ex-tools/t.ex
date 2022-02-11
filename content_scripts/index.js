@@ -17,7 +17,8 @@ let inject = (w) => {
             method: "get", 
             result: result,
             stack: parseStack((new Error()).stack),
-            url: window.location.href
+            url: window.location.href,
+            timeStamp: Date.now()
           }}));
           return result;
         },
@@ -28,7 +29,8 @@ let inject = (w) => {
             method: "set", 
             arguments: arguments,
             stack: parseStack((new Error()).stack),
-            url: window.location.href
+            url: window.location.href,
+            timeStamp: Date.now()
           }}));
           pd.set.apply(this, arguments);
         }
@@ -50,7 +52,8 @@ let inject = (w) => {
             arguments: arguments, 
             result: result,
             stack: parseStack((new Error()).stack),
-            url: window.location.href
+            url: window.location.href,
+            timeStamp: Date.now()
           }}));
           return result;
         }

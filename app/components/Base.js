@@ -49,6 +49,7 @@ export default {
       if (e.detail.currentChunk === e.detail.numberOfChunks) {
         this.loading = {isLoading: false, current: 0, max: 1};
       } else {
+        this.loading.isLoading = true;
         this.loading.current = e.detail.currentChunk;
         this.loading.max = e.detail.numberOfChunks;
       }
@@ -67,6 +68,7 @@ export default {
       this.totals = this.results.map((e) => e.count);
     },
     setInstances: function(queries) {
+      // TODO: we query multiple times, however member can be complementary, i.e. result of first evaluation can be used for second query
       return queries.map((q, i) => ({label: q.label, statistics: Statistics.query(q.filter, this.feature, q.id)}));
     },
     setResults: function() {

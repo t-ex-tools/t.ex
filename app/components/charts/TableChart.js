@@ -131,8 +131,8 @@ export default {
         </b-button>
       </div>
       <div v-for="(l, i) in labels" v-bind:key="l">
-        <div :id="'filter-' + i + '-' + id()" class="float-left"></div>
-        <span :id="'values-filter-' + i + '-' + id()" class="float-left ml-2"></span>
+        <div :id="'filter-' + i + '-' + id()" class="float-left mr-2"></div>
+        <span :id="'values-filter-' + i + '-' + id()" class="float-left"></span>
       </div>
       <div class="clearfix"></div>
       <div id="filter-string-search" class="mb-3"></div>

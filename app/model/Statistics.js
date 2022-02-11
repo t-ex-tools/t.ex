@@ -9,7 +9,7 @@ var Statistics = (() => {
     initialize: function(getData) {
       source = getData;
     },
-    push: (chunk, feature, id, index, total) => {
+    push: (chunk, feature, id) => {
       let keys = Object.keys(data);
       if (keys.length === 0) {
         return;
@@ -27,15 +27,6 @@ var Statistics = (() => {
           : (data[id].data[feature][x]) ?
             data[id].data[feature][x]++
             : data[id].data[feature][x] = 1;
-        
-        (i === chunk.length-1) ?
-          window.dispatchEvent(new CustomEvent("statistics:update", {
-            detail: {
-              currentChunk: index,
-              numberOfChunks: total
-            }
-          }))
-          : null;
       });
     },
     query: function(filter, feature, id) {
@@ -54,10 +45,20 @@ var Statistics = (() => {
       data[id] = result;
 
       let dataSource = source(feature.split(".")[0]);
-      Util.stream(dataSource, (chunk, index, total) => {
-        let fChunk = chunk.filter(filter);
-        result.count += fChunk.length; 
-        this.push(fChunk, feature, id, index, total);
+      Util.labeledStream(dataSource, (chunk, index, total) => {
+        if (chunk) {
+          let fChunk = chunk.filter(filter);
+          result.count += fChunk.length; 
+          this.push(fChunk, feature, id);
+        }
+
+        window.dispatchEvent(new CustomEvent("statistics:update", {
+          detail: {
+            currentChunk: index,
+            numberOfChunks: total
+          }
+        }))
+        
       });
       
       return {

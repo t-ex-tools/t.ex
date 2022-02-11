@@ -36,6 +36,7 @@ self.addEventListener("message", (msg) => {
         numRequests = new Array(chunks.length).fill(pChunk.length)
         : numRequests[index] = pChunk.length;
       pChunk.forEach((request, i) => {
+        // TODO: only a requested blocklist
         request.labels = blocklists.map((e) => e.isLabeled(request));
         self.postMessage({
           port: msg.data.port, 
