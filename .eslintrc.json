@@ -1,0 +1,8 @@
+{
+  "extends": [
+    "plugin:vue/vue3-recommended"
+  ],
+  "env": {
+    "webextensions": true
+  }
+}
