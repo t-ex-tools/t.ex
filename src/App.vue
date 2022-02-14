@@ -74,17 +74,17 @@ import Util from "./model/Util.js";
 import Statistics from "./model/Statistics.js";
 import Crypt from "./model/Crypt.js";
 
-import InitModal from "./components/modals/InitModal.js";
-import LoadingModal from "./components/modals/LoadingModal.js";
-import SettingsModal from "./components/modals/SettingsModal.js";
+import InitModal from "./components/modals/InitModal.vue";
+import LoadingModal from "./components/modals/LoadingModal.vue";
+import SettingsModal from "./components/modals/SettingsModal.vue";
 
-import RequestsTable from "./components/content/RequestsTable.js";
-import Graph from "./components/content/Graph.js";
+import RequestsTable from "./components/content/RequestsTable.vue";
+import Graph from "./components/content/Graph.vue";
 
-import Base from "./components/Base.js";
-import Sidebar from "./components/Sidebar.js";
-import Navigation from "./components/Navigation.js";
-import TabBar from "./components/TabBar.js";
+import Base from "./components/Base.vue";
+import Sidebar from "./components/Sidebar.vue";
+import Navigation from "./components/Navigation.vue";
+import TabBar from "./components/TabBar.vue";
 
 import defaultGroups from "./model/DefaultGroups.js";
 
@@ -92,7 +92,6 @@ window.location.hash = "/";
 
 export default {
   name: 'App',
-  // router: new VueRouter({routes: []}),
   components: {
     "InitModal": InitModal,
     "LoadingModal": LoadingModal,
@@ -111,7 +110,7 @@ export default {
       numberOfChunks: -1,
       requests: [],
       js: [],
-      // groups: defaultGroups,
+      groups: defaultGroups,
       selectedIndex: 0,
       boundaries: {
         lower: 0,

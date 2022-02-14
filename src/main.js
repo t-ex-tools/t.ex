@@ -1,5 +1,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import 'bootstrap'
+import { VueRouter } from 'vue-router'
 
-createApp(App).mount('#app')
+const app = createApp(App)
+app.use(VueRouter.createRouter({ routes: [] }))
+app.mount('#app')
