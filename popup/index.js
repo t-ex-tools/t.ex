@@ -1,3 +1,5 @@
+import Vue from "../app/libraries/vue.js/vue.js"
+
 var vm = new Vue({
   el: "#app",
   components: {

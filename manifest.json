@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "T.EX - The Transparency EXtension",
   "description": "Visualize and record third-party communication with T.EX - The Transparency Extension to identify Web trackers and what they know about you.",
   "version": "2.0",
@@ -11,14 +11,7 @@
     "128": "./icons/icon128.png"
   },
   "background": {
-    "scripts": [
-      "./app/libraries/lz-string/lz-string.min.js",
-      "./app/libraries/sjcl/sjcl.js",
-      "./app/libraries/jsencrypt/jsencrypt.min.js",
-      "./background/Requests.js",
-      "./background/Tabs.js",
-      "./background/Background.js"
-    ]
+    "service_worker": "./background/Background.js"
   },
   "content_scripts": [{
     "js": [
@@ -28,26 +21,33 @@
     "matches": ["<all_urls>"],
     "all_frames": true
   }],
-  "browser_action": {
+  "action": {
     "default_icon": "./icons/icon16.png",
     "default_title": "T.EX - Transparency EXtension",
     "default_popup": "./popup/index.html"
   },
-  "web_accessible_resources": [
-    "content_scripts/index.js",
-    "content_scripts/interfaces.js",
-    "app/resources/DdgRadarRules.json",
-    "app/resources/MySimpleKeyWordRules.txt"
-  ],
+  "web_accessible_resources": [{
+    "resources": [
+      "content_scripts/index.js",
+      "content_scripts/interfaces.js"
+    ],
+    "matches": [ "<all_urls>" ]
+  }],
   "permissions": [
     "background",
     "webRequest",
     "storage",
-    "unlimitedStorage",
     "activeTab",
     "tabs",
-    "downloads",
+    "downloads"
+  ],
+  "optional_permissions": [
+    "unlimitedStorage"
+  ],
+  "host_permissions": [
     "<all_urls>"
   ],
-  "content_security_policy": "script-src 'self' 'unsafe-eval' https://www.gstatic.com; object-src 'self'"
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
 }
