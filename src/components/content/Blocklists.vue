@@ -95,11 +95,9 @@
 
 <script>
 import Util from "../../model/Util.js";
-import TableChart from "../charts/TableChart.js";
 
 export default {
   components: {
-    "TableChart": TableChart,
   },
   props: ["requests", "dataTag"],
   data: () => {

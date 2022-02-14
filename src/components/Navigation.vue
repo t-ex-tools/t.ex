@@ -31,13 +31,11 @@
 
 <script>
 import FeatureExtractor from "../model/FeatureExtractor.js";
-import Base from "./Base.js";
-import RequestsTable from "./content/RequestsTable.js";
-import Graph from "./content/Graph.js";
-import Crawl from "./content/Crawl.js";
-import JsTable from "./content/JsTable.js";
-import Overview from "./content/Overview.js";
-import Blocklists from "./content/Blocklists.js";
+import Base from "./Base.vue";
+import Graph from "./content/Graph.vue";
+import Crawl from "./content/Crawl.vue";
+import Overview from "./content/Overview.vue";
+import Blocklists from "./content/Blocklists.vue";
 
 export default {
   data: () => {
@@ -47,14 +45,6 @@ export default {
         path: "/",
         name: "Overview",
         component: Overview,
-      }, {
-        path: "/requests",
-        name: "Requests",
-        component: RequestsTable,
-      }, {
-        path: "/js",
-        name: "JS",
-        component: JsTable,
       }, {
         path: "/blocklists",
         name: "Blocklists",
@@ -75,7 +65,6 @@ export default {
     "Base": Base,
     "Graph": Graph,
     "Crawl": Crawl,
-    "RequestsTable": RequestsTable,
   },
   props: ["groups", "selectedIndex", "dataTag"],
   created() {

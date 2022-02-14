@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import CrawlModal from "../modals/CrawlModal.js";
+import CrawlModal from "../modals/CrawlModal.vue";
 import Crawler from "../../model/Crawler.js";
 
 export default {

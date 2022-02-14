@@ -78,10 +78,6 @@ import InitModal from "./components/modals/InitModal.vue";
 import LoadingModal from "./components/modals/LoadingModal.vue";
 import SettingsModal from "./components/modals/SettingsModal.vue";
 
-import RequestsTable from "./components/content/RequestsTable.vue";
-import Graph from "./components/content/Graph.vue";
-
-import Base from "./components/Base.vue";
 import Sidebar from "./components/Sidebar.vue";
 import Navigation from "./components/Navigation.vue";
 import TabBar from "./components/TabBar.vue";
@@ -96,9 +92,6 @@ export default {
     "InitModal": InitModal,
     "LoadingModal": LoadingModal,
     "SettingsModal": SettingsModal,
-    "RequestsTable": RequestsTable,
-    "Base": Base,
-    "Graph": Graph,
     "Sidebar": Sidebar,
     "Navigation": Navigation,
     "TabBar": TabBar,

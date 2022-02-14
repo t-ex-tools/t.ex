@@ -35,15 +35,13 @@
 </template>
 
 <script>
-import BarChart from "./charts/BarChart.js";
-import BoxPlot from "./charts/BoxPlot.js";
-import TableChart from "./charts/TableChart.js";
+import BoxPlot from "./charts/BoxPlot.vue";
+import TableChart from "./charts/TableChart.vue";
 import Statistics from "../model/Statistics.js";
 
 export default {
   components: {
     "TableChart": TableChart,
-    "BarChart": BarChart,
     "BoxPlot": BoxPlot,
   },
   props: [

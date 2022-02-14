@@ -69,9 +69,9 @@
 </template>
 
 <script>
-import PasswordForm from "./init-modal/PasswordForm.js";
-import LimitSlider from "./init-modal/LimitSlider.js";
-import CrawlLoader from "./init-modal/CrawlLoader.js";
+import PasswordForm from "./init-modal/PasswordForm.vue";
+import LimitSlider from "./init-modal/LimitSlider.vue";
+import CrawlLoader from "./init-modal/CrawlLoader.vue";
 
 export default {
   components: {
