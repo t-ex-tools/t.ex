@@ -1,3 +1,23 @@
+<template>
+  <div>
+    <h6>Load a crawl</h6>
+    <b-form-text id="password-hint">
+      Load the recorded data of a specific crawl you've conducted.
+      Only one crawl can be loaded at the same time.
+    </b-form-text>      
+    <b-form-group class="mt-3">
+      <b-form-radio-group buttons stacked
+        v-model="selected"
+        v-bind:options="options"
+        name="radio-btn-stacked"
+        button-variant="outline-primary"
+        @change="updateLimit">
+      </b-form-radio-group>
+    </b-form-group>      
+  </div>
+</template>
+
+<script>
 export default {
   data: () => {
     return {
@@ -37,22 +57,5 @@ export default {
         : null;
     }
   },
-  template: /*html*/`
-    <div>
-      <h6>Load a crawl</h6>
-      <b-form-text id="password-hint">
-        Load the recorded data of a specific crawl you've conducted.
-        Only one crawl can be loaded at the same time.
-      </b-form-text>      
-      <b-form-group class="mt-3">
-        <b-form-radio-group buttons stacked
-          v-model="selected"
-          v-bind:options="options"
-          name="radio-btn-stacked"
-          button-variant="outline-primary"
-          @change="updateLimit">
-        </b-form-radio-group>
-      </b-form-group>      
-    </div>   
-  `,  
 }
+</script>

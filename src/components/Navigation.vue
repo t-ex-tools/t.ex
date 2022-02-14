@@ -1,3 +1,35 @@
+<template>
+<div>
+  <b-nav vertical>
+    <b>General</b>  
+    <b-nav-item 
+      v-for="route in staticRoutes" 
+      v-bind:key="route.name" 
+      v-bind:to="route.path">
+      {{route.name}}
+    </b-nav-item>
+    
+    <hr />
+    
+    <b>Features</b>
+    <b-nav-item-dropdown
+      v-for="(g, index) in FeatureExtractor.navigation()"
+      v-bind:key="index"
+      v-bind:text="g.label"
+      toggle-class="nav-link-custom"
+      right>
+      <b-dropdown-item 
+        v-for="feature in g.featureGroup" 
+        v-bind:key="feature.name" 
+        v-bind:to="feature.path">
+        {{feature.name}}
+      </b-dropdown-item>
+    </b-nav-item-dropdown>
+  </b-nav>
+</div>  
+</template>
+
+<script>
 import FeatureExtractor from "../model/FeatureExtractor.js";
 import Base from "./Base.js";
 import RequestsTable from "./content/RequestsTable.js";
@@ -75,34 +107,5 @@ export default {
       this.$emit("routes-changed", routes);
     },
   },
-  template: /*html*/`
-    <div>
-      <b-nav vertical>
-        <b>General</b>  
-        <b-nav-item 
-          v-for="route in staticRoutes" 
-          v-bind:key="route.name" 
-          v-bind:to="route.path">
-          {{route.name}}
-        </b-nav-item>
-        
-        <hr />
-        
-        <b>Features</b>
-        <b-nav-item-dropdown
-          v-for="(g, index) in FeatureExtractor.navigation()"
-          v-bind:key="index"
-          v-bind:text="g.label"
-          toggle-class="nav-link-custom"
-          right>
-          <b-dropdown-item 
-            v-for="feature in g.featureGroup" 
-            v-bind:key="feature.name" 
-            v-bind:to="feature.path">
-            {{feature.name}}
-          </b-dropdown-item>
-        </b-nav-item-dropdown>
-      </b-nav>
-    </div>
-  `,
 }
+</script>

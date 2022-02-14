@@ -1,3 +1,13 @@
+<template>
+  <b-row>
+    <b-col>
+      <b>Overview</b>
+      
+    </b-col>
+  </b-row>    
+</template>
+
+<script>
 import Util from "../../model/Util.js";
 
 export default {
@@ -10,12 +20,5 @@ export default {
   },
   methods: {
   },
-  template: /*html*/`
-    <b-row>
-      <b-col>
-        <b>Overview</b>
-        
-      </b-col>
-    </b-row>   
-  `,
 }
+</script>

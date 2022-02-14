@@ -1,3 +1,40 @@
+<template>
+  <div class="pb-5">
+    <b-row v-if="results === null">
+      <b-col cols="12">
+        <b-card class="m-2" title="No results found."></b-card>
+      </b-col>
+    </b-row>
+    <b-row v-else>
+      <b-col cols="12">
+        <b-card class="m-2" v-bind:title="featureInfo.title" v-bind:sub-title="featureInfo.subtitle">
+          <b-progress show-progress animated
+            v-if="loading.isLoading" 
+            v-bind:value="loading.current" 
+            v-bind:max="loading.max">
+          </b-progress>
+          <table-chart
+            v-if="featureInfo.lom <= 2"
+            v-bind:feature="featureInfo"
+            v-bind:totals="totals"
+            v-bind:labels="labels" 
+            v-bind:rawData="rawData"
+            v-bind:dataTag="dataTag">
+          </table-chart>
+          <box-plot 
+            v-else
+            v-bind:feature="featureInfo"
+            v-bind:totals="totals"
+            v-bind:labels="labels" 
+            v-bind:rawData="rawData">
+          </box-plot>   
+        </b-card> 
+      </b-col>
+    </b-row>
+  </div>  
+</template>
+
+<script>
 import BarChart from "./charts/BarChart.js";
 import BoxPlot from "./charts/BoxPlot.js";
 import TableChart from "./charts/TableChart.js";
@@ -75,40 +112,5 @@ export default {
       return this.instances.map((i) => i.statistics.get())
     },
   },
-  template: /*html*/`
-    <div class="pb-5">
-      <b-row v-if="results === null">
-        <b-col cols="12">
-          <b-card class="m-2" title="No results found."></b-card>
-        </b-col>
-      </b-row>
-      <b-row v-else>
-        <b-col cols="12">
-          <b-card class="m-2" v-bind:title="featureInfo.title" v-bind:sub-title="featureInfo.subtitle">
-            <b-progress show-progress animated
-              v-if="loading.isLoading" 
-              v-bind:value="loading.current" 
-              v-bind:max="loading.max">
-            </b-progress>
-            <table-chart
-              v-if="featureInfo.lom <= 2"
-              v-bind:feature="featureInfo"
-              v-bind:totals="totals"
-              v-bind:labels="labels" 
-              v-bind:rawData="rawData"
-              v-bind:dataTag="dataTag">
-            </table-chart>
-            <box-plot 
-              v-else
-              v-bind:feature="featureInfo"
-              v-bind:totals="totals"
-              v-bind:labels="labels" 
-              v-bind:rawData="rawData">
-            </box-plot>
-            </b-card>      
-          </b-card> 
-        </b-col>
-      </b-row>
-    </div>
-  `,
 }
+</script>

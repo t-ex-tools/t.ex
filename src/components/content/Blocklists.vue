@@ -1,3 +1,99 @@
+<template>
+  <b-row>
+    <b-col>
+      <b>Blocklists</b>
+      <b-progress show-progress animated
+        v-if="loading.isLoading" 
+        v-bind:value="loading.current" 
+        v-bind:max="loading.max">
+      </b-progress>
+
+      <p v-if="numOfRequests !== 0">
+        <small>Number of HTTP requests: N{{(loading.isLoading) ? "≈" : "="}}{{numOfRequests}}</small>
+      </p>
+
+      <b-button 
+        v-if="countsItems.length > 0"
+        variant="outline-primary" 
+        class="mb-3 float-right" 
+        @click="exportData('Overall', 'Labels', countsItems)">
+        <b-icon icon="table"></b-icon> Export CSV
+      </b-button>
+      <b-table striped hover 
+        v-bind:items="countsItems">
+      </b-table>
+
+      <div class="accordion" role="tablist">
+        <b-card no-body class="mb-1"
+          v-for="list, index in Object.keys(rules)" v-bind:key="index">
+          <b-card-header header-tag="header" class="p-1" role="tab">
+            <b-button block v-b-toggle="'accordion-' + index" variant="outline-primary">
+              {{list}}
+            </b-button>
+          </b-card-header>
+          <b-collapse
+            v-bind:id="'accordion-' + index"
+            accordion="my-accordion"
+            role="tabpanel">
+            <b-card-body>
+              <div v-if="rulesItems[index].length > 0">
+                <b>Rules</b>
+
+                <b-button 
+                  variant="outline-primary" 
+                  class="mb-3 float-right" 
+                  @click="exportData(list, 'Rules', rulesItems[index])">
+                  <b-icon icon="table"></b-icon> Export CSV
+                </b-button>
+
+                <b-table striped hover
+                  v-bind:id="'blocklist-rules-' + index"
+                  v-bind:items="rulesItems[index]"
+                  sort-by="count"
+                  sort-desc="true"
+                  v-bind:current-page="currentRulesPage[index]"
+                  v-bind:per-page="perPage">
+                </b-table>
+
+                <b-pagination pills
+                  v-if="rulesItems[index] && rulesItems[index].length > perPage"
+                  v-model="currentRulesPage[index]"
+                  v-bind:total-rows="(rulesItems[index]) ? rulesItems[index].length : 0"
+                  v-bind:per-page="perPage"
+                  v-bind:aria-controls="'blocklist-rules-' + index"
+                  align="center"
+                  v-bind:limit="perPage">
+                </b-pagination>                
+              </div>
+
+              <div v-if="typesItems[index].length > 0">
+                <b>Types</b>
+
+                <b-button 
+                  variant="outline-primary" 
+                  class="mb-3 float-right" 
+                  @click="exportData(list, 'Types', typesItems[index])">
+                  <b-icon icon="table"></b-icon> Export CSV
+                </b-button>
+
+                <b-table striped hover
+                  v-bind:id="'blocklist-types-' + index"
+                  v-bind:items="typesItems[index]"
+                  sort-by="count"
+                  sort-desc="true"
+                  v-bind:current-page="currentTypesPage[index]"
+                  v-bind:per-page="perPage">
+                </b-table>                
+              </div>
+            </b-card-body>
+          </b-collapse>
+        </b-card>
+      </div>
+    </b-col>
+  </b-row>  
+</template>
+
+<script>
 import Util from "../../model/Util.js";
 import TableChart from "../charts/TableChart.js";
 
@@ -127,98 +223,5 @@ export default {
       });
     },    
   },
-  template: /*html*/`
-    <b-row>
-      <b-col>
-        <b>Blocklists</b>
-        <b-progress show-progress animated
-          v-if="loading.isLoading" 
-          v-bind:value="loading.current" 
-          v-bind:max="loading.max">
-        </b-progress>
-
-        <p v-if="numOfRequests !== 0">
-          <small>Number of HTTP requests: N{{(loading.isLoading) ? "≈" : "="}}{{numOfRequests}}</small>
-        </p>
-
-        <b-button 
-          v-if="countsItems.length > 0"
-          variant="outline-primary" 
-          class="mb-3 float-right" 
-          @click="exportData('Overall', 'Labels', countsItems)">
-          <b-icon icon="table"></b-icon> Export CSV
-        </b-button>
-        <b-table striped hover 
-          v-bind:items="countsItems">
-        </b-table>
-
-        <div class="accordion" role="tablist">
-          <b-card no-body class="mb-1"
-            v-for="list, index in Object.keys(rules)" v-bind:key="index">
-            <b-card-header header-tag="header" class="p-1" role="tab">
-              <b-button block v-b-toggle="'accordion-' + index" variant="outline-primary">
-                {{list}}
-              </b-button>
-            </b-card-header>
-            <b-collapse
-              v-bind:id="'accordion-' + index"
-              accordion="my-accordion"
-              role="tabpanel">
-              <b-card-body>
-                <div v-if="rulesItems[index].length > 0">
-                  <b>Rules</b>
-
-                  <b-button 
-                    variant="outline-primary" 
-                    class="mb-3 float-right" 
-                    @click="exportData(list, 'Rules', rulesItems[index])">
-                    <b-icon icon="table"></b-icon> Export CSV
-                  </b-button>
-
-                  <b-table striped hover
-                    v-bind:id="'blocklist-rules-' + index"
-                    v-bind:items="rulesItems[index]"
-                    sort-by="count"
-                    sort-desc="true"
-                    v-bind:current-page="currentRulesPage[index]"
-                    v-bind:per-page="perPage">
-                  </b-table>
-
-                  <b-pagination pills
-                    v-if="rulesItems[index] && rulesItems[index].length > perPage"
-                    v-model="currentRulesPage[index]"
-                    v-bind:total-rows="(rulesItems[index]) ? rulesItems[index].length : 0"
-                    v-bind:per-page="perPage"
-                    v-bind:aria-controls="'blocklist-rules-' + index"
-                    align="center"
-                    v-bind:limit="perPage">
-                  </b-pagination>                
-                </div>
-
-                <div v-if="typesItems[index].length > 0">
-                  <b>Types</b>
-
-                  <b-button 
-                    variant="outline-primary" 
-                    class="mb-3 float-right" 
-                    @click="exportData(list, 'Types', typesItems[index])">
-                    <b-icon icon="table"></b-icon> Export CSV
-                  </b-button>
-
-                  <b-table striped hover
-                    v-bind:id="'blocklist-types-' + index"
-                    v-bind:items="typesItems[index]"
-                    sort-by="count"
-                    sort-desc="true"
-                    v-bind:current-page="currentTypesPage[index]"
-                    v-bind:per-page="perPage">
-                  </b-table>                
-                </div>
-              </b-card-body>
-            </b-collapse>
-          </b-card>
-        </div>
-      </b-col>
-    </b-row>   
-  `,
 }
+</script>

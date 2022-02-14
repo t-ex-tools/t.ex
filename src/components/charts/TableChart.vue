@@ -1,3 +1,35 @@
+<template>
+<div :id="this.id()" class="mt-3">
+      <div>
+        <b-button variant="outline-primary" class="float-right" @click="exportData">
+          <b-icon icon="table"></b-icon> Export CSV
+        </b-button>
+      </div>
+      <div v-for="(l, i) in labels" v-bind:key="l">
+        <div :id="'filter-' + i + '-' + id()" class="float-left mr-2"></div>
+        <span :id="'values-filter-' + i + '-' + id()" class="float-left"></span>
+      </div>
+      <div class="clearfix"></div>
+      <div id="filter-string-search" class="mb-3"></div>
+      <div :id="'chart-' + id()"></div>
+      <div>
+        <small v-for="(t, i) in totals" v-bind:key="i">
+          <i>{{labels[i]}} {{t}} requests; </i>
+        </small>
+      </div>
+      <div>
+        <small v-for="(s, i) in shares" v-bind:key="i">
+          <i>
+            {{shares[i].count}} ({{shares[i].percentage}}%) 
+            {{feature.title}}
+            in {{labels[i]}}; 
+          </i>
+        </small>
+      </div>
+    </div>  
+</template>
+
+<script>
 import Util from "../../model/Util.js";
 
 export default {
@@ -123,34 +155,5 @@ export default {
       });
     },
   },
-  template: /*html*/`
-    <div :id="this.id()" class="mt-3">
-      <div>
-        <b-button variant="outline-primary" class="float-right" @click="exportData">
-          <b-icon icon="table"></b-icon> Export CSV
-        </b-button>
-      </div>
-      <div v-for="(l, i) in labels" v-bind:key="l">
-        <div :id="'filter-' + i + '-' + id()" class="float-left mr-2"></div>
-        <span :id="'values-filter-' + i + '-' + id()" class="float-left"></span>
-      </div>
-      <div class="clearfix"></div>
-      <div id="filter-string-search" class="mb-3"></div>
-      <div :id="'chart-' + id()"></div>
-      <div>
-        <small v-for="(t, i) in totals" v-bind:key="i">
-          <i>{{labels[i]}} {{t}} requests; </i>
-        </small>
-      </div>
-      <div>
-        <small v-for="(s, i) in shares" v-bind:key="i">
-          <i>
-            {{shares[i].count}} ({{shares[i].percentage}}%) 
-            {{feature.title}}
-            in {{labels[i]}}; 
-          </i>
-        </small>
-      </div>
-    </div>
-  `,
 }
+</script>

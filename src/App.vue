@@ -11,11 +11,10 @@
         </button>        
       </div>
     </nav>
-
-    <!--
+    
     <tab-bar
-      v-bind:groups="groups"
-      v-bind:selected-index="selectedIndex"
+      :groups="groups"
+      :selected-index="selectedIndex"
       @tabs-changed="updateSelectedIndex"
       @tab-removed="groupAtIndexRemoved">
     </tab-bar>
@@ -25,25 +24,25 @@
 
         <b-col cols="2" class="border-right pt-3">
           <navigation
-            v-bind:groups="groups"
-            v-bind:selected-index="selectedIndex"
-            v-bind:data-tag="dataTag"
+            :groups="groups"
+            :selected-index="selectedIndex"
+            :data-tag="dataTag"
             @routes-changed="updateRoutes">
           </navigation>
         </b-col>
 
         <b-col cols="8" class="pt-3">
           <router-view
-            v-bind:requests="requests" 
-            v-bind:js="js"
-            v-bind:data-tag="dataTag">
+            :requests="requests" 
+            :js="js"
+            :data-tag="dataTag">
           </router-view>
         </b-col>
 
         <b-col cols="2" class="border-left pt-3">
           <sidebar
-            v-bind:requests="requests" 
-            v-bind:js="js"
+            :requests="requests" 
+            :js="js"
             v-on:trigger-download="download">
           </sidebar>
         </b-col>
@@ -51,19 +50,29 @@
       </b-row>
     </b-container>
 
-    <loading-modal ref="LoadingModal" v-bind:loaded="alreadyLoaded + windowSize" v-bind:total="numberOfChunks"></loading-modal>
-    <init-modal ref="InitModal" @update-limit="updateLimit"></init-modal>
-    <settings-modal ref="SettingsModal" @create-password="createPassword"></settings-modal>
-  -->
+    <loading-modal 
+      ref="LoadingModal" 
+      :loaded="alreadyLoaded + windowSize" 
+      :total="numberOfChunks">
+    </loading-modal>
+    
+    <init-modal 
+      ref="InitModal" 
+      @update-limit="updateLimit">
+    </init-modal>
+    
+    <settings-modal 
+      ref="SettingsModal" 
+      @create-password="createPassword">
+    </settings-modal>
+    
   </div>
 </template>
 
 <script>
 import Util from "./model/Util.js";
 import Statistics from "./model/Statistics.js";
-// import Crypt from "./model/Crypt.js";
-
-/*
+import Crypt from "./model/Crypt.js";
 
 import InitModal from "./components/modals/InitModal.js";
 import LoadingModal from "./components/modals/LoadingModal.js";
@@ -77,15 +86,14 @@ import Sidebar from "./components/Sidebar.js";
 import Navigation from "./components/Navigation.js";
 import TabBar from "./components/TabBar.js";
 
-import defaultGroups from "./resources/DefaultGroups.js";
-*/
+import defaultGroups from "./model/DefaultGroups.js";
+
 window.location.hash = "/";
 
 export default {
   name: 'App',
   // router: new VueRouter({routes: []}),
   components: {
-    /*
     "InitModal": InitModal,
     "LoadingModal": LoadingModal,
     "SettingsModal": SettingsModal,
@@ -95,7 +103,6 @@ export default {
     "Sidebar": Sidebar,
     "Navigation": Navigation,
     "TabBar": TabBar,
-    */
   },
   data: () => {
     return {

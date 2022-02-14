@@ -1,3 +1,78 @@
+<template>
+  <div>
+    <b-row>
+      <b-col>
+        <h3>Crawls</h3>
+      </b-col>
+    </b-row>    
+    <b-row>
+      <b-col>
+        <b-button variant="outline-primary" class="float-right" @click="handleCreateModal">
+          <b-icon icon="plus-circle"></b-icon> Create crawl
+        </b-button>
+      </b-col>
+    </b-row>
+    <b-row class="pb-5">
+      <b-col>
+        <b-card 
+          v-for="(crawl, index) in crawls"
+          v-bind:key="index" 
+          v-bind:header="crawl.name" 
+          v-bind:sub-title="'#' + crawl.tag"
+          border-variant="primary"
+          header-bg-variant="primary"
+          header-text-variant="white"
+          class="mt-3">
+          <b-card-text>
+            <p><b>Number of websites:</b> {{crawl.urls.length}}</p>
+            <p><b>Conducted crawls:</b></p>
+            <b-pagination pills
+              v-if="crawlStats[crawl.tag] && crawlStats[crawl.tag].length > perPage"
+              v-model="currentPage[index]"
+              v-bind:total-rows="(crawlStats[crawl.tag]) ? crawlStats[crawl.tag].length : 0"
+              v-bind:per-page="perPage"
+              v-bind:aria-controls="'requests-table-' + index"
+              align="center"
+              v-bind:limit="perPage">
+            </b-pagination>
+            <b-table striped hover
+              v-bind:id="'requests-table-' + index"
+              v-bind:items="stats[crawl.tag]"
+              v-bind:current-page="currentPage[index]" 
+              v-bind:per-page="perPage">
+            </b-table>
+          </b-card-text>
+          <template #footer>
+            <div class="text-right">
+              <b-row>
+                <b-col cols="8">
+                  <div v-if="activeCrawl === index" class="text-left">
+                    <h6>Crawl running ...</h6>
+                    <b-progress v-bind:value="tabsCompleted" v-bind:max="tabsToFinish" show-progress animated></b-progress>
+                  </div>
+                </b-col>
+                <b-col cols="4">
+                  <b-button variant="outline-primary" @click="handleStartCrawl(index)">
+                    <b-icon icon="play"></b-icon> Run crawl
+                  </b-button>
+                  <b-button variant="outline-secondary" @click="editCrawl(crawl, index)">
+                    <b-icon icon="pencil"></b-icon> Edit
+                  </b-button>
+                  <b-button variant="outline-danger" @click="deleteCrawl(index)">
+                    <b-icon icon="trash"></b-icon> Delete
+                  </b-button>          
+                </b-col>
+              </b-row>
+            </div>
+          </template>
+        </b-card>
+      </b-col>
+    </b-row>
+    <crawl-modal ref="CrawlModal" @save-crawl="saveCrawl"></crawl-modal>
+  </div>  
+</template>
+
+<script>
 import CrawlModal from "../modals/CrawlModal.js";
 import Crawler from "../../model/Crawler.js";
 
@@ -122,77 +197,5 @@ export default {
         });
     },
   },
-  template: /*html*/`
-    <div>
-      <b-row>
-        <b-col>
-          <h3>Crawls</h3>
-        </b-col>
-      </b-row>    
-      <b-row>
-        <b-col>
-          <b-button variant="outline-primary" class="float-right" @click="handleCreateModal">
-            <b-icon icon="plus-circle"></b-icon> Create crawl
-          </b-button>
-        </b-col>
-      </b-row>
-      <b-row class="pb-5">
-        <b-col>
-          <b-card 
-            v-for="(crawl, index) in crawls"
-            v-bind:key="index" 
-            v-bind:header="crawl.name" 
-            v-bind:sub-title="'#' + crawl.tag"
-            border-variant="primary"
-            header-bg-variant="primary"
-            header-text-variant="white"
-            class="mt-3">
-            <b-card-text>
-              <p><b>Number of websites:</b> {{crawl.urls.length}}</p>
-              <p><b>Conducted crawls:</b></p>
-              <b-pagination pills
-                v-if="crawlStats[crawl.tag] && crawlStats[crawl.tag].length > perPage"
-                v-model="currentPage[index]"
-                v-bind:total-rows="(crawlStats[crawl.tag]) ? crawlStats[crawl.tag].length : 0"
-                v-bind:per-page="perPage"
-                v-bind:aria-controls="'requests-table-' + index"
-                align="center"
-                v-bind:limit="perPage">
-              </b-pagination>
-              <b-table striped hover
-                v-bind:id="'requests-table-' + index"
-                v-bind:items="stats[crawl.tag]"
-                v-bind:current-page="currentPage[index]" 
-                v-bind:per-page="perPage">
-              </b-table>
-            </b-card-text>
-            <template #footer>
-              <div class="text-right">
-                <b-row>
-                  <b-col cols="8">
-                    <div v-if="activeCrawl === index" class="text-left">
-                      <h6>Crawl running ...</h6>
-                      <b-progress v-bind:value="tabsCompleted" v-bind:max="tabsToFinish" show-progress animated></b-progress>
-                    </div>
-                  </b-col>
-                  <b-col cols="4">
-                    <b-button variant="outline-primary" @click="handleStartCrawl(index)">
-                      <b-icon icon="play"></b-icon> Run crawl
-                    </b-button>
-                    <b-button variant="outline-secondary" @click="editCrawl(crawl, index)">
-                      <b-icon icon="pencil"></b-icon> Edit
-                    </b-button>
-                    <b-button variant="outline-danger" @click="deleteCrawl(index)">
-                      <b-icon icon="trash"></b-icon> Delete
-                    </b-button>          
-                  </b-col>
-                </b-row>
-              </div>
-            </template>
-          </b-card>
-        </b-col>
-      </b-row>
-      <crawl-modal ref="CrawlModal" @save-crawl="saveCrawl", ></crawl-modal>
-    </div>
-  `,
 }
+</script>

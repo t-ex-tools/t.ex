@@ -1,3 +1,19 @@
+<template>
+<div :id="this.id()">
+  <div v-for="(l, i) in labels" v-bind:key="l">
+    <b-icon icon="circle-fill" scale="0.65" v-bind:style="'color:' + Util.color(i)"></b-icon>
+    <div :id="'filter-' + i + '-' + id()" style="display: inline"></div>
+  </div>
+  <div :id="'chart-' + id()"></div>
+  <div>
+    <small v-for="(t, i) in totals" v-bind:key="i">
+      <i>{{labels[i] + " " + t + " requests; "}}</i>
+    </small>
+  </div>
+</div>
+</template>
+
+<script>
 import Util from "../../model/Util.js";
 
 // NOTE: deprecated to be removed
@@ -98,18 +114,5 @@ export default {
       this.dashboard.draw(this.data, this.options);
     },
   },
-  template: /*html*/`
-    <div :id="this.id()">
-      <div v-for="(l, i) in labels" v-bind:key="l">
-        <b-icon icon="circle-fill" scale="0.65" v-bind:style="'color:' + Util.color(i)"></b-icon>
-        <div :id="'filter-' + i + '-' + id()" style="display: inline"></div>
-      </div>
-      <div :id="'chart-' + id()"></div>
-      <div>
-        <small v-for="(t, i) in totals" v-bind:key="i">
-          <i>{{labels[i] + " " + t + " requests; "}}</i>
-        </small>
-      </div>
-    </div>
-  `,
 }
+</script>

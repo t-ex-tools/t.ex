@@ -1,3 +1,8 @@
+<template>
+  <div :id="this.id()"></div>
+</template>
+
+<script>
 import Statistics from "../../model/Statistics.js";
 import Util from "../../model/Util.js";
 
@@ -43,7 +48,5 @@ export default {
       this.chart.draw(this.data, this.options);
     },
   },
-  template: /*html*/`
-    <div :id="this.id()"></div>
-  `,
 }
+</script>
