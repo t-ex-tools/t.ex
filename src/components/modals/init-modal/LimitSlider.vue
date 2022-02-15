@@ -15,7 +15,7 @@
       v-model="limit" 
       type="range" 
       min="0" 
-      v-bind:max="indexes.length-1"
+      :max="indexes.length-1"
       @change="updateLimit">
     </b-form-input>
     <div class="mt-2">

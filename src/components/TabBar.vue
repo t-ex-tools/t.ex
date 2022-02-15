@@ -1,9 +1,9 @@
 <template>
   <div>
     <b-tabs content-class="mt-3" @changed="tabChanged" v-model="index">
-      <b-tab v-for="(g, i) in groups" v-bind:key="i">
+      <b-tab v-for="(g, i) in groups" :key="i">
         <template #title>
-          <span class="tab-text" v-b-tooltip.hover v-bind:title="g.label">{{g.label}}</span>
+          <span class="tab-text" v-b-tooltip.hover :title="g.label">{{g.label}}</span>
           <b-icon v-if="groups.length > 1" icon="x-circle-fill" scale="0.95" class="remove-tab-btn ml-3" @click="$emit('tab-removed', i)"></b-icon>
           <b-icon v-if="groups.length === 1" icon="circle-fill" scale="0.95" class="ml-3" style="color: darkgray;"></b-icon>
         </template>

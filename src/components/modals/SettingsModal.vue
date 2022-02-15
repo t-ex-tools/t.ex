@@ -12,7 +12,7 @@
           <b-list-group-item>
             <b-form-checkbox
               class="float-right" 
-              v-bind:checked="settingsEncryption" 
+              :checked="settingsEncryption" 
               switch 
               size="lg"
               @change="setSettingsEncryption">
@@ -24,7 +24,7 @@
           <b-list-group-item>
             <b-form-checkbox
               class="float-right" 
-              v-bind:checked="settingsBodyFormData" 
+              :checked="settingsBodyFormData" 
               switch 
               size="lg"
               @change="setSettingsBodyFormData">

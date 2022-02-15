@@ -25,7 +25,7 @@
           <b-form-input 
             id="crawl-name" 
             v-model="crawl.name"
-            v-bind:state="nameValid"
+            :state="nameValid"
             placeholder="Enter a name for the crawl.">
           </b-form-input>
         </b-form-group>
@@ -36,7 +36,7 @@
           <b-form-input 
             id="crawl-tag" 
             v-model="crawl.tag"
-            v-bind:state="tagValid" 
+            :state="tagValid" 
             placeholder="Enter a tag for the crawl.">
           </b-form-input>
         </b-form-group>
@@ -47,7 +47,7 @@
           <b-form-textarea
             id="crawl-urls"
             v-model="crawl.urls"
-            v-bind:state="urlsValid"
+            :state="urlsValid"
             placeholder="Enter the URLs to crawl each in a new line."
             rows="4"
             max-rows="8">

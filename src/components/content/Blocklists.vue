@@ -4,8 +4,8 @@
       <b>Blocklists</b>
       <b-progress show-progress animated
         v-if="loading.isLoading" 
-        v-bind:value="loading.current" 
-        v-bind:max="loading.max">
+        :value="loading.current" 
+        :max="loading.max">
       </b-progress>
 
       <p v-if="numOfRequests !== 0">
@@ -20,19 +20,19 @@
         <b-icon icon="table"></b-icon> Export CSV
       </b-button>
       <b-table striped hover 
-        v-bind:items="countsItems">
+        :items="countsItems">
       </b-table>
 
       <div class="accordion" role="tablist">
         <b-card no-body class="mb-1"
-          v-for="list, index in Object.keys(rules)" v-bind:key="index">
+          v-for="list, index in Object.keys(rules)" :key="index">
           <b-card-header header-tag="header" class="p-1" role="tab">
             <b-button block v-b-toggle="'accordion-' + index" variant="outline-primary">
               {{list}}
             </b-button>
           </b-card-header>
           <b-collapse
-            v-bind:id="'accordion-' + index"
+            :id="'accordion-' + index"
             accordion="my-accordion"
             role="tabpanel">
             <b-card-body>
@@ -47,22 +47,22 @@
                 </b-button>
 
                 <b-table striped hover
-                  v-bind:id="'blocklist-rules-' + index"
-                  v-bind:items="rulesItems[index]"
+                  :id="'blocklist-rules-' + index"
+                  :items="rulesItems[index]"
                   sort-by="count"
                   sort-desc="true"
-                  v-bind:current-page="currentRulesPage[index]"
-                  v-bind:per-page="perPage">
+                  :current-page="currentRulesPage[index]"
+                  :per-page="perPage">
                 </b-table>
 
                 <b-pagination pills
                   v-if="rulesItems[index] && rulesItems[index].length > perPage"
                   v-model="currentRulesPage[index]"
-                  v-bind:total-rows="(rulesItems[index]) ? rulesItems[index].length : 0"
-                  v-bind:per-page="perPage"
-                  v-bind:aria-controls="'blocklist-rules-' + index"
+                  :total-rows="(rulesItems[index]) ? rulesItems[index].length : 0"
+                  :per-page="perPage"
+                  :aria-controls="'blocklist-rules-' + index"
                   align="center"
-                  v-bind:limit="perPage">
+                  :limit="perPage">
                 </b-pagination>                
               </div>
 
@@ -77,12 +77,12 @@
                 </b-button>
 
                 <b-table striped hover
-                  v-bind:id="'blocklist-types-' + index"
-                  v-bind:items="typesItems[index]"
+                  :id="'blocklist-types-' + index"
+                  :items="typesItems[index]"
                   sort-by="count"
                   sort-desc="true"
-                  v-bind:current-page="currentTypesPage[index]"
-                  v-bind:per-page="perPage">
+                  :current-page="currentTypesPage[index]"
+                  :per-page="perPage">
                 </b-table>                
               </div>
             </b-card-body>

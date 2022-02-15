@@ -7,26 +7,26 @@
     </div>
     <div class="row" v-else>
       <div class="col">
-        <b-card class="m-2" v-bind:title="featureInfo.title" v-bind:sub-title="featureInfo.subtitle">
+        <b-card class="m-2" :title="featureInfo.title" :sub-title="featureInfo.subtitle">
           <b-progress show-progress animated
             v-if="loading.isLoading" 
-            v-bind:value="loading.current" 
-            v-bind:max="loading.max">
+            :value="loading.current" 
+            :max="loading.max">
           </b-progress>
           <table-chart
             v-if="featureInfo.lom <= 2"
-            v-bind:feature="featureInfo"
-            v-bind:totals="totals"
-            v-bind:labels="labels" 
-            v-bind:rawData="rawData"
-            v-bind:dataTag="dataTag">
+            :feature="featureInfo"
+            :totals="totals"
+            :labels="labels" 
+            :rawData="rawData"
+            :dataTag="dataTag">
           </table-chart>
           <box-plot 
             v-else
-            v-bind:feature="featureInfo"
-            v-bind:totals="totals"
-            v-bind:labels="labels" 
-            v-bind:rawData="rawData">
+            :feature="featureInfo"
+            :totals="totals"
+            :labels="labels" 
+            :rawData="rawData">
           </box-plot>   
         </b-card> 
       </div>

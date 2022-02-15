@@ -13,8 +13,8 @@
       <div class="col">
         <b-progress animated 
           class="mb-3"
-          v-bind:value="loaded" 
-          v-bind:max="total">
+          :value="loaded" 
+          :max="total">
         </b-progress>
       </div>
     </div>

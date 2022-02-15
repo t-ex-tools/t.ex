@@ -1,71 +1,68 @@
 <template>
   <div>
-
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">Navbar</a>
+        <a class="navbar-brand" href="#">T.EX</a>
       </div>
       <div class="d-flex">
-        <button variant="primary" title="Settings" class="p-1" @click="openSettings()">
+        <button
+          class="btn btn-primary p-1"
+          type="button"
+          @click="openSettings()"
+        >
           <i class="bi bi-gear"></i>
-        </button>        
+          Settings
+        </button>
       </div>
     </nav>
-    
+
     <tab-bar
       :groups="groups"
       :selected-index="selectedIndex"
       @tabs-changed="updateSelectedIndex"
-      @tab-removed="groupAtIndexRemoved">
+      @tab-removed="groupAtIndexRemoved"
+    >
     </tab-bar>
 
     <div class="container-fluid h-100">
       <div class="row h-100">
-
         <div class="col-2 border-right pt-3">
           <navigation
             :groups="groups"
             :selected-index="selectedIndex"
             :data-tag="dataTag"
-            @routes-changed="updateRoutes">
+            @routes-changed="updateRoutes"
+          >
           </navigation>
         </div>
 
         <div class="col-8 pt-3">
-          <router-view
-            :requests="requests" 
-            :js="js"
-            :data-tag="dataTag">
+          <router-view :requests="requests" :js="js" :data-tag="dataTag">
           </router-view>
         </div>
 
         <div class="col-2 border-left pt-3">
           <sidebar
-            :requests="requests" 
+            :requests="requests"
             :js="js"
-            v-on:trigger-download="download">
+            v-on:trigger-download="download"
+          >
           </sidebar>
         </div>
-        
       </div>
     </div>
 
-    <loading-modal 
-      ref="LoadingModal" 
-      :loaded="alreadyLoaded + windowSize" 
-      :total="numberOfChunks">
+    <loading-modal
+      ref="LoadingModal"
+      :loaded="alreadyLoaded + windowSize"
+      :total="numberOfChunks"
+    >
     </loading-modal>
-    
-    <init-modal 
-      ref="InitModal" 
-      @update-limit="updateLimit">
-    </init-modal>
-    
-    <settings-modal 
-      ref="SettingsModal" 
-      @create-password="createPassword">
+
+    <init-modal ref="InitModal" @update-limit="updateLimit"> </init-modal>
+
+    <settings-modal ref="SettingsModal" @create-password="createPassword">
     </settings-modal>
-    
   </div>
 </template>
 
@@ -85,14 +82,14 @@ import TabBar from "./components/TabBar.vue";
 import defaultGroups from "./model/DefaultGroups.js";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    "InitModal": InitModal,
-    "LoadingModal": LoadingModal,
-    "SettingsModal": SettingsModal,
-    "Sidebar": Sidebar,
-    "Navigation": Navigation,
-    "TabBar": TabBar,
+    InitModal: InitModal,
+    LoadingModal: LoadingModal,
+    SettingsModal: SettingsModal,
+    Sidebar: Sidebar,
+    Navigation: Navigation,
+    TabBar: TabBar,
   },
   data: () => {
     return {
@@ -109,65 +106,70 @@ export default {
       },
       dataTag: Util.randomString(),
       memoryLimit: 256 * 1000000,
-    }
+    };
   },
   created() {
     const self = this;
     // google.charts.load("49", {"packages": ["corechart", "controls"]});
 
-    chrome.storage.local.get([
-      "settingsEncryption", 
-      "settingsChunksAtOnce"
-    ], (setting) => {
-      let useEncryption = setting.settingsEncryption || false;
-      self.windowSize = Number.parseInt(setting.settingsChunksAtOnce) || self.windowSize;
-      // self.$refs.InitModal.showModal(useEncryption, true, () => self.bootstrap(useEncryption));
-    });
+    chrome.storage.local.get(
+      ["settingsEncryption", "settingsChunksAtOnce"],
+      (setting) => {
+        let useEncryption = setting.settingsEncryption || false;
+        self.windowSize =
+          Number.parseInt(setting.settingsChunksAtOnce) || self.windowSize;
+        // self.$refs.InitModal.showModal(useEncryption, true, () => self.bootstrap(useEncryption));
+      }
+    );
   },
   methods: {
-    bootstrap: function(useEncryption) {
+    bootstrap: function (useEncryption) {
       const self = this;
       chrome.storage.local.get("indexes", (result) => {
-        this.getChunks(result.indexes || [], useEncryption); 
+        this.getChunks(result.indexes || [], useEncryption);
         // this.$refs.LoadingModal.showModal();
         Statistics.initialize(this.passData);
       });
     },
-    getChunks: function(indexes, useEncryption) {
+    getChunks: function (indexes, useEncryption) {
       let keys = indexes
         .filter((e) => this.boundaries.lower <= e && e <= this.boundaries.upper)
         .map((e) => e.toString());
 
       this.numberOfChunks = keys.length;
-      for (let i=0; i * this.windowSize < keys.length; i++) {
-        chrome.storage.local.get(keys.slice(i * this.windowSize, i * this.windowSize + this.windowSize), (chunks) => {
-          Object.values(chunks).forEach((chunk, index) => {
-            let tmp = (useEncryption) ? 
-              (chunk.hasOwnProperty("aesKey")) ? 
-                /*Crypt.decryptChunk(chunk)*/ chunk : 
-                chunk :
-              (chunk.hasOwnProperty("aesKey")) ?
-                {requests: null, js: null} :
-                chunk;
-            this.requests.push(tmp.requests);
-            this.js.push(tmp.js);
-            this.alreadyLoaded = i * this.windowSize + (index+1);
-          });
-        });
+      for (let i = 0; i * this.windowSize < keys.length; i++) {
+        chrome.storage.local.get(
+          keys.slice(
+            i * this.windowSize,
+            i * this.windowSize + this.windowSize
+          ),
+          (chunks) => {
+            Object.values(chunks).forEach((chunk, index) => {
+              let tmp = useEncryption
+                ? chunk.hasOwnProperty("aesKey")
+                  ? /*Crypt.decryptChunk(chunk)*/ chunk
+                  : chunk
+                : chunk.hasOwnProperty("aesKey")
+                ? { requests: null, js: null }
+                : chunk;
+              this.requests.push(tmp.requests);
+              this.js.push(tmp.js);
+              this.alreadyLoaded = i * this.windowSize + (index + 1);
+            });
+          }
+        );
       }
     },
-    passData: function(source) {
-      return (source === "requests") ? 
-          this.requests
-          : this.js;
+    passData: function (source) {
+      return source === "requests" ? this.requests : this.js;
     },
-    updateRoutes: function(routes) {
+    updateRoutes: function (routes) {
       const self = this;
       routes.forEach((route) => {
         this.$router.addRoute(route);
       });
     },
-    updateSelectedIndex: function(index) {
+    updateSelectedIndex: function (index) {
       this.selectedIndex = index;
     },
     groupAtIndexRemoved(index) {
@@ -183,33 +185,40 @@ export default {
         this.alreadyLoaded = current;
         this.numberOfChunks = total;
         exportChunk = exportChunk.concat(chunk);
-        if (this.memoryLimit <= Util.memorySizeOf(exportChunk) ||
-            current === total) {
-              this.downloadFile(this.dataTag + "-" + dataInfo.label + "." + numberOfFiles + ".json", exportChunk);
-              numberOfFiles++;
-              exportChunk = [];
-            }
+        if (
+          this.memoryLimit <= Util.memorySizeOf(exportChunk) ||
+          current === total
+        ) {
+          this.downloadFile(
+            this.dataTag + "-" + dataInfo.label + "." + numberOfFiles + ".json",
+            exportChunk
+          );
+          numberOfFiles++;
+          exportChunk = [];
+        }
       });
     },
-    downloadFile: function(filename, payload) {
+    downloadFile: function (filename, payload) {
       chrome.downloads.download({
         filename: filename,
-        url: URL.createObjectURL(new Blob([JSON.stringify(payload)], {type: "application/json"}))
+        url: URL.createObjectURL(
+          new Blob([JSON.stringify(payload)], { type: "application/json" })
+        ),
       });
     },
-    updateLimit: function(boundaries) {
+    updateLimit: function (boundaries) {
       this.dataTag = boundaries.dataTag;
       delete boundaries.dataTag;
       this.boundaries = boundaries;
     },
-    openSettings: function() {
+    openSettings: function () {
       // this.$refs.SettingsModal.showModal()
     },
-    createPassword: function() {
+    createPassword: function () {
       // this.$refs.InitModal.showModal(true, false, () => {});
     },
-  }
-}
+  },
+};
 </script>
 
 <style>
@@ -219,5 +228,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
 }
 
-@import'~bootstrap/dist/css/bootstrap.css'
+@import "~bootstrap/dist/css/bootstrap.css";
 </style>

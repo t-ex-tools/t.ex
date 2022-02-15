@@ -8,7 +8,7 @@
     <b-form-group class="mt-3">
       <b-form-radio-group buttons stacked
         v-model="selected"
-        v-bind:options="options"
+        :options="options"
         name="radio-btn-stacked"
         button-variant="outline-primary"
         @change="updateLimit">

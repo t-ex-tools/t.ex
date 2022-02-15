@@ -16,9 +16,9 @@
       <div class="col">
         <b-card 
           v-for="(crawl, index) in crawls"
-          v-bind:key="index" 
-          v-bind:header="crawl.name" 
-          v-bind:sub-title="'#' + crawl.tag"
+          :key="index" 
+          :header="crawl.name" 
+          :sub-title="'#' + crawl.tag"
           border-variant="primary"
           header-bg-variant="primary"
           header-text-variant="white"
@@ -29,17 +29,17 @@
             <b-pagination pills
               v-if="crawlStats[crawl.tag] && crawlStats[crawl.tag].length > perPage"
               v-model="currentPage[index]"
-              v-bind:total-rows="(crawlStats[crawl.tag]) ? crawlStats[crawl.tag].length : 0"
-              v-bind:per-page="perPage"
-              v-bind:aria-controls="'requests-table-' + index"
+              :total-rows="(crawlStats[crawl.tag]) ? crawlStats[crawl.tag].length : 0"
+              :per-page="perPage"
+              :aria-controls="'requests-table-' + index"
               align="center"
-              v-bind:limit="perPage">
+              :limit="perPage">
             </b-pagination>
             <b-table striped hover
-              v-bind:id="'requests-table-' + index"
-              v-bind:items="stats[crawl.tag]"
-              v-bind:current-page="currentPage[index]" 
-              v-bind:per-page="perPage">
+              :id="'requests-table-' + index"
+              :items="stats[crawl.tag]"
+              :current-page="currentPage[index]" 
+              :per-page="perPage">
             </b-table>
           </b-card-text>
           <!--
@@ -49,7 +49,7 @@
                 <b-div class="col-8">
                   <div v-if="activeCrawl === index" class="text-left">
                     <h6>Crawl running ...</h6>
-                    <b-progress v-bind:value="tabsCompleted" v-bind:max="tabsToFinish" show-progress animated></b-progress>
+                    <b-progress :value="tabsCompleted" :max="tabsToFinish" show-progress animated></b-progress>
                   </div>
                 </div>
                 <div class="col-4">

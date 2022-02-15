@@ -12,7 +12,7 @@
 
     <div v-if="useEncryption" class="row mb-3">
       <div class="col">
-        <password-form ref="PasswordForm" v-bind:createPwdMode="createPwdMode"></password-form>
+        <password-form ref="PasswordForm" :createPwdMode="createPwdMode"></password-form>
       </div>
     </div>
 
