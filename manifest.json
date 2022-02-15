@@ -4,32 +4,33 @@
   "description": "Visualize and record third-party communication with T.EX - The Transparency Extension to identify Web trackers and what they know about you.",
   "version": "2.0",
   "icons": {
-    "32": "./icons/icon32.png",
-    "48": "./icons/icon48.png",
-    "64": "./icons/icon64.png",
-    "96": "./icons/icon96.png",
-    "128": "./icons/icon128.png"
+    "32": "./src/assets/icons/icon32.png",
+    "48": "./src/assets/icons/icon48.png",
+    "64": "./src/assets/icons/icon64.png",
+    "96": "./src/assets/icons/icon96.png",
+    "128": "./src/assets/icons/icon128.png"
   },
   "background": {
-    "service_worker": "./background/Background.js"
+    "service_worker": "./src/background/Background.js",
+    "type": "module"
   },
   "content_scripts": [{
     "js": [
-      "./content_scripts/inject.js"
+      "./src/content_scripts/inject.js"
     ],
     "run_at": "document_start",
     "matches": ["<all_urls>"],
     "all_frames": true
   }],
   "action": {
-    "default_icon": "./icons/icon16.png",
+    "default_icon": "./src/assets/icons/icon16.png",
     "default_title": "T.EX - Transparency EXtension",
-    "default_popup": "./popup/index.html"
+    "default_popup": "./src/popup/index.html"
   },
   "web_accessible_resources": [{
     "resources": [
-      "content_scripts/index.js",
-      "content_scripts/interfaces.js"
+      "./src/content_scripts/index.js",
+      "./src/content_scripts/interfaces.js"
     ],
     "matches": [ "<all_urls>" ]
   }],
@@ -39,9 +40,7 @@
     "storage",
     "activeTab",
     "tabs",
-    "downloads"
-  ],
-  "optional_permissions": [
+    "downloads",
     "unlimitedStorage"
   ],
   "host_permissions": [

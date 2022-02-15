@@ -1,6 +1,6 @@
 let mainScript = document.createElement("script");
 mainScript.setAttribute("type", "module");
-mainScript.setAttribute("src", chrome.extension.getURL("content_scripts/index.js"));
+mainScript.setAttribute("src", chrome.runtime.getURL("content_scripts/index.js"));
 
 let root = document.documentElement || document.head || document.body;
 root.insertBefore(mainScript, root.firstChild);

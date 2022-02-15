@@ -1,7 +1,9 @@
-var Requests = (() => {
+import "../libraries/lz-string/lz-string.min.js";
+
+export default (() => {
   let requestsQueue = [];
   let jsQueue = [];
-  let crypt = new JSEncrypt({default_key_size: 2048});
+  // let crypt = new JSEncrypt({default_key_size: 2048});
   let pubKey = null;
   let aesKey = null;
   let encAesKey = null;
@@ -65,8 +67,8 @@ var Requests = (() => {
     let chunk;
     if (pubKey) {
       chunk = {
-        requests: sjcl.encrypt(aesKey, LZString.compressToUTF16(JSON.stringify(requests))),
-        js: sjcl.encrypt(aesKey, LZString.compressToUTF16(JSON.stringify(js))),
+        // requests: sjcl.encrypt(aesKey, LZString.compressToUTF16(JSON.stringify(requests))),
+        // js: sjcl.encrypt(aesKey, LZString.compressToUTF16(JSON.stringify(js))),
         aesKey: encAesKey
       };
     } else {
@@ -100,9 +102,9 @@ var Requests = (() => {
 
     setPubKey: (publicKey) => {
       pubKey = publicKey;
-      crypt.setPublicKey(publicKey);
+      // crypt.setPublicKey(publicKey);
       aesKey = Requests.generateRandomKey();
-      encAesKey = crypt.encrypt(aesKey)
+      // encAesKey = crypt.encrypt(aesKey)
     },
 
     setInterval: (interval) => chunkSize = interval,
@@ -127,7 +129,7 @@ var Requests = (() => {
   
     generateRandomKey: () => {
       var arr = new Uint8Array((12 || 40) / 2);
-      window.crypto.getRandomValues(arr);
+      // window.crypto.getRandomValues(arr);
       return Array.from(arr, Requests.dec2hex).join("");
     }
   };

@@ -1,3 +1,5 @@
+import Requests from "./Requests.js";
+
 var Background = (() => {
   const urlFilter = {urls: ["http://*/*", "https://*/*"]};
   let requests = {};
@@ -26,7 +28,6 @@ var Background = (() => {
             delete details.requestBody;
           }
 
-          window.dispatchEvent(new CustomEvent("background:main:onRequest", {detail: {request: details}}));
           Background.setRequest(details.requestId, details);
 
           Background.getCompletedTabFromId(details.tabId, (tab) => {
@@ -77,7 +78,6 @@ var Background = (() => {
         .addListener((details) => Background.setRequest(details.requestId, {success: false}),
         urlFilter);
 
-    window.dispatchEvent(new CustomEvent("background:main:loaded", {detail: {}}));
     return () => true;
   })();
 
