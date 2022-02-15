@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ul class="nav nav-pills">
+    <ul class="nav nav-pills flex-column">
       <b>General</b>
       <li class="nav-item" v-for="route in staticRoutes" :key="route.name">
         <router-link class="nav-link" :to="route.path">

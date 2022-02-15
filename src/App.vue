@@ -3,16 +3,17 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">T.EX</a>
-      </div>
-      <div class="d-flex">
-        <button
-          class="btn btn-primary p-1"
-          type="button"
-          @click="openSettings()"
-        >
-          <i class="bi bi-gear"></i>
-          Settings
-        </button>
+        <div class="d-flex">
+          <button
+            class="btn btn-primary p-1"
+            type="button"
+            data-bs-toggle="modal" 
+            data-bs-target="#settings-modal"
+          >
+            <i class="bi bi-gear me-2"></i>
+            <small>Settings</small>
+          </button>
+        </div>
       </div>
     </nav>
 

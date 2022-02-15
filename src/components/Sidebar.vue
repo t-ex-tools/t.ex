@@ -32,7 +32,7 @@
                 type="button"
                 @click="triggerDownload('requests', requests)"
               >
-                <i class="bi bi-download"></i>
+                <i class="bi bi-download me-2"></i>
                 <small>Export requests</small>
               </button>
             </div>
@@ -67,7 +67,7 @@
                 type="button"
                 @click="triggerDownload('js', js)"
               >
-                <i class="bi bi-download"></i>
+                <i class="bi bi-download me-2"></i>
                 <small>Export JS events</small>
               </button>
             </div>

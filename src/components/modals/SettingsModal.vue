@@ -1,101 +1,158 @@
 <template>
-  <b-modal 
-    ref="settings-modal"
-    title="Settings"
-    header-bg-variant="primary"
-    header-text-variant="light"
-    hide-footer
-    v-model="modalShown">
-    <div class="row">
-      <div class="col">
-        <b-list-group class="mb-3">
-          <b-list-group-item>
-            <b-form-checkbox
-              class="float-right" 
-              :checked="settingsEncryption" 
-              switch 
-              size="lg"
-              @change="setSettingsEncryption">
-            </b-form-checkbox>
-            Use Encryption to protect recorded Web traffic<br />
-            <small>Encryption is turned <b>{{(settingsEncryption) ? "ON" : "OFF"}}</b></small><br />
-            <small v-if="!settingsEncryption">Encrypted requests won't be loaded.</small>
-          </b-list-group-item>
-          <b-list-group-item>
-            <b-form-checkbox
-              class="float-right" 
-              :checked="settingsBodyFormData" 
-              switch 
-              size="lg"
-              @change="setSettingsBodyFormData">
-            </b-form-checkbox>
-            Record data that was transmitted in the HTTP body<br />
-            <small>HTTP payload <b>{{(settingsBodyFormData) ? "will be recorded" : "won't be recorded"}}</b></small>
-          </b-list-group-item>
-          <b-list-group-item>
-            <div class="row">
-              <div class="col-8">
-              Max. number of tabs opened simultaneously during a crawl
-              </div>
-              <div class="col-4">
-                <b-form-input 
-                  class="float-right"
-                  type="number"
-                  v-model="settingsTabsAtOnce"
-                  @blur="setSetting('settingsTabsAtOnce', settingsTabsAtOnce)">
-                </b-form-input>
-              </div>
+  <div id="settings-modal" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Settings</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col">
+              <ul class="list-group mb-3">
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-10">
+                      Use Encryption to protect recorded Web traffic<br />
+                      <small
+                        >Encryption is turned
+                        <b>{{ settingsEncryption ? "ON" : "OFF" }}</b></small
+                      ><br />
+                      <small v-if="!settingsEncryption"
+                        >Encrypted requests won't be loaded.</small
+                      >
+                    </div>
+                    <div class="col-2">
+                      <div class="form-check form-switch">
+                        <input
+                          class="form-check-input float-end"
+                          type="checkbox"
+                          role="switch"
+                          @change="setSettingsEncryption"
+                          :checked="settingsEncryption"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-10">
+                      Record data that was transmitted in the HTTP body<br />
+                      <small
+                        >HTTP payload
+                        <b>{{
+                          settingsBodyFormData
+                            ? "will be recorded"
+                            : "won't be recorded"
+                        }}</b></small
+                      >
+                    </div>
+                    <div class="col-2">
+                      <div class="form-check form-switch">
+                        <input
+                          class="form-check-input float-end"
+                          type="checkbox"
+                          role="switch"
+                          @change="setSettingsBodyFormData"
+                          :checked="settingsBodyFormData"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-8">
+                      Max. number of tabs opened simultaneously during a crawl
+                    </div>
+                    <div class="col-4">
+                      <input
+                        type="number"
+                        class="form-control"
+                        :value="settingsTabsAtOnce"
+                        @blur="
+                          setSetting('settingsTabsAtOnce', settingsTabsAtOnce)
+                        "
+                      />
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-8">
+                      Time-to-live of a tab for websites that load too long
+                    </div>
+                    <div class="col-4">
+                      <input
+                        type="number"
+                        class="form-control"
+                        :value="settingsTabTtl"
+                        @blur="setSetting('settingsTabTtl', settingsTabTtl)"
+                      />
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-8">
+                      Max. number of HTTP requests contained in a single chunk
+                    </div>
+                    <div class="col-4">
+                      <input
+                        type="number"
+                        class="form-control"
+                        :value="settingsChunkSize"
+                        @blur="
+                          setSetting('settingsChunkSize', settingsChunkSize)
+                        "
+                      />
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-8">
+                      Max. number of chunks loaded at once when loading the
+                      extension
+                    </div>
+                    <div class="col-4">
+                      <input
+                        type="number"
+                        class="form-control"
+                        :value="settingsChunksAtOnce"
+                        @blur="
+                          setSetting(
+                            'settingsChunksAtOnce',
+                            settingsChunksAtOnce
+                          )
+                        "
+                      />
+                    </div>
+                  </div>
+                </li>
+              </ul>
             </div>
-          </b-list-group-item>
-          <b-list-group-item>
-            <div class="row">
-              <div class="col-8">
-              Time-to-live of a tab for websites that load too long
-              </div>
-              <div class="col-4">
-                <b-form-input 
-                  class="float-right"
-                  type="number"
-                  v-model="settingsTabTtl"
-                  @blur="setSetting('settingsTabTtl', settingsTabTtl)">
-                </b-form-input>
-              </div>
-            </div>
-          </b-list-group-item>            
-          <b-list-group-item>
-            <div class="row">
-              <div class="col-8">
-              Max. number of HTTP requests contained in a single chunk
-              </div>
-              <div class="col-4">
-                <b-form-input 
-                  class="float-right"
-                  type="number"
-                  v-model="settingsChunkSize"
-                  @blur="setSetting('settingsChunkSize', settingsChunkSize)">
-                </b-form-input>
-              </div>
-            </div>
-          </b-list-group-item>
-          <b-list-group-item>
-            <div class="row">
-              <div class="col-8">
-              Max. number of chunks loaded at once when loading the extension
-              </div>
-              <div class="col-4">
-                <b-form-input 
-                  class="float-right"
-                  type="number"
-                  v-model="settingsChunksAtOnce"
-                  @blur="setSetting('settingsChunksAtOnce', settingsChunksAtOnce)">
-                </b-form-input>
-              </div>
-            </div>
-          </b-list-group-item>
-        </b-list-group>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
       </div>
     </div>
-  </b-modal>  
+  </div>
 </template>
 
 <script>
@@ -110,14 +167,14 @@ export default {
       settingsChunkSize: 1500,
       settingsChunksAtOnce: 6,
       settingsKeys: [
-        "settingsBodyFormData", 
+        "settingsBodyFormData",
         "settingsEncryption",
         "settingsTabsAtOnce",
         "settingsTabTtl",
         "settingsChunkSize",
         "settingsChunksAtOnce",
       ],
-    }
+    };
   },
   props: [],
   mounted() {
@@ -147,16 +204,16 @@ export default {
     },
     setSettingsEncryption(flag) {
       this.settingsEncryption = flag;
-      chrome.storage.local.set({settingsEncryption: flag}, () => {
-        (flag) ? 
-          chrome.storage.local.get("publicKey", (result) => {
-            (result.hasOwnProperty("publicKey")) ?
-              chrome.runtime.sendMessage({pubKey: result.publicKey}) :
-              (this.resetModal(), this.$emit("create-password"))
-          }) :
-          chrome.runtime.sendMessage({delete: true})
+      chrome.storage.local.set({ settingsEncryption: flag }, () => {
+        flag
+          ? chrome.storage.local.get("publicKey", (result) => {
+              result.hasOwnProperty("publicKey")
+                ? chrome.runtime.sendMessage({ pubKey: result.publicKey })
+                : (this.resetModal(), this.$emit("create-password"));
+            })
+          : chrome.runtime.sendMessage({ delete: true });
       });
     },
   },
-}
+};
 </script>

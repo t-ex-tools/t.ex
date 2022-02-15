@@ -1,3 +1,6 @@
 module.exports = {
-  publicPath: "/dist/"
+  publicPath: "/dist/",
+  configureWebpack: (config) => {
+    config.devtool = 'inline-source-map'
+  },
 }
