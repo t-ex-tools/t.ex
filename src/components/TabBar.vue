@@ -48,7 +48,7 @@ export default {
         return prevFilter (r) && b;
       }
 
-      this.groups.push({label: label, members: [{label: label, filter: filter}]});
+      // this.groups.push({label: label, members: [{label: label, filter: filter}]});
     },
     tabChanged: function(currentTabs, previousTabs) {
       (currentTabs.length > previousTabs.length) ? 

@@ -84,8 +84,6 @@ import TabBar from "./components/TabBar.vue";
 
 import defaultGroups from "./model/DefaultGroups.js";
 
-window.location.hash = "/";
-
 export default {
   name: 'App',
   components: {
@@ -164,7 +162,10 @@ export default {
           : this.js;
     },
     updateRoutes: function(routes) {
-      // this.$router.addRoutes(routes);
+      const self = this;
+      routes.forEach((route) => {
+        this.$router.addRoute(route);
+      });
     },
     updateSelectedIndex: function(index) {
       this.selectedIndex = index;

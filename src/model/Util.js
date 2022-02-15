@@ -1,8 +1,6 @@
-console.log(chrome)
-
 var Util = (() => {
-  let Labeler = new Worker(chrome.runtime.getURL("app/workers/Labeler.js"), { type: "module" });
-  let Decompressor = new Worker(chrome.runtime.getURL("app/workers/Decompressor.js"), { type: "module" });
+  let Labeler = new Worker(chrome.runtime.getURL("src/workers/Labeler.js"), { type: "module" });
+  let Decompressor = new Worker(chrome.runtime.getURL("src/workers/Decompressor.js"), { type: "module" });
 
   let load = (() => {})();
 

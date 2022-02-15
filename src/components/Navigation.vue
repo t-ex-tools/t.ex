@@ -61,11 +61,6 @@ export default {
       routes: [],
     }
   },
-  components: {
-    "Base": Base,
-    "Graph": Graph,
-    "Crawl": Crawl,
-  },
   props: ["groups", "selectedIndex", "dataTag"],
   created() {
     this.routes = this.staticRoutes.concat(FeatureExtractor.features().map((f) => {
