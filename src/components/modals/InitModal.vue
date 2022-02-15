@@ -10,14 +10,14 @@
     v-on:hidden="resetModal"
     v-on:ok="handleOk">
 
-    <b-row v-if="useEncryption" class="mb-3">
-      <b-col>
+    <div v-if="useEncryption" class="row mb-3">
+      <div class="col">
         <password-form ref="PasswordForm" v-bind:createPwdMode="createPwdMode"></password-form>
-      </b-col>
-    </b-row>
+      </div>
+    </div>
 
-    <b-row v-if="showDataPicker">
-      <b-col>
+    <div v-if="showDataPicker" class="row">
+      <div class="col">
 
         <div class="accordion" role="tablist">
           <b-card no-body class="mb-1">
@@ -63,8 +63,8 @@
           </b-card>
         </div>
 
-      </b-col>
-    </b-row>
+      </div>
+    </div>
   </b-modal>  
 </template>
 

@@ -19,36 +19,36 @@
       @tab-removed="groupAtIndexRemoved">
     </tab-bar>
 
-    <b-container fluid class="h-100">
-      <b-row class="h-100">
+    <div class="container-fluid h-100">
+      <div class="row h-100">
 
-        <b-col cols="2" class="border-right pt-3">
+        <div class="col-2 border-right pt-3">
           <navigation
             :groups="groups"
             :selected-index="selectedIndex"
             :data-tag="dataTag"
             @routes-changed="updateRoutes">
           </navigation>
-        </b-col>
+        </div>
 
-        <b-col cols="8" class="pt-3">
+        <div class="col-8 pt-3">
           <router-view
             :requests="requests" 
             :js="js"
             :data-tag="dataTag">
           </router-view>
-        </b-col>
+        </div>
 
-        <b-col cols="2" class="border-left pt-3">
+        <div class="col-2 border-left pt-3">
           <sidebar
             :requests="requests" 
             :js="js"
             v-on:trigger-download="download">
           </sidebar>
-        </b-col>
+        </div>
         
-      </b-row>
-    </b-container>
+      </div>
+    </div>
 
     <loading-modal 
       ref="LoadingModal" 

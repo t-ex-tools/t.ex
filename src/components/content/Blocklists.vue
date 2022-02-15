@@ -1,6 +1,6 @@
 <template>
-  <b-row>
-    <b-col>
+  <div class="row">
+    <div class="col">
       <b>Blocklists</b>
       <b-progress show-progress animated
         v-if="loading.isLoading" 
@@ -89,8 +89,8 @@
           </b-collapse>
         </b-card>
       </div>
-    </b-col>
-  </b-row>  
+    </div>
+  </div>  
 </template>
 
 <script>

@@ -1,9 +1,9 @@
 <template>
-  <b-row>
-    <b-col>
+  <div class="row">
+    <div class="col">
       <b>Graph</b>
-    </b-col>
-  </b-row>  
+    </div>
+  </div>  
 </template>
 
 <script>

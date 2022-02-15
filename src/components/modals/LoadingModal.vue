@@ -9,15 +9,15 @@
     hide-header-close
     hide-footer
     v-model="modalShown">
-    <b-row>
-      <b-col>
+    <div class="row">
+      <div class="col">
         <b-progress animated 
           class="mb-3"
           v-bind:value="loaded" 
           v-bind:max="total">
         </b-progress>
-      </b-col>
-    </b-row>
+      </div>
+    </div>
   </b-modal>
 </template>
 

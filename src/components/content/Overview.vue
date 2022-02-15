@@ -1,10 +1,10 @@
 <template>
-  <b-row>
-    <b-col>
+  <div class="row">
+    <div class="col">
       <b>Overview</b>
       
-    </b-col>
-  </b-row>    
+    </div>
+  </div>    
 </template>
 
 <script>

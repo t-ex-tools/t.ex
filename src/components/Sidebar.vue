@@ -1,27 +1,27 @@
 <template>
 <div>
-  <b-row>
-    <b-col>
+  <div class="row">
+    <div class="col">
       <b>Stats</b>
       <div>
-        <b-row>
-          <b-col>
+        <div class="row">
+          <div class="col">
             <small>
               Requests size (%) of {{max / 1000000}}MB:
             </small>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
             <b-progress show-progress
               v-bind:value="requestsSize" 
               v-bind:max="max"
               v-bind:variant="color(requestsSize)">
             </b-progress>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
             <b-button 
               class="mt-2 mb-3 float-right" 
               variant="outline-primary" 
@@ -30,28 +30,28 @@
               <b-icon icon="download"></b-icon> 
               <small>Export requests</small>
             </b-button>
-          </b-col>
-        </b-row>
+          </div>
+        </div>
       </div>
       <div>
-        <b-row>
-          <b-col>
+        <div class="row">
+          <div class="col">
             <small>
               JS events size (%) of {{max / 1000000}}MB:
             </small>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
             <b-progress show-progress
               v-bind:value="jsSize" 
               v-bind:max="max"
               v-bind:variant="color(jsSize)">
             </b-progress>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
             <b-button 
               class="mt-2 mb-3 float-right" 
               variant="outline-primary" 
@@ -60,11 +60,11 @@
               <b-icon icon="download"></b-icon> 
               <small>Export JS events</small>
             </b-button>
-          </b-col>
-        </b-row>
+          </div>
+        </div>
       </div>
-    </b-col>
-  </b-row>
+    </div>
+  </div>
 </div>  
 </template>
 

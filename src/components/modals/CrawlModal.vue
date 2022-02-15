@@ -6,8 +6,8 @@
     header-bg-variant="primary"
     header-text-variant="light"
     @ok="handleOk">
-    <b-row>
-      <b-col>
+    <div class="row">
+      <div class="col">
         <b-form-group 
           v-if="!createMode"
           label="Index:" 
@@ -53,8 +53,8 @@
             max-rows="8">
           </b-form-textarea>
         </b-form-group>
-      </b-col>
-    </b-row>
+      </div>
+    </div>
   </b-modal>  
 </template>
 

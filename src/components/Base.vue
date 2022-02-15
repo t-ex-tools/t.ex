@@ -1,12 +1,12 @@
 <template>
   <div class="pb-5">
-    <b-row v-if="results === null">
-      <b-col cols="12">
+    <div class="row" v-if="results === null">
+      <div class="col">
         <b-card class="m-2" title="No results found."></b-card>
-      </b-col>
-    </b-row>
-    <b-row v-else>
-      <b-col cols="12">
+      </div>
+    </div>
+    <div class="row" v-else>
+      <div class="col">
         <b-card class="m-2" v-bind:title="featureInfo.title" v-bind:sub-title="featureInfo.subtitle">
           <b-progress show-progress animated
             v-if="loading.isLoading" 
@@ -29,8 +29,8 @@
             v-bind:rawData="rawData">
           </box-plot>   
         </b-card> 
-      </b-col>
-    </b-row>
+      </div>
+    </div>
   </div>  
 </template>
 

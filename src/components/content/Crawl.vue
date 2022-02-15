@@ -1,19 +1,19 @@
 <template>
   <div>
-    <b-row>
-      <b-col>
+    <div class="row">
+      <div class="col">
         <h3>Crawls</h3>
-      </b-col>
-    </b-row>    
-    <b-row>
-      <b-col>
+      </div>
+    </div>    
+    <div class="row">
+      <div class="col">
         <b-button variant="outline-primary" class="float-right" @click="handleCreateModal">
           <b-icon icon="plus-circle"></b-icon> Create crawl
         </b-button>
-      </b-col>
-    </b-row>
-    <b-row class="pb-5">
-      <b-col>
+      </div>
+    </div>
+    <div class="row pb-5">
+      <div class="col">
         <b-card 
           v-for="(crawl, index) in crawls"
           v-bind:key="index" 
@@ -42,16 +42,17 @@
               v-bind:per-page="perPage">
             </b-table>
           </b-card-text>
+          <!--
           <template #footer>
             <div class="text-right">
-              <b-row>
-                <b-col cols="8">
+              <div class="row">
+                <b-div class="col-8">
                   <div v-if="activeCrawl === index" class="text-left">
                     <h6>Crawl running ...</h6>
                     <b-progress v-bind:value="tabsCompleted" v-bind:max="tabsToFinish" show-progress animated></b-progress>
                   </div>
-                </b-col>
-                <b-col cols="4">
+                </div>
+                <div class="col-4">
                   <b-button variant="outline-primary" @click="handleStartCrawl(index)">
                     <b-icon icon="play"></b-icon> Run crawl
                   </b-button>
@@ -61,13 +62,14 @@
                   <b-button variant="outline-danger" @click="deleteCrawl(index)">
                     <b-icon icon="trash"></b-icon> Delete
                   </b-button>          
-                </b-col>
-              </b-row>
+                </div>
+              </div>
             </div>
           </template>
+          -->
         </b-card>
-      </b-col>
-    </b-row>
+      </div>
+    </div>
     <crawl-modal ref="CrawlModal" @save-crawl="saveCrawl"></crawl-modal>
   </div>  
 </template>

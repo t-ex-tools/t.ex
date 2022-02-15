@@ -6,8 +6,8 @@
     header-text-variant="light"
     hide-footer
     v-model="modalShown">
-    <b-row>
-      <b-col>
+    <div class="row">
+      <div class="col">
         <b-list-group class="mb-3">
           <b-list-group-item>
             <b-form-checkbox
@@ -33,68 +33,68 @@
             <small>HTTP payload <b>{{(settingsBodyFormData) ? "will be recorded" : "won't be recorded"}}</b></small>
           </b-list-group-item>
           <b-list-group-item>
-            <b-row>
-              <b-col cols="8">
+            <div class="row">
+              <div class="col-8">
               Max. number of tabs opened simultaneously during a crawl
-              </b-col>
-              <b-col cols="4">
+              </div>
+              <div class="col-4">
                 <b-form-input 
                   class="float-right"
                   type="number"
                   v-model="settingsTabsAtOnce"
                   @blur="setSetting('settingsTabsAtOnce', settingsTabsAtOnce)">
                 </b-form-input>
-              </b-col>
-            </b-row>
+              </div>
+            </div>
           </b-list-group-item>
           <b-list-group-item>
-            <b-row>
-              <b-col cols="8">
+            <div class="row">
+              <div class="col-8">
               Time-to-live of a tab for websites that load too long
-              </b-col>
-              <b-col cols="4">
+              </div>
+              <div class="col-4">
                 <b-form-input 
                   class="float-right"
                   type="number"
                   v-model="settingsTabTtl"
                   @blur="setSetting('settingsTabTtl', settingsTabTtl)">
                 </b-form-input>
-              </b-col>
-            </b-row>
+              </div>
+            </div>
           </b-list-group-item>            
           <b-list-group-item>
-            <b-row>
-              <b-col cols="8">
+            <div class="row">
+              <div class="col-8">
               Max. number of HTTP requests contained in a single chunk
-              </b-col>
-              <b-col cols="4">
+              </div>
+              <div class="col-4">
                 <b-form-input 
                   class="float-right"
                   type="number"
                   v-model="settingsChunkSize"
                   @blur="setSetting('settingsChunkSize', settingsChunkSize)">
                 </b-form-input>
-              </b-col>
-            </b-row>
+              </div>
+            </div>
           </b-list-group-item>
           <b-list-group-item>
-            <b-row>
-              <b-col cols="8">
+            <div class="row">
+              <div class="col-8">
               Max. number of chunks loaded at once when loading the extension
-              </b-col>
-              <b-col cols="4">
+              </div>
+              <div class="col-4">
                 <b-form-input 
                   class="float-right"
                   type="number"
                   v-model="settingsChunksAtOnce"
                   @blur="setSetting('settingsChunksAtOnce', settingsChunksAtOnce)">
                 </b-form-input>
-              </b-col>
-            </b-row>
+              </div>
+            </div>
           </b-list-group-item>
         </b-list-group>
-      </b-col>
-    </b-row>
+      </div>
+    </div>
   </b-modal>  
 </template>
 
