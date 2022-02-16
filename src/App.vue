@@ -64,15 +64,14 @@
     </div>
 
     <loading-modal
-      ref="LoadingModal"
       :loaded="alreadyLoaded + windowSize"
       :total="numberOfChunks"
     >
     </loading-modal>
 
-    <init-modal ref="InitModal" @update-limit="updateLimit"> </init-modal>
+    <init-modal @update-limit="updateLimit"> </init-modal>
 
-    <settings-modal ref="SettingsModal" @create-password="createPassword">
+    <settings-modal @create-password="createPassword">
     </settings-modal>
   </div>
 </template>

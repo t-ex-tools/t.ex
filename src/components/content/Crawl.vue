@@ -2,7 +2,7 @@
   <div>
     <div class="row">
       <div class="col">
-        <h3>Crawls</h3>
+        <b>Crawls</b>
       </div>
     </div>    
     <div class="row">
