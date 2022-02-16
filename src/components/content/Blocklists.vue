@@ -34,6 +34,7 @@ export default {
     }
   },
   mounted() {
+    /*
     this.loading.isLoading = true;
     Util.labeledStream(this.requests, (chunk, current, total) => {
       this.numOfRequests = total;
@@ -45,6 +46,7 @@ export default {
       }
       (chunk) ? this.processChunk(chunk) : null;
     });
+    */
   },
   methods: {
     processChunk: function(chunk) {

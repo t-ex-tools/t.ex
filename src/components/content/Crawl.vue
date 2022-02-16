@@ -7,25 +7,30 @@
     </div>    
     <div class="row">
       <div class="col">
-        <b-button variant="outline-primary" class="float-right" @click="handleCreateModal">
-          <b-icon icon="plus-circle"></b-icon> Create crawl
-        </b-button>
+        <button class="btn btn-outline-primary float-end" data-bs-toggle="modal"
+            data-bs-target="#crawl-modal">
+          <i icon="bi bi-plus-circle me-2"></i>
+          <small>Create crawl</small>
+        </button>
       </div>
     </div>
     <div class="row pb-5">
       <div class="col">
-        <b-card 
-          v-for="(crawl, index) in crawls"
+        <div class="card mt-3"
+          v-for="crawl, index in crawls"
           :key="index" 
           :header="crawl.name" 
           :sub-title="'#' + crawl.tag"
-          border-variant="primary"
-          header-bg-variant="primary"
-          header-text-variant="white"
-          class="mt-3">
-          <b-card-text>
+        >
+          <div class="card-header">
+            <h5 class="card-title">{{ crawl.name }}</h5>
+            <h6 class="card-subtitle">{{ crawl.tag }}</h6>
+          </div>
+
+          <div class="card-body">
             <p><b>Number of websites:</b> {{crawl.urls.length}}</p>
             <p><b>Conducted crawls:</b></p>
+            <!--
             <b-pagination pills
               v-if="crawlStats[crawl.tag] && crawlStats[crawl.tag].length > perPage"
               v-model="currentPage[index]"
@@ -41,7 +46,8 @@
               :current-page="currentPage[index]" 
               :per-page="perPage">
             </b-table>
-          </b-card-text>
+            -->
+          </div>
           <!--
           <template #footer>
             <div class="text-right">
@@ -67,10 +73,10 @@
             </div>
           </template>
           -->
-        </b-card>
+        </div>
       </div>
     </div>
-    <crawl-modal ref="CrawlModal" @save-crawl="saveCrawl"></crawl-modal>
+    <crawl-modal  @save-crawl="saveCrawl"></crawl-modal>
   </div>  
 </template>
 
