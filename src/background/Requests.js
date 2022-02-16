@@ -3,46 +3,32 @@ import "../libraries/lz-string/lz-string.min.js";
 export default (() => {
   let requestsQueue = [];
   let jsQueue = [];
-  // let crypt = new JSEncrypt({default_key_size: 2048});
-  let pubKey = null;
-  let aesKey = null;
-  let encAesKey = null;
   let chunkSize = 1500;
 
   let load = (() => {
-    chrome.storage.local.get(["publicKey", "settingsChunkSize", "settingsEncryption"], (result) => {
-      (
-        result.hasOwnProperty("publicKey") && 
-        result.hasOwnProperty("settingsEncryption") && 
-        result.settingsEncryption
-      ) ?
-        Requests.setPubKey(result.publicKey) :
-
+    chrome.storage.local.get(["settingsChunkSize"], (result) => {
       (result.hasOwnProperty("settingsChunkSize")) ?
         (chunkSize = Number.parseInt(result.settingsChunkSize)) :
-      
-      null;
+        null;
     });
 
     chrome.runtime.onMessage.addListener((message) => {
-      (message.hasOwnProperty("pubKey")) ?
-        Requests.setPubKey(message.pubKey) :
 
       (message.hasOwnProperty("delete")) ?
         Requests.setPubKey(null) :
 
-      (message.hasOwnProperty("flush")) ?
-        (pushRequests(requestsQueue, jsQueue),
-        requestsQueue = [],
-        jsQueue = []) :
+        (message.hasOwnProperty("flush")) ?
+          (pushRequests(requestsQueue, jsQueue),
+            requestsQueue = [],
+            jsQueue = []) :
 
-      (message.hasOwnProperty("js")) ?
-        Requests.addEvent(message.js) :
+          (message.hasOwnProperty("js")) ?
+            Requests.addEvent(message.js) :
 
-      (message.hasOwnProperty("settingsChunkSize")) ?
-        chunkSize = Number.parseInt(message.settingsChunkSize) :
+            (message.hasOwnProperty("settingsChunkSize")) ?
+              chunkSize = Number.parseInt(message.settingsChunkSize) :
 
-      null;
+              null;
     });
 
     return () => true;
@@ -60,52 +46,34 @@ export default (() => {
 
     jsQueue = [];
     requestsQueue = requestsQueue.filter((e) => !e.complete);
-    pushRequests(requestsToUpdate, jsToUpdate);    
+    pushRequests(requestsToUpdate, jsToUpdate);
   };
 
   let pushRequests = (requests, js) => {
-    let chunk;
-    if (pubKey) {
-      chunk = {
-        // requests: sjcl.encrypt(aesKey, LZString.compressToUTF16(JSON.stringify(requests))),
-        // js: sjcl.encrypt(aesKey, LZString.compressToUTF16(JSON.stringify(js))),
-        aesKey: encAesKey
-      };
-    } else {
-      chunk = {
+    let id = Date.now();
+    let chunk = {
+      [id]: {
         requests: LZString.compressToUTF16(JSON.stringify(requests)),
         js: LZString.compressToUTF16(JSON.stringify(js)),
-      };
-    }
-    let chunkWrap = {};
-    let currentId = Date.now();
-    chunkWrap[currentId] = chunk;
-    
-    chrome.storage.local.set(chunkWrap, () => {
+      }
+    };
+
+    chrome.storage.local.set(chunk, () => {
       chrome.storage.local.get("indexes", (result) => {
         if (result.hasOwnProperty("indexes")) {
-          result.indexes.push(currentId);
+          result.indexes.push(id);
         } else {
-          result.indexes = [currentId];
+          result.indexes = [id];
         }
         chrome.storage.local.set(result, null);
       });
     });
 
-    chrome.runtime.sendMessage({requests: requests});
+    // chrome.runtime.sendMessage({ requests: requests });
   };
 
   return {
     isLoaded: () => load(),
-
-    getPubKey: () => pubKey,
-
-    setPubKey: (publicKey) => {
-      pubKey = publicKey;
-      // crypt.setPublicKey(publicKey);
-      aesKey = Requests.generateRandomKey();
-      // encAesKey = crypt.encrypt(aesKey)
-    },
 
     setInterval: (interval) => chunkSize = interval,
 
@@ -118,20 +86,9 @@ export default (() => {
 
     addEvent: (js) => {
       jsQueue = jsQueue.concat(js);
-      (jsQueue.length >= chunkSize * 2) ?
-        scheduleWorker(0) :
-        null;
     },
 
-    get: () => ({requests: requestsQueue, js: jsQueue}),
-  
-    dec2hex: (dec) => ("0" + dec.toString(16)).substr(-2),
-  
-    generateRandomKey: () => {
-      var arr = new Uint8Array((12 || 40) / 2);
-      // window.crypto.getRandomValues(arr);
-      return Array.from(arr, Requests.dec2hex).join("");
-    }
+    get: () => ({ requests: requestsQueue, js: jsQueue }),
   };
-  
+
 })();

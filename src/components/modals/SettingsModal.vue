@@ -18,31 +18,6 @@
                 <li class="list-group-item">
                   <div class="row">
                     <div class="col-10">
-                      Use Encryption to protect recorded Web traffic<br />
-                      <small
-                        >Encryption is turned
-                        <b>{{ settingsEncryption ? "ON" : "OFF" }}</b></small
-                      ><br />
-                      <small v-if="!settingsEncryption"
-                        >Encrypted requests won't be loaded.</small
-                      >
-                    </div>
-                    <div class="col-2">
-                      <div class="form-check form-switch">
-                        <input
-                          class="form-check-input float-end"
-                          type="checkbox"
-                          role="switch"
-                          @change="setSettingsEncryption"
-                          :checked="settingsEncryption"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li class="list-group-item">
-                  <div class="row">
-                    <div class="col-10">
                       Record data that was transmitted in the HTTP body<br />
                       <small
                         >HTTP payload
@@ -168,7 +143,6 @@ export default {
       settingsChunksAtOnce: 6,
       settingsKeys: [
         "settingsBodyFormData",
-        "settingsEncryption",
         "settingsTabsAtOnce",
         "settingsTabTtl",
         "settingsChunkSize",
@@ -201,18 +175,6 @@ export default {
     },
     setSettingsBodyFormData(flag) {
       this.setSetting("settingsBodyFormData", flag);
-    },
-    setSettingsEncryption(flag) {
-      this.settingsEncryption = flag;
-      chrome.storage.local.set({ settingsEncryption: flag }, () => {
-        flag
-          ? chrome.storage.local.get("publicKey", (result) => {
-              result.hasOwnProperty("publicKey")
-                ? chrome.runtime.sendMessage({ pubKey: result.publicKey })
-                : (this.resetModal(), this.$emit("create-password"));
-            })
-          : chrome.runtime.sendMessage({ delete: true });
-      });
     },
   },
 };

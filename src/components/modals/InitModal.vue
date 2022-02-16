@@ -10,12 +10,6 @@
     v-on:hidden="resetModal"
     v-on:ok="handleOk">
 
-    <div v-if="useEncryption" class="row mb-3">
-      <div class="col">
-        <password-form ref="PasswordForm" :createPwdMode="createPwdMode"></password-form>
-      </div>
-    </div>
-
     <div v-if="showDataPicker" class="row">
       <div class="col">
 
@@ -69,33 +63,25 @@
 </template>
 
 <script>
-import PasswordForm from "./init-modal/PasswordForm.vue";
 import LimitSlider from "./init-modal/LimitSlider.vue";
 import CrawlLoader from "./init-modal/CrawlLoader.vue";
 
 export default {
   components: {
-    "PasswordForm": PasswordForm,
     "LimitSlider": LimitSlider,
     "CrawlLoader": CrawlLoader,
   },
   data: () => {
     return {
       modalShown: false,
-      createPwdMode: false,
-      useEncryption: false,
       showDataPicker: false,
       callback: null,
     }
   },
   mounted() {
-    window.addEventListener("crypt:loaded", (e) => {
-      this.createPwdMode = !e.detail.privKeyExists;
-    });
   },
   methods: {
-    showModal(useEncryption, showDataPicker, callback) {
-      this.useEncryption = useEncryption;
+    showModal(showDataPicker, callback) {
       this.showDataPicker = showDataPicker;
       this.callback = callback;
       this.modalShown = true;
@@ -108,16 +94,7 @@ export default {
       this.$emit("update-limit", limit);
     },
     handleOk(e) {
-      (this.useEncryption) ? 
-        (this.createPwdMode) ? 
-          this.$refs.PasswordForm.createPwd(e, this.callbackAndHide)
-          : this.$refs.PasswordForm.checkPwd(e, this.callbackAndHide) 
-        : this.callbackAndHide();
-    },
-    callbackAndHide() {
       this.callback();
-      this.modalShown = false;
-      (this.$refs.PasswordForm) ? this.$refs.PasswordForm.resetForm() : null;
     },
   },
 }

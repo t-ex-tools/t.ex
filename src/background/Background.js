@@ -1,7 +1,7 @@
 import Requests from "./Requests.js";
 
 var Background = (() => {
-  const urlFilter = {urls: ["http://*/*", "https://*/*"]};
+  const urlFilter = { urls: ["http://*/*", "https://*/*"] };
   let requests = {};
   let storeBody = false;
 
@@ -19,63 +19,63 @@ var Background = (() => {
 
     chrome.webRequest
       .onBeforeRequest
-        .addListener((details) => {
-          if (details.tabId < 0) {
-            return;
-          }
+      .addListener((details) => {
+        if (details.tabId < 0) {
+          return;
+        }
 
-          if (!storeBody && details.hasOwnProperty("requestBody")) {
-            delete details.requestBody;
-          }
+        if (!storeBody && details.hasOwnProperty("requestBody")) {
+          delete details.requestBody;
+        }
 
-          Background.setRequest(details.requestId, details);
+        Background.setRequest(details.requestId, details);
 
-          Background.getCompletedTabFromId(details.tabId, (tab) => {
-            Background.setRequest(details.requestId, {source: tab.url, complete: true});
+        Background.getCompletedTabFromId(details.tabId, (tab) => {
+          Background.setRequest(details.requestId, { source: tab.url, complete: true });
 
-            (Background.getRequest(details.requestId).requestHeaders &&
+          (Background.getRequest(details.requestId).requestHeaders &&
             Background.getRequest(details.requestId).response) ?
-              Background.pushToQueue(details.requestId):
-              null;
-          });
-        },
+            Background.pushToQueue(details.requestId) :
+            null;
+        });
+      },
         urlFilter,
-        ["requestBody"]);    
+        ["requestBody"]);
 
     chrome.webRequest
       .onBeforeSendHeaders
-        .addListener((details) => {
-          Background.setRequest(details.requestId, {requestHeaders: details.requestHeaders}),
+      .addListener((details) => {
+        Background.setRequest(details.requestId, { requestHeaders: details.requestHeaders }),
 
           (Background.getRequest(details.requestId).complete &&
             Background.getRequest(details.requestId).response) ?
-              Background.pushToQueue(details.requestId):
-              null;
-        },
-        urlFilter, 
+            Background.pushToQueue(details.requestId) :
+            null;
+      },
+        urlFilter,
         ["requestHeaders", "extraHeaders"]);
 
     chrome.webRequest
       .onResponseStarted
-        .addListener((details) => {
-          Background.setRequest(details.requestId, {response: details});
+      .addListener((details) => {
+        Background.setRequest(details.requestId, { response: details });
 
-          (Background.getRequest(details.requestId).complete &&
-            Background.getRequest(details.requestId).requestHeaders) ?
-              Background.pushToQueue(details.requestId):
-              null;
-        },
+        (Background.getRequest(details.requestId).complete &&
+          Background.getRequest(details.requestId).requestHeaders) ?
+          Background.pushToQueue(details.requestId) :
+          null;
+      },
         urlFilter,
         ["responseHeaders", "extraHeaders"]);
 
     chrome.webRequest
       .onCompleted
-        .addListener((details) => Background.setRequest(details.requestId, {success: true}),
+      .addListener((details) => Background.setRequest(details.requestId, { success: true }),
         urlFilter);
 
     chrome.webRequest
       .onErrorOccurred
-        .addListener((details) => Background.setRequest(details.requestId, {success: false}),
+      .addListener((details) => Background.setRequest(details.requestId, { success: false }),
         urlFilter);
 
     return () => true;

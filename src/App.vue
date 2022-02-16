@@ -70,7 +70,6 @@
 <script>
 import Util from "./model/Util.js";
 import Statistics from "./model/Statistics.js";
-import Crypt from "./model/Crypt.js";
 
 import InitModal from "./components/modals/InitModal.vue";
 import LoadingModal from "./components/modals/LoadingModal.vue";
@@ -114,25 +113,24 @@ export default {
     // google.charts.load("49", {"packages": ["corechart", "controls"]});
 
     chrome.storage.local.get(
-      ["settingsEncryption", "settingsChunksAtOnce"],
+      ["settingsChunksAtOnce"],
       (setting) => {
-        let useEncryption = setting.settingsEncryption || false;
         self.windowSize =
           Number.parseInt(setting.settingsChunksAtOnce) || self.windowSize;
-        // self.$refs.InitModal.showModal(useEncryption, true, () => self.bootstrap(useEncryption));
+        // self.$refs.InitModal.showModal(useEncryption, true, () => self.bootstrap());
       }
     );
   },
   methods: {
-    bootstrap: function (useEncryption) {
+    bootstrap: function () {
       const self = this;
       chrome.storage.local.get("indexes", (result) => {
-        this.getChunks(result.indexes || [], useEncryption);
+        this.getChunks(result.indexes || []);
         // this.$refs.LoadingModal.showModal();
         Statistics.initialize(this.passData);
       });
     },
-    getChunks: function (indexes, useEncryption) {
+    getChunks: function (indexes) {
       let keys = indexes
         .filter((e) => this.boundaries.lower <= e && e <= this.boundaries.upper)
         .map((e) => e.toString());
@@ -146,15 +144,8 @@ export default {
           ),
           (chunks) => {
             Object.values(chunks).forEach((chunk, index) => {
-              let tmp = useEncryption
-                ? chunk.hasOwnProperty("aesKey")
-                  ? /*Crypt.decryptChunk(chunk)*/ chunk
-                  : chunk
-                : chunk.hasOwnProperty("aesKey")
-                ? { requests: null, js: null }
-                : chunk;
-              this.requests.push(tmp.requests);
-              this.js.push(tmp.js);
+              this.requests.push(chunk.requests);
+              this.js.push(chunk.js);
               this.alreadyLoaded = i * this.windowSize + (index + 1);
             });
           }
