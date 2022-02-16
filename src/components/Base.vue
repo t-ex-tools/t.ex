@@ -2,36 +2,51 @@
   <div class="pb-5">
     <div class="row" v-if="results === null">
       <div class="col">
-        <b-card class="m-2" title="No results found."></b-card>
+        <div class="card card-body m-2">No results found.</div>
       </div>
     </div>
+
     <div class="row" v-else>
       <div class="col">
-        <b-card class="m-2" :title="featureInfo.title" :sub-title="featureInfo.subtitle">
-          <b-progress show-progress animated
-            v-if="loading.isLoading" 
-            :value="loading.current" 
-            :max="loading.max">
-          </b-progress>
+        <div
+          class="card card-body m-2"
+          :title="featureInfo.title"
+          :sub-title="featureInfo.subtitle"
+        >
+          <div class="progress" v-if="loading.isLoading">
+            <div
+              class="progress-bar bg-primary"
+              :style="'width: ' + loading.current + '%'"
+              role="progressbar"
+              :aria-valuenow="loading.current"
+              aria-valuemin="0"
+              :aria-valuemax="loading.max"
+            >
+              {{ loading.current }}
+            </div>
+          </div>
+
           <table-chart
             v-if="featureInfo.lom <= 2"
             :feature="featureInfo"
             :totals="totals"
-            :labels="labels" 
+            :labels="labels"
             :rawData="rawData"
-            :dataTag="dataTag">
+            :dataTag="dataTag"
+          >
           </table-chart>
-          <box-plot 
+          <box-plot
             v-else
             :feature="featureInfo"
             :totals="totals"
-            :labels="labels" 
-            :rawData="rawData">
-          </box-plot>   
-        </b-card> 
+            :labels="labels"
+            :rawData="rawData"
+          >
+          </box-plot>
+        </div>
       </div>
     </div>
-  </div>  
+  </div>
 </template>
 
 <script>
@@ -41,16 +56,10 @@ import Statistics from "../model/Statistics.js";
 
 export default {
   components: {
-    "TableChart": TableChart,
-    "BoxPlot": BoxPlot,
+    TableChart: TableChart,
+    BoxPlot: BoxPlot,
   },
-  props: [
-    "queries", 
-    "feature", 
-    "featureInfo", 
-    "tabIndex",
-    "dataTag"
-  ],
+  props: ["queries", "feature", "featureInfo", "tabIndex", "dataTag"],
   data: () => {
     return {
       loading: {
@@ -58,31 +67,31 @@ export default {
         current: 0,
         max: 1,
       },
-      instances: null, 
+      instances: null,
       results: null,
       totals: null,
       labels: null,
       rawData: null,
-    }
+    };
   },
   watch: {
     queries: {
       immediate: true,
-      handler: async function() {
+      handler: async function () {
         this.startQuery();
       },
     },
     feature: {
       immediate: false,
-      handler: async function() {
+      handler: async function () {
         this.startQuery();
       },
-    }
+    },
   },
   mounted() {
     window.addEventListener("statistics:update", (e) => {
       if (e.detail.currentChunk === e.detail.numberOfChunks) {
-        this.loading = {isLoading: false, current: 0, max: 1};
+        this.loading = { isLoading: false, current: 0, max: 1 };
       } else {
         this.loading.isLoading = true;
         this.loading.current = e.detail.currentChunk;
@@ -92,23 +101,26 @@ export default {
     });
   },
   methods: {
-    startQuery: function() {
+    startQuery: function () {
       this.loading.isLoading = true;
       this.instances = this.setInstances(this.queries);
     },
-    update: function() {
+    update: function () {
       this.results = this.setResults();
       this.labels = this.instances.map((e) => e.label);
       this.rawData = this.results.map((e) => e.data[this.feature]);
       this.totals = this.results.map((e) => e.count);
     },
-    setInstances: function(queries) {
+    setInstances: function (queries) {
       // TODO: we query multiple times, however member can be complementary, i.e. result of first evaluation can be used for second query
-      return queries.map((q, i) => ({label: q.label, statistics: Statistics.query(q.filter, this.feature, q.id)}));
+      return queries.map((q, i) => ({
+        label: q.label,
+        statistics: Statistics.query(q.filter, this.feature, q.id),
+      }));
     },
-    setResults: function() {
-      return this.instances.map((i) => i.statistics.get())
+    setResults: function () {
+      return this.instances.map((i) => i.statistics.get());
     },
   },
-}
+};
 </script>

@@ -1,28 +1,12 @@
 <template>
   <div>
-    <b-tabs content-class="mt-3" @changed="tabChanged" v-model="index">
-      <b-tab v-for="(g, i) in groups" :key="i">
-        <template #title>
-          <span class="tab-text" v-b-tooltip.hover :title="g.label">{{
-            g.label
-          }}</span>
-          <b-icon
-            v-if="groups.length > 1"
-            icon="x-circle-fill"
-            scale="0.95"
-            class="remove-tab-btn ml-3"
-            @click="$emit('tab-removed', i)"
-          ></b-icon>
-          <b-icon
-            v-if="groups.length === 1"
-            icon="circle-fill"
-            scale="0.95"
-            class="ml-3"
-            style="color: darkgray"
-          ></b-icon>
-        </template>
-      </b-tab>
-    </b-tabs>
+    <ul class="nav nav-tabs">
+      <li v-for="(g, i) in groups" :key="i" class="nav-item">
+        <a class="nav-link active" aria-current="page" href="#">
+          {{ g.label }}
+        </a>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -80,3 +64,19 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.tab-text {
+  max-width: 200px;
+  float: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.remove-tab-btn {
+  color: darkgray;
+}
+.remove-tab-btn:hover {
+  color: red;
+}
+</style>

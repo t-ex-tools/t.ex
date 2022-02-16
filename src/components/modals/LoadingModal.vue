@@ -1,24 +1,34 @@
 <template>
-  <b-modal 
-    ref="loading-modal"
-    title="Loading ..."
-    header-bg-variant="primary"
-    header-text-variant="light"
-    no-close-on-esc
-    no-close-on-backdrop
-    hide-header-close
-    hide-footer
-    v-model="modalShown">
-    <div class="row">
-      <div class="col">
-        <b-progress animated 
-          class="mb-3"
-          :value="loaded" 
-          :max="total">
-        </b-progress>
+
+  <div id="loading-modal" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Loading ...</h5>
+        </div>
+
+        <div class="modal-body">
+          <div class="row">
+            <div class="col">
+              <div class="progress">
+                <div
+                  class="progress-bar bg-primary"
+                  :style="'width: ' + loaded + '%'"
+                  role="progressbar"
+                  :aria-valuenow="loaded"
+                  aria-valuemin="0"
+                  :aria-valuemax="total"
+                >
+                  {{ loaded }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
       </div>
     </div>
-  </b-modal>
+  </div>
 </template>
 
 <script>
