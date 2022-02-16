@@ -10,6 +10,7 @@
       v-if="options.length > 0"
       class="form-select"
       aria-label="Default select example"
+      size="5"
       @update="updateLimit"
     >
       <option v-for="(option, index) in options" :key="index" :value="index">
