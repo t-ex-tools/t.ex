@@ -44,7 +44,7 @@
                       <component
                         :is="option.component"
                         class="mt-3"
-                        @update-limit="passLimit"
+                        @update-limit="setBoundaries"
                       >
                       </component>
                     </div>
@@ -90,23 +90,46 @@ export default {
           component: CrawlLoader,
         },
       ],
-      modalShown: false,
-      callback: null,
+      boundaries: {
+        lower: 0,
+        upper: 0,
+      }
     };
   },
   mounted() {},
   methods: {
-    showModal(callback) {
-      this.callback = callback;
-      this.modalShown = true;
-    },
-    resetModal() {},
-    setModal() {},
-    passLimit(limit) {
-      this.$emit("update-limit", limit);
+    getChunks: function (indexes) {
+      let keys = indexes
+        .filter((e) => this.boundaries.lower <= e && e <= this.boundaries.upper)
+        .map((e) => e.toString());
+
+      this.chunks.total = keys.length;
+      for (let i = 0; i * this.chunks.windowSize < keys.length; i++) {
+        chrome.storage.local.get(
+          keys.slice(
+            i * this.chunks.windowSize,
+            i * this.chunks.windowSize + this.chunks.windowSize
+          ),
+          (chunks) => {
+            Object.values(chunks).forEach((chunk, index) => {
+              this.data.requests.push(chunk.requests);
+              this.js.push(chunk.js);
+              this.chunks.loaded = i * this.chunks.windowSize + (index + 1);
+            });
+          }
+        );
+      }
+    },    
+    setBoundaries(boundaries) {
+
+      // TODO: retrieve indexes to load from LimitSlider
+      // TODO: retrieve boundaries from CrawlLoader
+      this.$emit("set-tag", boundaries.dataTag);
+      delete boundaries.dataTag;
+      this.boundaries = limit;
     },
     handleOk(e) {
-      this.callback();
+      // TODO: load data & propagate to parent
     },
   },
 };

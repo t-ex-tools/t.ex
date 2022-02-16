@@ -1,34 +1,9 @@
 <template>
   <div>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">T.EX</a>
-        <div class="d-flex">
-          <button
-            class="btn btn-primary p-1"
-            type="button"
-            data-bs-toggle="modal"
-            data-bs-target="#init-modal"
-          >
-            <i class="bi bi-gear me-2"></i>
-            <small>Load data</small>
-          </button>
-
-          <button
-            class="btn btn-primary p-1"
-            type="button"
-            data-bs-toggle="modal"
-            data-bs-target="#settings-modal"
-          >
-            <i class="bi bi-gear me-2"></i>
-            <small>Settings</small>
-          </button>
-        </div>
-      </div>
-    </nav>
+    <nav-bar></nav-bar>
 
     <tab-bar
-      :groups="groups"
+      :groups="groups.default"
       :selected-index="selectedIndex"
       @tabs-changed="updateSelectedIndex"
       @tab-removed="groupAtIndexRemoved"
@@ -39,22 +14,22 @@
       <div class="row h-100">
         <div class="col-2 border-right pt-3">
           <navigation
-            :groups="groups"
+            :groups="groups.default"
             :selected-index="selectedIndex"
-            :data-tag="dataTag"
+            :data-tag="data.tag"
             @routes-changed="updateRoutes"
           >
           </navigation>
         </div>
 
         <div class="col-8 pt-3">
-          <router-view :requests="requests" :js="js" :data-tag="dataTag">
+          <router-view :requests="data.requests" :js="js" :data-tag="dataTag">
           </router-view>
         </div>
 
         <div class="col-2 border-left pt-3">
           <sidebar
-            :requests="requests"
+            :requests="data.requests"
             :js="js"
             v-on:trigger-download="download"
           >
@@ -64,8 +39,8 @@
     </div>
 
     <loading-modal
-      :loaded="alreadyLoaded + windowSize"
-      :total="numberOfChunks"
+      :loaded="chunks.loaded + chunks.windowSize"
+      :total="chunks.total"
     >
     </loading-modal>
 
@@ -84,6 +59,7 @@ import InitModal from "./components/modals/InitModal.vue";
 import LoadingModal from "./components/modals/LoadingModal.vue";
 import SettingsModal from "./components/modals/SettingsModal.vue";
 
+import NavBar from "./components/NavBar.vue";
 import Sidebar from "./components/Sidebar.vue";
 import Navigation from "./components/Navigation.vue";
 import TabBar from "./components/TabBar.vue";
@@ -99,67 +75,30 @@ export default {
     Sidebar: Sidebar,
     Navigation: Navigation,
     TabBar: TabBar,
+    NavBar: NavBar,
   },
   data: () => {
     return {
-      windowSize: 6,
-      alreadyLoaded: 0,
-      numberOfChunks: -1,
-      requests: [],
-      js: [],
-      groups: defaultGroups,
-      selectedIndex: 0,
-      boundaries: {
-        lower: 0,
-        upper: 0,
+      chunks: {
+        memoryLimit: 256 * 1000000,
+        windowSize: 6,
+        loaded: 0,
+        total: -1
       },
-      dataTag: Util.randomString(),
-      memoryLimit: 256 * 1000000,
+      data: {
+        tag: Util.randomString(),
+        requests: [],
+        js: [],
+      },
+      groups: {
+        default: defaultGroups,
+        selectedIndex: 0
+      }
     };
   },
-  created() {
-    const self = this;
-    // google.charts.load("49", {"packages": ["corechart", "controls"]});
-
-    chrome.storage.local.get(["settingsChunksAtOnce"], (setting) => {
-      self.windowSize =
-        Number.parseInt(setting.settingsChunksAtOnce) || self.windowSize;
-      // self.$refs.InitModal.showModal(useEncryption, true, () => self.bootstrap());
-    });
-  },
   methods: {
-    bootstrap: function () {
-      const self = this;
-      chrome.storage.local.get("indexes", (result) => {
-        this.getChunks(result.indexes || []);
-        // this.$refs.LoadingModal.showModal();
-        Statistics.initialize(this.passData);
-      });
-    },
-    getChunks: function (indexes) {
-      let keys = indexes
-        .filter((e) => this.boundaries.lower <= e && e <= this.boundaries.upper)
-        .map((e) => e.toString());
-
-      this.numberOfChunks = keys.length;
-      for (let i = 0; i * this.windowSize < keys.length; i++) {
-        chrome.storage.local.get(
-          keys.slice(
-            i * this.windowSize,
-            i * this.windowSize + this.windowSize
-          ),
-          (chunks) => {
-            Object.values(chunks).forEach((chunk, index) => {
-              this.requests.push(chunk.requests);
-              this.js.push(chunk.js);
-              this.alreadyLoaded = i * this.windowSize + (index + 1);
-            });
-          }
-        );
-      }
-    },
     passData: function (source) {
-      return source === "requests" ? this.requests : this.js;
+      return source === "requests" ? this.data.requests : this.js;
     },
     updateRoutes: function (routes) {
       const self = this;
@@ -171,24 +110,24 @@ export default {
       this.selectedIndex = index;
     },
     groupAtIndexRemoved(index) {
-      this.groups[index].members.forEach((g) => Statistics.clear(g.id));
-      this.groups.splice(index, 1);
+      this.groups.default[index].members.forEach((g) => Statistics.clear(g.id));
+      this.groups.default.splice(index, 1);
     },
     download: function (dataInfo) {
       let exportChunk = [];
       let numberOfFiles = 0;
-      this.alreadyLoaded = 0;
+      this.chunks.loaded = 0;
       // this.$refs.LoadingModal.showModal();
       Util.stream(dataInfo.dataSource, (chunk, current, total) => {
-        this.alreadyLoaded = current;
-        this.numberOfChunks = total;
+        this.chunks.loaded = current;
+        this.chunks.total = total;
         exportChunk = exportChunk.concat(chunk);
         if (
-          this.memoryLimit <= Util.memorySizeOf(exportChunk) ||
+          this.chunks.memoryLimit <= Util.memorySizeOf(exportChunk) ||
           current === total
         ) {
           this.downloadFile(
-            this.dataTag + "-" + dataInfo.label + "." + numberOfFiles + ".json",
+            this.data.tag + "-" + dataInfo.label + "." + numberOfFiles + ".json",
             exportChunk
           );
           numberOfFiles++;
@@ -203,17 +142,6 @@ export default {
           new Blob([JSON.stringify(payload)], { type: "application/json" })
         ),
       });
-    },
-    updateLimit: function (boundaries) {
-      this.dataTag = boundaries.dataTag;
-      delete boundaries.dataTag;
-      this.boundaries = boundaries;
-    },
-    openSettings: function () {
-      // this.$refs.SettingsModal.showModal()
-    },
-    createPassword: function () {
-      // this.$refs.InitModal.showModal(true, false, () => {});
     },
   },
 };
