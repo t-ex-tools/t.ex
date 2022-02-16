@@ -1,19 +1,23 @@
 <template>
   <div>
     <h6>Load a crawl</h6>
-    <b-form-text id="password-hint">
-      Load the recorded data of a specific crawl you've conducted.
-      Only one crawl can be loaded at the same time.
-    </b-form-text>      
-    <b-form-group class="mt-3">
-      <b-form-radio-group buttons stacked
-        v-model="selected"
-        :options="options"
-        name="radio-btn-stacked"
-        button-variant="outline-primary"
-        @change="updateLimit">
-      </b-form-radio-group>
-    </b-form-group>      
+    <div>
+      Load the recorded data of a specific crawl you've conducted. Only one
+      crawl can be loaded at the same time.
+    </div>
+
+    <select
+      v-if="options.length > 0"
+      class="form-select"
+      aria-label="Default select example"
+      @update="updateLimit"
+    >
+      <option v-for="(option, index) in options" :key="index" :value="index">
+        {{ option.label }}
+      </option>
+    </select>
+
+    <div v-else>No crawls yet.</div>
   </div>
 </template>
 
@@ -24,7 +28,7 @@ export default {
       selected: 0,
       crawls: [],
       options: [],
-    }
+    };
   },
   props: [],
   mounted() {
@@ -35,7 +39,7 @@ export default {
       chrome.storage.local.get(tags, (r) => {
         crawls = Object.values(r).reduce((acc, val) => acc.concat(val), []);
         this.options = crawls.map((c, i) => ({
-          text: c.tag + " " + new Date(c.startedAt).toLocaleString(),
+          label: c.tag + " " + new Date(c.startedAt).toLocaleString(),
           startedAt: c.startedAt,
           doneAt: c.doneAt,
           value: i,
@@ -44,18 +48,17 @@ export default {
     });
   },
   methods: {
-    updateLimit: function(checked) {
-      (this.options[checked]) ?
-        this.$emit("update-limit", {
-          lower: this.options[checked].startedAt, 
-          upper: this.options[checked].doneAt,
-          dataTag: 
-            this.options[checked].text
+    updateLimit: function (checked) {
+      this.options[checked]
+        ? this.$emit("update-limit", {
+            lower: this.options[checked].startedAt,
+            upper: this.options[checked].doneAt,
+            dataTag: this.options[checked].label
               .replace(/\:/g, "-")
               .replace(/\,\s/g, "_"),
-        })
+          })
         : null;
-    }
+    },
   },
-}
+};
 </script>

@@ -1,65 +1,72 @@
 <template>
-  <b-modal 
-    ref="InitModal"
-    title="Load recorded data"
-    header-bg-variant="primary"
-    header-text-variant="light"
-    ok-only
-    v-model="modalShown"
-    v-on:shown="setModal"
-    v-on:hidden="resetModal"
-    v-on:ok="handleOk">
-
-    <div v-if="showDataPicker" class="row">
-      <div class="col">
-
-        <div class="accordion" role="tablist">
-          <b-card no-body class="mb-1">
-            <b-card-header header-tag="header" class="p-1" role="tab">
-              <b-button block v-b-toggle.accordion-1 variant="outline-primary">
-                Select time range
-              </b-button>
-            </b-card-header>
-            <b-collapse visible
-              id="accordion-1"
-              accordion="my-accordion"
-              role="tabpanel"  
-              @show="$refs.LimitSlider.updateLimit()">
-              <b-card-body>
-                <limit-slider 
-                  ref="LimitSlider"
-                  class="mt-3"
-                  @update-limit="passLimit">
-                </limit-slider>
-              </b-card-body>
-            </b-collapse>
-          </b-card>
-      
-          <b-card no-body class="mb-1">
-            <b-card-header header-tag="header" class="p-1" role="tab">
-              <b-button block v-b-toggle.accordion-2 variant="outline-primary">
-                Load a crawl
-              </b-button>
-            </b-card-header>
-            <b-collapse 
-              id="accordion-2" 
-              accordion="my-accordion" 
-              role="tabpanel" 
-              @show="$refs.CrawlLoader.updateLimit(0)">
-              <b-card-body>
-                <crawl-loader 
-                  ref="CrawlLoader"
-                  class="mt-3" 
-                  @update-limit="passLimit">
-                </crawl-loader>
-              </b-card-body>
-            </b-collapse>
-          </b-card>
+  <div id="init-modal" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Load recorded data</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
 
+        <div class="modal-body">
+          <div class="row">
+            <div class="col">
+              <div id="init-modal-accordion" class="accordion" role="tablist">
+                <div
+                  v-for="(option, index) in options"
+                  :key="index"
+                  class="accordion-item"
+                >
+                  <h2 class="accordion-header" :id="'heading-' + index">
+                    <button
+                      class="accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      :data-bs-target="'#item-' + index"
+                      aria-expanded="false"
+                      :aria-controls="'item-' + index"
+                    >
+                      {{ option.label }}
+                    </button>
+                  </h2>
+
+                  <div
+                    :id="'item-' + index"
+                    class="accordion-collapse collapse"
+                    :aria-labelledby="'heading-' + index"
+                    data-bs-parent="#init-modal-accordion"
+                  >
+                    <div class="accordion-body">
+                      <component
+                        :is="option.component"
+                        class="mt-3"
+                        @update-limit="passLimit"
+                      >
+                      </component>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
       </div>
     </div>
-  </b-modal>  
+  </div>
 </template>
 
 <script>
@@ -68,28 +75,33 @@ import CrawlLoader from "./init-modal/CrawlLoader.vue";
 
 export default {
   components: {
-    "LimitSlider": LimitSlider,
-    "CrawlLoader": CrawlLoader,
+    LimitSlider: LimitSlider,
+    CrawlLoader: CrawlLoader,
   },
   data: () => {
     return {
+      options: [
+        {
+          label: "Select time range",
+          component: LimitSlider,
+        },
+        {
+          label: "Load crawl",
+          component: CrawlLoader,
+        },
+      ],
       modalShown: false,
-      showDataPicker: false,
       callback: null,
-    }
+    };
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
-    showModal(showDataPicker, callback) {
-      this.showDataPicker = showDataPicker;
+    showModal(callback) {
       this.callback = callback;
       this.modalShown = true;
     },
-    resetModal() {
-    },
-    setModal() {
-    },
+    resetModal() {},
+    setModal() {},
     passLimit(limit) {
       this.$emit("update-limit", limit);
     },
@@ -97,5 +109,5 @@ export default {
       this.callback();
     },
   },
-}
+};
 </script>

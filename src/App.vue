@@ -7,7 +7,17 @@
           <button
             class="btn btn-primary p-1"
             type="button"
-            data-bs-toggle="modal" 
+            data-bs-toggle="modal"
+            data-bs-target="#init-modal"
+          >
+            <i class="bi bi-gear me-2"></i>
+            <small>Load data</small>
+          </button>
+
+          <button
+            class="btn btn-primary p-1"
+            type="button"
+            data-bs-toggle="modal"
             data-bs-target="#settings-modal"
           >
             <i class="bi bi-gear me-2"></i>
@@ -112,14 +122,11 @@ export default {
     const self = this;
     // google.charts.load("49", {"packages": ["corechart", "controls"]});
 
-    chrome.storage.local.get(
-      ["settingsChunksAtOnce"],
-      (setting) => {
-        self.windowSize =
-          Number.parseInt(setting.settingsChunksAtOnce) || self.windowSize;
-        // self.$refs.InitModal.showModal(useEncryption, true, () => self.bootstrap());
-      }
-    );
+    chrome.storage.local.get(["settingsChunksAtOnce"], (setting) => {
+      self.windowSize =
+        Number.parseInt(setting.settingsChunksAtOnce) || self.windowSize;
+      // self.$refs.InitModal.showModal(useEncryption, true, () => self.bootstrap());
+    });
   },
   methods: {
     bootstrap: function () {
