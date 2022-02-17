@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="card card-body">
     <div class="row">
       <div class="col">
         <b>Stats</b>

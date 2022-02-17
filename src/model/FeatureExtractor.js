@@ -19,24 +19,24 @@ import UrlFeatures from "./features/UrlFeatures.js";
 import JsFeatures from "./features/JsFeatures.js";
 import ResponseFeatures from "./features/ResponseFeatures.js";
 
-var FeatureExtractor = (() => {  
+var FeatureExtractor = (() => {
 
   let cache = {};
   let subClasses = [
-    {label: "Request features", obj: RequestFeatures},
-    {label: "URL features", obj: UrlFeatures},
-    {label: "HTTP Header", obj: HeaderFeatures},
-    {label: "HTTP Cookies", obj: CookieFeatures},
-    {label: "HTTP Body", obj: BodyFeatures},
-    {label: "JavaScript features", obj: JsFeatures},
-    {label: "Response features", obj: ResponseFeatures},
+    { label: "Request features", obj: RequestFeatures },
+    { label: "URL features", obj: UrlFeatures },
+    { label: "HTTP Header", obj: HeaderFeatures },
+    { label: "HTTP Cookies", obj: CookieFeatures },
+    { label: "HTTP Body", obj: BodyFeatures },
+    { label: "JavaScript features", obj: JsFeatures },
+    { label: "Response features", obj: ResponseFeatures },
   ];
 
-  let fromCache = (key, f) => (key = SparkMD5.hash(key), 
-    (cache[key]) ? 
-      cache[key] : 
+  let fromCache = (key, f) => (key = SparkMD5.hash(key),
+    (cache[key]) ?
+      cache[key] :
       (cache[key] = f(key), cache[key])
-    );
+  );
 
   let extractLengths = (cacheKey, array, keyOrValue) => [...fromCache(cacheKey, () => array.map((e) => e[keyOrValue].length))];
 
@@ -55,22 +55,25 @@ var FeatureExtractor = (() => {
     },
     info: (f) => ({
       index: Object.keys(features).indexOf(f),
-      title: features[f].title, 
-      subtitle: features[f].subtitle, 
-      lom: features[f].lom, 
+      title: features[f].title,
+      subtitle: features[f].subtitle,
+      lom: features[f].lom,
       cardinalityType: features[f].cardinalityType
     }),
-    navigation: () => subClasses.map((c) => {
-      let features = c.obj.features();
-      return {
-        label: c.label,
-        featureGroup: 
-          Object.keys(features).map((k) => ({
-          name: features[k].title,
-          path: k
-        }))
-      };
-    }),
+    navigation: () => subClasses
+      .map((c) => {
+        let features = c.obj.features();
+        return {
+          label: c.label,
+          featureGroup:
+            Object.keys(features).map((k) => ({
+              name: features[k].title,
+              path: k
+            }))
+        };
+      }).sort((a, b) =>
+        a.label.localeCompare(b.label)
+      ),
     encode: (e) => (typeof e === "object") ? e[0] + ": " + e[1] : e,
     cache: fromCache,
     lengths: extractLengths,

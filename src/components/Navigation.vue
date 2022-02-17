@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="card card-body">
     <ul class="nav nav-pills flex-column">
-      <b>General</b>
+      <b>Navigation</b>
       <li class="nav-item" v-for="route in staticRoutes" :key="route.name">
         <router-link class="nav-link" :to="route.path">
           {{ route.name }}
@@ -10,7 +10,7 @@
 
       <hr />
 
-      <b>Features</b>
+      <b>Statistics</b>
       <li
         class="nav-item dropdown"
         v-for="(g, index) in FeatureExtractor.navigation()"
@@ -51,25 +51,28 @@ export default {
       staticRoutes: [
         {
           path: "/",
-          name: "Overview",
+          name: "Start",
           component: Overview,
         },
-        {
-          path: "/blocklists",
-          name: "Blocklists",
-          component: Blocklists,
-        },
-        {
-          path: "/graph",
-          name: "Graph",
-          component: Graph,
-        },
-        {
-          path: "/crawl",
-          name: "Crawl",
-          component: Crawl,
-        },
-      ],
+      ].concat(
+        [
+          {
+            path: "/blocklists",
+            name: "Labeling",
+            component: Blocklists,
+          },
+          {
+            path: "/graph",
+            name: "Network",
+            component: Graph,
+          },
+          {
+            path: "/crawl",
+            name: "Crawls",
+            component: Crawl,
+          },
+        ].sort((a, b) => a.name.localeCompare(b.name))
+      ),
       routes: [],
     };
   },
@@ -101,11 +104,7 @@ export default {
         };
       })
     );
-  },
-  watch: {
-    routes: function (routes) {
-      this.$emit("routes-changed", routes);
-    },
+    this.$emit("routes-changed", this.routes);
   },
 };
 </script>

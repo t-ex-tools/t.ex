@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">T.EX</a>
+      <a class="navbar-brand" href="#">T.EX - The Transparency EXtension</a>
       <div class="d-flex">
         <button
           class="btn btn-primary p-1 me-2"

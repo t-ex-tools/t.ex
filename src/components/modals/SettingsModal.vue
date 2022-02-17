@@ -15,99 +15,44 @@
           <div class="row">
             <div class="col">
               <ul class="list-group mb-3">
-                <li class="list-group-item">
+                <li
+                  v-for="(setting, index) in settings"
+                  :key="index"
+                  class="list-group-item"
+                >
                   <div class="row">
-                    <div class="col-10">
-                      Record data that was transmitted in the HTTP body<br />
-                      <small
-                        >HTTP payload
-                        <b>{{
-                          settingsBodyFormData
-                            ? "will be recorded"
-                            : "won't be recorded"
-                        }}</b></small
-                      >
+                    <div class="col-8">
+                      <div class="fw-bold">{{ setting.label }}</div>
+                      <small>{{ setting.description }}</small>
                     </div>
-                    <div class="col-2">
+                    <div class="col-4">
                       <div class="form-check form-switch">
                         <input
+                          v-if="setting.type === 'checkbox'"
                           class="form-check-input float-end"
-                          type="checkbox"
+                          :name="setting.key"
+                          :type="setting.type"
                           role="switch"
-                          @change="setSettingsBodyFormData"
-                          :checked="settingsBodyFormData"
+                          @change="set"
+                          :checked="
+                            values[setting.key]
+                              ? values[setting.key]
+                              : setting.default
+                          "
+                        />
+                        <input
+                          v-else
+                          :name="setting.key"
+                          type="number"
+                          class="form-control"
+                          :value="
+                            values[setting.key]
+                              ? values[setting.key]
+                              : setting.default
+                          "
+                          @blur="set"
                         />
                       </div>
-                    </div>
-                  </div>
-                </li>
-                <li class="list-group-item">
-                  <div class="row">
-                    <div class="col-8">
-                      Max. number of tabs opened simultaneously during a crawl
-                    </div>
-                    <div class="col-4">
-                      <input
-                        type="number"
-                        class="form-control"
-                        :value="settingsTabsAtOnce"
-                        @blur="
-                          setSetting('settingsTabsAtOnce', settingsTabsAtOnce)
-                        "
-                      />
-                    </div>
-                  </div>
-                </li>
-                <li class="list-group-item">
-                  <div class="row">
-                    <div class="col-8">
-                      Time-to-live of a tab for websites that load too long
-                    </div>
-                    <div class="col-4">
-                      <input
-                        type="number"
-                        class="form-control"
-                        :value="settingsTabTtl"
-                        @blur="setSetting('settingsTabTtl', settingsTabTtl)"
-                      />
-                    </div>
-                  </div>
-                </li>
-                <li class="list-group-item">
-                  <div class="row">
-                    <div class="col-8">
-                      Max. number of HTTP requests contained in a single chunk
-                    </div>
-                    <div class="col-4">
-                      <input
-                        type="number"
-                        class="form-control"
-                        :value="settingsChunkSize"
-                        @blur="
-                          setSetting('settingsChunkSize', settingsChunkSize)
-                        "
-                      />
-                    </div>
-                  </div>
-                </li>
-                <li class="list-group-item">
-                  <div class="row">
-                    <div class="col-8">
-                      Max. number of chunks loaded at once when loading the
-                      extension
-                    </div>
-                    <div class="col-4">
-                      <input
-                        type="number"
-                        class="form-control"
-                        :value="settingsChunksAtOnce"
-                        @blur="
-                          setSetting(
-                            'settingsChunksAtOnce',
-                            settingsChunksAtOnce
-                          )
-                        "
-                      />
                     </div>
                   </div>
                 </li>
@@ -116,14 +61,9 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-          >
-            Close
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+            Exit settings
           </button>
-          <button type="button" class="btn btn-primary">Save changes</button>
         </div>
       </div>
     </div>
@@ -134,47 +74,63 @@
 export default {
   data: () => {
     return {
-      modalShown: false,
-      settingsBodyFormData: false,
-      settingsEncryption: false,
-      settingsTabsAtOnce: 20,
-      settingsTabTtl: 30,
-      settingsChunkSize: 1500,
-      settingsChunksAtOnce: 6,
-      settingsKeys: [
-        "settingsBodyFormData",
-        "settingsTabsAtOnce",
-        "settingsTabTtl",
-        "settingsChunkSize",
-        "settingsChunksAtOnce",
+      values: {},
+      settings: [
+        {
+          key: "httpBody",
+          label: "HTTP Body",
+          description: "Record data that was transmitted in the HTTP body",
+          type: "checkbox",
+          default: false,
+        },
+        {
+          key: "tabsAtOnce",
+          label: "Tabs at once",
+          description:
+            "Max. number of tabs opened simultaneously during a crawl",
+          type: "number",
+          default: 20,
+        },
+        {
+          key: "tabsTtl",
+          label: "Tabs TTL",
+          description:
+            "Time-to-live of a tab for websites that load too long (in seconds)",
+          type: "number",
+          default: 30,
+        },
+        {
+          key: "chunkSize",
+          label: "Chunk size",
+          description:
+            "Max. number of HTTP requests contained in a single chunk",
+          type: "number",
+          default: 1500,
+        },
+        {
+          key: "chunksAtOnce",
+          label: "Chunk at once",
+          description:
+            "Max. number of chunks loaded at once when loading the extension",
+          type: "number",
+          default: 6,
+        },
       ],
     };
   },
-  props: [],
   mounted() {
-    chrome.storage.local.get(this.settingsKeys, (result) => {
-      this.settingsKeys.forEach((setting) => {
-        this[setting] = result[setting] || this[setting];
-      });
+    chrome.storage.local.get("settings").then((res) => {
+      this.values = res.settings;
     });
   },
   methods: {
-    showModal() {
-      this.modalShown = true;
-    },
-    resetModal() {
-      this.modalShown = false;
-    },
-    setSetting(setting, value) {
-      this[setting] = value;
-      let obj = {};
-      obj[setting] = value;
-      chrome.storage.local.set(obj, () => {
-        chrome.runtime.sendMessage(obj);
+    set(evt) {
+      this.values[evt.target.name] =
+        evt.target.type === "checkbox" ? evt.target.checked : evt.target.value;
+
+      chrome.storage.local.set({ settings: this.values }).then(() => {
+        chrome.runtime.sendMessage({ settings: this.values });
       });
-    },
-    setSettingsBodyFormData(flag) {
-      this.setSetting("settingsBodyFormData", flag);
     },
   },
 };
