@@ -71,51 +71,13 @@
 </template>
 
 <script>
+import settings from "../../assets/settings.json";
+
 export default {
   data: () => {
     return {
       values: {},
-      settings: [
-        {
-          key: "httpBody",
-          label: "HTTP Body",
-          description: "Record data that was transmitted in the HTTP body",
-          type: "checkbox",
-          default: false,
-        },
-        {
-          key: "tabsAtOnce",
-          label: "Tabs at once",
-          description:
-            "Max. number of tabs opened simultaneously during a crawl",
-          type: "number",
-          default: 20,
-        },
-        {
-          key: "tabsTtl",
-          label: "Tabs TTL",
-          description:
-            "Time-to-live of a tab for websites that load too long (in seconds)",
-          type: "number",
-          default: 30,
-        },
-        {
-          key: "chunkSize",
-          label: "Chunk size",
-          description:
-            "Max. number of HTTP requests contained in a single chunk",
-          type: "number",
-          default: 1500,
-        },
-        {
-          key: "chunksAtOnce",
-          label: "Chunk at once",
-          description:
-            "Max. number of chunks loaded at once when loading the extension",
-          type: "number",
-          default: 6,
-        },
-      ],
+      settings: settings,
     };
   },
   mounted() {

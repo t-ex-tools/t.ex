@@ -93,6 +93,7 @@
 import LimitSlider from "./init-modal/LimitSlider.vue";
 import CrawlLoader from "./init-modal/CrawlLoader.vue";
 import LoadingModal from "./LoadingModal.vue";
+import settings from "../../assets/settings.json";
 
 export default {
   components: {
@@ -113,7 +114,7 @@ export default {
         },
       ],
       chunks: {
-        windowSize: 6,
+        chunksAtOnce: settings.find((s) => s.key === "chunksAtOnce").default,
         loaded: 0,
         total: -1,
       },
@@ -125,29 +126,34 @@ export default {
     };
   },
   mounted() {
-    chrome.storage.local.get("indexes").then((result) => {
-      this.indexes = result.indexes ? result.indexes.sort() : [];
-      if (this.indexes.length > 0) {
-        this.boundaries.upper = Date.now(),
-        this.boundaries.lower = this.indexes[this.indexes.length-1];
-      }
-    });
+    chrome.storage.local.get(["indexes", "settings"])
+      .then((res) => {
+        this.indexes = res.indexes ? res.indexes.sort() : [];
+        if (this.indexes.length > 0) {
+          this.boundaries.upper = Date.now(),
+          this.boundaries.lower = this.indexes[this.indexes.length-1];
+        }
+
+        if (res.settings && res.settings.chunksAtOnce) {
+          this.chunks.chunksAtOnce = res.settings.chunksAtOnce;
+        }
+      });
   },
   methods: {
     load: function (indexes) {
       this.chunks.total = indexes.length;
-      for (let i = 0; i * this.chunks.windowSize < indexes.length; i++) {
+      for (let i = 0; i * this.chunks.chunksAtOnce < indexes.length; i++) {
         chrome.storage.local
           .get(
             indexes.slice(
-              i * this.chunks.windowSize,
-              (i + 1) * this.chunks.windowSize
+              i * this.chunks.chunksAtOnce,
+              (i + 1) * this.chunks.chunksAtOnce
             )
           )
           .then((chunks) => {
             Object.values(chunks).forEach((chunk, index) => {
               this.$emit("data", chunk);
-              this.chunks.loaded = i * this.chunks.windowSize + (index + 1);
+              this.chunks.loaded = i * this.chunks.chunksAtOnce + (index + 1);
             });
           });
       }
