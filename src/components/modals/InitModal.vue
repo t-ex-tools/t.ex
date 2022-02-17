@@ -15,7 +15,8 @@
         <div class="modal-body">
           <div class="row">
             <div class="col">
-              <div id="init-modal-accordion" class="accordion" role="tablist">
+
+              <div v-if="indexes.length > 0" id="init-modal-accordion" class="accordion" role="tablist">
                 <div
                   v-for="(option, index) in options"
                   :key="index"
@@ -52,6 +53,10 @@
                   </div>
                 </div>
               </div>
+
+              <div v-else class="card card-body bg-warning">
+                No data recorded yet.
+              </div>
             </div>
           </div>
         </div>
@@ -65,6 +70,7 @@
           </button>
           
           <button 
+            v-if="indexes.length > 0"
             type="button" 
             class="btn btn-primary"
             data-bs-toggle="modal"
@@ -120,7 +126,11 @@ export default {
   },
   mounted() {
     chrome.storage.local.get("indexes").then((result) => {
-      this.indexes = result.indexes ? result.indexes : [];
+      this.indexes = result.indexes ? result.indexes.sort() : [];
+      if (this.indexes.length > 0) {
+        this.boundaries.upper = Date.now(),
+        this.boundaries.lower = this.indexes[this.indexes.length-1];
+      }
     });
   },
   methods: {
@@ -151,6 +161,7 @@ export default {
       let i = this.indexes
         .filter((t) => t >= this.boundaries.lower && t <= this.boundaries.upper)
         .map((t) => t.toString());
+      console.log(i);
       this.load(i);
     },
   },
