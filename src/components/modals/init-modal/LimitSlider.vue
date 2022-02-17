@@ -1,17 +1,16 @@
 <template>
   <div>
-    <h6>Select time range</h6>
     <div>
       Configure the lower bound to determine the time range of HTTP requests to
       load. The upper bound is always configured as the present.
     </div>
     <div class="mt-3">
       <span>{{ new Date(indexes[indexes.length - 1]).toDateString() }}</span>
-      <span class="float-right">{{ new Date(indexes[0]).toDateString() }}</span>
+      <span class="float-end">{{ new Date(indexes[0]).toDateString() }}</span>
     </div>
     <input
       id="limit-range"
-      class="mt-1"
+      class="form-range mt-1"
       v-model="limit"
       type="range"
       min="0"
@@ -36,18 +35,10 @@
 export default {
   data: () => {
     return {
-      indexes: [],
       limit: 0,
     };
   },
-  props: [],
-  mounted() {
-    chrome.storage.local.get("indexes", (result) => {
-      this.indexes = result.indexes || this.indexes;
-      this.limit = 0;
-      this.updateLimit();
-    });
-  },
+  props: ["indexes"],
   methods: {
     updateLimit: function () {
       this.$emit("update-limit", {

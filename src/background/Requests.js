@@ -1,4 +1,4 @@
-import "../libraries/lz-string/lz-string.min.js";
+import LZString from "../libraries/lz-string/lz-string.min.js";
 
 export default (() => {
   let requestsQueue = [];
@@ -68,8 +68,6 @@ export default (() => {
         chrome.storage.local.set(result, null);
       });
     });
-
-    // chrome.runtime.sendMessage({ requests: requests });
   };
 
   return {

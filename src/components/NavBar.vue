@@ -4,7 +4,7 @@
       <a class="navbar-brand" href="#">T.EX</a>
       <div class="d-flex">
         <button
-          class="btn btn-primary p-1"
+          class="btn btn-primary p-1 me-2"
           type="button"
           data-bs-toggle="modal"
           data-bs-target="#init-modal"

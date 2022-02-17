@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h6>Load a crawl</h6>
     <div>
       Load the recorded data of a specific crawl you've conducted. Only one
       crawl can be loaded at the same time.
@@ -18,7 +17,7 @@
       </option>
     </select>
 
-    <div v-else>No crawls yet.</div>
+    <div class="card card-body bg-light mt-2" v-else>No crawls yet.</div>
   </div>
 </template>
 

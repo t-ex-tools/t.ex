@@ -27,7 +27,7 @@
                       type="button"
                       data-bs-toggle="collapse"
                       :data-bs-target="'#item-' + index"
-                      aria-expanded="false"
+                      aria-expanded="true"
                       :aria-controls="'item-' + index"
                     >
                       {{ option.label }}
@@ -37,13 +37,14 @@
                   <div
                     :id="'item-' + index"
                     class="accordion-collapse collapse"
+                    :class="{ show: index === 0 }"
                     :aria-labelledby="'heading-' + index"
                     data-bs-parent="#init-modal-accordion"
                   >
                     <div class="accordion-body">
                       <component
                         :is="option.component"
-                        class="mt-3"
+                        :indexes="indexes"
                         @update-limit="setBoundaries"
                       >
                       </component>
@@ -60,23 +61,38 @@
             class="btn btn-secondary"
             data-bs-dismiss="modal"
           >
-            Close
+            Cancel
           </button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          
+          <button 
+            type="button" 
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#loading-modal"
+            @click="handleOk">
+            Load data
+          </button>
         </div>
       </div>
     </div>
   </div>
+  <loading-modal
+    :loaded="chunks.loaded"
+    :total="chunks.total"
+  >
+  </loading-modal>
 </template>
 
 <script>
 import LimitSlider from "./init-modal/LimitSlider.vue";
 import CrawlLoader from "./init-modal/CrawlLoader.vue";
+import LoadingModal from "./LoadingModal.vue";
 
 export default {
   components: {
-    LimitSlider: LimitSlider,
-    CrawlLoader: CrawlLoader,
+    LimitSlider,
+    CrawlLoader,
+    LoadingModal
   },
   data: () => {
     return {
@@ -90,46 +106,52 @@ export default {
           component: CrawlLoader,
         },
       ],
+      chunks: {
+        windowSize: 6,
+        loaded: 0,
+        total: -1,
+      },
       boundaries: {
         lower: 0,
         upper: 0,
-      }
+      },
+      indexes: [],
     };
   },
-  mounted() {},
+  mounted() {
+    chrome.storage.local.get("indexes").then((result) => {
+      this.indexes = result.indexes ? result.indexes : [];
+    });
+  },
   methods: {
-    getChunks: function (indexes) {
-      let keys = indexes
-        .filter((e) => this.boundaries.lower <= e && e <= this.boundaries.upper)
-        .map((e) => e.toString());
-
-      this.chunks.total = keys.length;
-      for (let i = 0; i * this.chunks.windowSize < keys.length; i++) {
-        chrome.storage.local.get(
-          keys.slice(
-            i * this.chunks.windowSize,
-            i * this.chunks.windowSize + this.chunks.windowSize
-          ),
-          (chunks) => {
+    load: function (indexes) {
+      this.chunks.total = indexes.length;
+      for (let i = 0; i * this.chunks.windowSize < indexes.length; i++) {
+        chrome.storage.local
+          .get(
+            indexes.slice(
+              i * this.chunks.windowSize,
+              (i + 1) * this.chunks.windowSize
+            )
+          )
+          .then((chunks) => {
             Object.values(chunks).forEach((chunk, index) => {
-              this.data.requests.push(chunk.requests);
-              this.js.push(chunk.js);
+              this.$emit("data", chunk);
               this.chunks.loaded = i * this.chunks.windowSize + (index + 1);
             });
-          }
-        );
+          });
       }
-    },    
+    },
     setBoundaries(boundaries) {
-
-      // TODO: retrieve indexes to load from LimitSlider
-      // TODO: retrieve boundaries from CrawlLoader
       this.$emit("set-tag", boundaries.dataTag);
       delete boundaries.dataTag;
-      this.boundaries = limit;
+      this.boundaries = boundaries;
     },
-    handleOk(e) {
-      // TODO: load data & propagate to parent
+    handleOk() {
+      let i = this.indexes
+        .filter((t) => t >= this.boundaries.lower && t <= this.boundaries.upper)
+        .map((t) => t.toString());
+      this.load(i);
     },
   },
 };

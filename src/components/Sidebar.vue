@@ -3,25 +3,28 @@
     <div class="row">
       <div class="col">
         <b>Stats</b>
-        <div>
+        <div v-for="(dataType, index) in ['requests', 'js']" :key="index">
           <div class="row">
             <div class="col">
-              <small> Requests size (%) of {{ max / 1000000 }}MB: </small>
+              <small>
+                {{ dataType.charAt(0).toUpperCase() + dataType.slice(1) }} size
+                (%) of {{ max / 1000000 }}MB:
+              </small>
             </div>
           </div>
           <div class="row">
             <div class="col">
               <div class="progress">
                 <div
-                  :class="'progress-bar' + 'bg-' + color(percent(requestsSize))"
-                  :style="'width: ' + percent(requestsSize) + '%'"
+                  :class="
+                    'progress-bar ' + 'bg-' + color(percent(size(dataType)))
+                  "
+                  :style="'width: ' + percent(size(dataType)) + '%'"
                   role="progressbar"
-                  :aria-valuenow="requestsSize"
+                  :aria-valuenow="size(dataType)"
                   aria-valuemin="0"
                   :aria-valuemax="max"
-                >
-                  {{ percent(requestsSize) }}%
-                </div>
+                ></div>
               </div>
             </div>
           </div>
@@ -30,45 +33,10 @@
               <button
                 class="btn btn-outline-primary mt-2 mb-3 float-right"
                 type="button"
-                @click="triggerDownload('requests', requests)"
+                @click="triggerDownload(dataType)"
               >
                 <i class="bi bi-download me-2"></i>
-                <small>Export requests</small>
-              </button>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div class="row">
-            <div class="col">
-              <small> JS events size (%) of {{ max / 1000000 }}MB: </small>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <div class="progress">
-                <div
-                  :class="'progress-bar' + 'bg-' + color(percent(jsSize))"
-                  :style="'width: ' + percent(jsSize) + '%'"
-                  role="progressbar"
-                  :aria-valuenow="jsSize"
-                  aria-valuemin="0"
-                  :aria-valuemax="max"
-                >
-                  {{ percent(jsSize) }}%
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <button
-                class="btn btn-outline-primary mt-2 mb-3 float-right"
-                type="button"
-                @click="triggerDownload('js', js)"
-              >
-                <i class="bi bi-download me-2"></i>
-                <small>Export JS events</small>
+                <small>Export {{ dataType }}</small>
               </button>
             </div>
           </div>
@@ -90,17 +58,12 @@ export default {
     };
   },
   props: ["requests", "js"],
-  computed: {
-    requestsSize() {
-      return Util.memorySizeOf(this.requests);
-    },
-    jsSize() {
-      return Util.memorySizeOf(this.js);
-    },
-  },
   methods: {
+    size(dataType) {
+      return Util.memorySizeOf(this[dataType]);
+    },
     percent(size) {
-      return (size / this.max) * 100;
+      return Math.round((size / this.max) * 100);
     },
     color(percent) {
       return this.warningAt <= percent
@@ -109,8 +72,11 @@ export default {
           : "warning"
         : "success";
     },
-    triggerDownload(label, dataSource) {
-      this.$emit("trigger-download", { label: label, dataSource: dataSource });
+    triggerDownload(dataType) {
+      this.$emit("trigger-download", {
+        label: label,
+        dataType: this[dataType],
+      });
     },
   },
   mounted() {},

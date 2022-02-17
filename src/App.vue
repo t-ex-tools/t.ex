@@ -38,13 +38,11 @@
       </div>
     </div>
 
-    <loading-modal
-      :loaded="chunks.loaded + chunks.windowSize"
-      :total="chunks.total"
+    <init-modal 
+      @data="appendData"
+      @set-tag="setTag"
     >
-    </loading-modal>
-
-    <init-modal @update-limit="updateLimit"> </init-modal>
+    </init-modal>
 
     <settings-modal @create-password="createPassword">
     </settings-modal>
@@ -56,7 +54,6 @@ import Util from "./model/Util.js";
 import Statistics from "./model/Statistics.js";
 
 import InitModal from "./components/modals/InitModal.vue";
-import LoadingModal from "./components/modals/LoadingModal.vue";
 import SettingsModal from "./components/modals/SettingsModal.vue";
 
 import NavBar from "./components/NavBar.vue";
@@ -69,23 +66,17 @@ import defaultGroups from "./model/DefaultGroups.js";
 export default {
   name: "App",
   components: {
-    InitModal: InitModal,
-    LoadingModal: LoadingModal,
-    SettingsModal: SettingsModal,
-    Sidebar: Sidebar,
-    Navigation: Navigation,
-    TabBar: TabBar,
-    NavBar: NavBar,
+    InitModal,
+    SettingsModal,
+    Sidebar,
+    Navigation,
+    TabBar,
+    NavBar,
   },
   data: () => {
     return {
-      chunks: {
-        memoryLimit: 256 * 1000000,
-        windowSize: 6,
-        loaded: 0,
-        total: -1
-      },
       data: {
+        memoryLimit: 256 * 1000000,
         tag: Util.randomString(),
         requests: [],
         js: [],
@@ -97,6 +88,13 @@ export default {
     };
   },
   methods: {
+    setTag(tag) {
+      this.data.tag = tag;
+    },
+    appendData(chunk) {
+      this.data.requests.push(chunk.requests);
+      this.data.js.push(chunk.js);
+    },
     passData: function (source) {
       return source === "requests" ? this.data.requests : this.js;
     },
@@ -116,14 +114,14 @@ export default {
     download: function (dataInfo) {
       let exportChunk = [];
       let numberOfFiles = 0;
-      this.chunks.loaded = 0;
+      // this.chunks.loaded = 0;
       // this.$refs.LoadingModal.showModal();
       Util.stream(dataInfo.dataSource, (chunk, current, total) => {
-        this.chunks.loaded = current;
-        this.chunks.total = total;
+        //this.chunks.loaded = current;
+        //this.chunks.total = total;
         exportChunk = exportChunk.concat(chunk);
         if (
-          this.chunks.memoryLimit <= Util.memorySizeOf(exportChunk) ||
+          this.data.memoryLimit <= Util.memorySizeOf(exportChunk) ||
           current === total
         ) {
           this.downloadFile(
