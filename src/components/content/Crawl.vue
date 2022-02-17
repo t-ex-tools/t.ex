@@ -21,7 +21,7 @@
     <div class="row pb-5">
       <div class="col">
         <div class="card mt-3"
-          v-for="crawl, index in crawls"
+          v-for="crawl, index in crawl.all"
           :key="index" 
           :header="crawl.name" 
           :sub-title="'#' + crawl.tag"
@@ -111,10 +111,9 @@ export default {
   mounted() {
     chrome.storage.local.get("crawls")
       .then((res) => {
-        this.crawl.all = (res.crawls) ? res.crawls : [];
-
+        this.crawl.all = (res.crawls) ? Object.values(res.crawls) : [];
         this.crawl.tags = this.crawl.all.map((c) => c.tag);
-        chrome.storage.local.get(this.crawl.tags)
+        chrome.storage.local.get(Object.values(this.crawl.tags))
           .then((r) => {
             this.crawl.info = Object
               .keys(r)
@@ -154,26 +153,20 @@ export default {
       this.crawl.selected = null;
     },
     create(crawl) {
-      console.log(crawl);
-      /*
-      let index = result.crawl.index;
-      delete result.crawl.index;
-      result.crawl.urls = result.crawl.urls.split(/\r\n|\r|\n/g);
+      crawl.urls = crawl.urls.split(/\r\n|\r|\n/g);
+      this.crawl.all.push(crawl);
+      this.crawl.tags.push(crawl.tag);
       
-      chrome.storage.local.set({crawls: (result.createMode) ? 
-        (this.crawls.push(result.crawl), this.crawls) :
-        (this.crawls.splice(index, 1, result.crawl), this.crawls)
-      }, () => {
-        this.toast("Crawl saved", "Crawl saved successfully.", "success");
-        this.$refs.CrawlModal.clearInputs();
-      });
-      */
+      chrome.storage.local.set({ crawls: this.crawl.all })
+        .then(() => {
+          
+        });
     },
     editCrawl(crawl, index) {
       let obj = {...crawl};
       obj.index = index;
       obj.urls = crawl.urls.join("\r\n");
-      this.$refs.CrawlModal.showModal(false, obj, this.crawls.map((c) => c.tag));
+      // this.$refs.CrawlModal.showModal(false, obj, this.crawls.map((c) => c.tag));
     },
     deleteCrawl(index) {
       this.$bvModal.msgBoxConfirm("Are you sure?")
@@ -182,7 +175,7 @@ export default {
             return;
           }
 
-          this.crawls.splice(index, 1);
+          // this.crawls.splice(index, 1);
           chrome.storage.local.set({crawls: this.crawls}, () => {
             this.toast("Crawl deleted", "Crawl deleted successfully.", "danger");
           });

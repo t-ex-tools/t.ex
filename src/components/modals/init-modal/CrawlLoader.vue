@@ -33,10 +33,9 @@ export default {
   props: [],
   mounted() {
     chrome.storage.local.get("crawls", (result) => {
-      let crawls = result.crawls || [];
-
+      let crawls = (result.crawls) ? Object.values(result.crawls) : [];
       let tags = crawls.map((c) => c.tag);
-      chrome.storage.local.get(tags, (r) => {
+      chrome.storage.local.get(Object.values(tags), (r) => {
         crawls = Object.values(r).reduce((acc, val) => acc.concat(val), []);
         this.options = crawls.map((c, i) => ({
           label: c.tag + " " + new Date(c.startedAt).toLocaleString(),
