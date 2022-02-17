@@ -1,15 +1,11 @@
 <template>
-
   <div id="crawl-modal" class="modal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Create or edit crawl</h5>
         </div>
-
         <div class="modal-body">
-
-              
           <div class="row">
             <div class="col">
               <div v-for="(input, index) in inputs" :key="index" class="mb-3">
@@ -19,65 +15,52 @@
                 <textarea
                   v-if="input.type === 'textarea'"
                   class="form-control"
+                  :class="{
+                    'is-valid': valid[input.key],
+                    'is-invalid': !valid[input.key],
+                  }"
                   :id="'crawl-modal-input-' + index"
                   :placeholder="input.placeholder"
+                  v-model="vCrawl[input.key]"
                 ></textarea>
                 <input
                   v-else
                   type="text"
                   class="form-control"
+                  :class="{
+                    'is-valid': valid[input.key],
+                    'is-invalid': !valid[input.key],
+                  }"
                   :id="'crawl-modal-input-' + index"
                   :placeholder="input.placeholder"
+                  v-model="vCrawl[input.key]"
                 />
               </div>
-
-              <!--
-              <b-form-group v-if="!createMode" label="Index:" label-for="crawl-index">
-                <b-form-input id="crawl-index" v-model="crawl.index" disabled>
-                </b-form-input>
-              </b-form-group>
-
-              <b-form-group label="Name:" label-for="crawl-name">
-                <b-form-input
-                  id="crawl-name"
-                  v-model="crawl.name"
-                  :state="nameValid"
-                  placeholder="Enter a name for the crawl."
-                >
-                </b-form-input>
-              </b-form-group>
-
-              <b-form-group label="Tag:" label-for="crawl-tag">
-                <b-form-input
-                  id="crawl-tag"
-                  v-model="crawl.tag"
-                  :state="tagValid"
-                  placeholder="Enter a tag for the crawl."
-                >
-                </b-form-input>
-              </b-form-group>
-
-              <b-form-group label="URLs:" label-for="crawl-urls">
-                <b-form-textarea
-                  id="crawl-urls"
-                  v-model="crawl.urls"
-                  :state="urlsValid"
-                  placeholder="Enter the URLs to crawl each in a new line."
-                  rows="4"
-                  max-rows="8"
-                >
-                </b-form-textarea>
-              </b-form-group>
-              -->
             </div>
-          </div>              
-
+          </div>
         </div>
-        
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+            @click="clearInputs"
+          >
+            Cancel
+          </button>
+          <button
+            v-if="valid['name'] && valid['tag'] && valid['urls']"
+            type="button"
+            class="btn btn-primary"
+            data-bs-dismiss="modal"
+            @click="handleOk"
+          >
+            Save
+          </button>
+        </div>
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -86,39 +69,53 @@ export default {
     return {
       inputs: [
         {
+          key: "name",
           label: "Name",
           placeholder: "Enter a name for the crawl.",
           type: "text",
         },
         {
+          key: "tag",
           label: "Tag",
           placeholder: "Enter a tag for the crawl.",
           type: "text",
         },
         {
+          key: "urls",
           label: "Websites",
           placeholder: "Enter the URLs to crawl each in a new line.",
           type: "textarea",
         },
       ],
-      crawl: { index: "", name: "", tag: "", urls: "" },
-      createMode: false,
-      modalShown: false,
-      existingTags: [],
+      vCrawl: { name: "", tag: "", urls: "" },
     };
   },
+  props: ["crawl", "tags"],
   computed: {
-    nameValid() {
-      return this.crawl.name.length > 0;
+    valid() {
+      return {
+        name: this.nameValid(this.vCrawl.name),
+        tag: this.tagValid(this.vCrawl.tag),
+        urls: this.urlsValid(this.vCrawl.urls),
+      };
     },
-    tagValid() {
-      return (
-        this.crawl.tag.length > 0 &&
-        this.existingTags.indexOf(this.crawl.tag) === -1
-      );
+  },
+  methods: {
+    clearInputs: function () {
+      this.vCrawl = { name: "", tag: "", urls: "" };
     },
-    urlsValid() {
-      for (let url of this.crawl.urls.split(/\r\n|\r|\n/g)) {
+    handleOk: function () {
+      this.$emit("create-crawl", this.vCrawl);
+      this.clearInputs();
+    },
+    nameValid(value) {
+      return value.length > 0;
+    },
+    tagValid(value) {
+      return value.length > 0 && this.tags.indexOf(value) === -1;
+    },
+    urlsValid(value) {
+      for (let url of value.split(/\r\n|\r|\n/g)) {
         try {
           url.startsWith("https://") || url.startsWith("http://")
             ? new URL(url)
@@ -128,31 +125,6 @@ export default {
         }
       }
       return true;
-    },
-  },
-  methods: {
-    showModal: function (createMode, crawl, existingTags) {
-      this.createMode = createMode;
-      if (!createMode) {
-        this.crawl = crawl;
-      }
-      this.modalShown = true;
-      this.existingTags = existingTags;
-    },
-    resetModal: function () {
-      this.modalShown = false;
-    },
-    clearInputs: function () {
-      this.crawl = { index: "", name: "", tag: "", urls: "" };
-    },
-    handleOk: function () {
-      if (!this.nameValid || !this.tagValid || !this.urlsValid) {
-        return;
-      }
-      this.$emit("save-crawl", {
-        crawl: { ...this.crawl },
-        createMode: this.createMode,
-      });
     },
   },
 };

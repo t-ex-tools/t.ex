@@ -28,6 +28,7 @@
               </div>
             </div>
           </div>
+          <!--
           <div class="row">
             <div class="col">
               <button
@@ -40,6 +41,7 @@
               </button>
             </div>
           </div>
+          -->
         </div>
       </div>
     </div>

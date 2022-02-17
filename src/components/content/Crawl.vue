@@ -7,8 +7,12 @@
     </div>    
     <div class="row">
       <div class="col">
-        <button class="btn btn-outline-primary float-end" data-bs-toggle="modal"
-            data-bs-target="#crawl-modal">
+        <button 
+          class="btn btn-outline-primary float-end" 
+          data-bs-toggle="modal"
+          data-bs-target="#crawl-modal"
+          @click="handleCreate"
+        >
           <i icon="bi bi-plus-circle me-2"></i>
           <small>Create crawl</small>
         </button>
@@ -76,7 +80,12 @@
         </div>
       </div>
     </div>
-    <crawl-modal  @save-crawl="saveCrawl"></crawl-modal>
+    <crawl-modal 
+      :crawl="crawl.selected"
+      :tags="this.crawl.tags"
+      @create-crawl="create"
+    >
+    </crawl-modal>
   </div>  
 </template>
 
@@ -86,45 +95,42 @@ import Crawler from "../../model/Crawler.js";
 
 export default {
   components: {
-    "CrawlModal": CrawlModal,
+    CrawlModal,
   },
   data: () => {
     return {
-      currentPage: [],
-      crawls: [],
-      crawlStats: {},
+      crawl: {
+        all: [],
+        tags: [],
+        selected: null,
+        info: {}
+      },
       activeCrawl: -1,
-      tabsCompleted: 0,
-      tabsToFinish: 1,
-      perPage: 3,
-    }
-  },
-  computed: {
-    stats: function() {
-      return Object.keys(this.crawlStats)
-        .reduce((acc, val) => {
-          acc[val] = this.crawlStats[val]
-            .map((e) => {
-              e.doneAt = new Date(e.doneAt).toLocaleString();
-              e.startedAt = new Date(e.startedAt).toLocaleString();
-              return e;
-            });
-          return acc;
-        }, {})
     }
   },
   mounted() {
-    const self = this;
-    chrome.storage.local.get("crawls", (result) => {
-      self.crawls = result.crawls || [];
-      self.currentPage = new Array(self.crawls.length).fill(1);
+    chrome.storage.local.get("crawls")
+      .then((res) => {
+        this.crawl.all = (res.crawls) ? res.crawls : [];
 
-      let tags = self.crawls.map((c) => c.tag);
-      chrome.storage.local.get(tags, (r) => {
-        this.crawlStats = r;
+        this.crawl.tags = this.crawl.all.map((c) => c.tag);
+        chrome.storage.local.get(this.crawl.tags)
+          .then((r) => {
+            this.crawl.info = Object
+              .keys(r)
+              .reduce((acc, val) => {
+                acc[val] = r[val]
+                  .map((e) => {
+                    e.doneAt = new Date(e.doneAt).toLocaleString();
+                    e.startedAt = new Date(e.startedAt).toLocaleString();
+                    return e;
+                  });
+                return acc;
+              }, {})
+          });
       });
-    });
 
+    /*
     window.addEventListener("crawler:crawlStatus", function(e) {
       self.tabsCompleted = e.detail.crawlStatus.tabsCompleted; 
       self.tabsToFinish = e.detail.crawlStatus.tabsToFinish;
@@ -141,12 +147,15 @@ export default {
         }, 5 * 1000) :
         null;
     });
+    */
   },
   methods: {
-    handleCreateModal: function() {
-      this.$refs.CrawlModal.showModal(true, {}, this.crawls.map((c) => c.tag));
+    handleCreate: function() {
+      this.crawl.selected = null;
     },
-    saveCrawl(result) {
+    create(crawl) {
+      console.log(crawl);
+      /*
       let index = result.crawl.index;
       delete result.crawl.index;
       result.crawl.urls = result.crawl.urls.split(/\r\n|\r|\n/g);
@@ -158,6 +167,7 @@ export default {
         this.toast("Crawl saved", "Crawl saved successfully.", "success");
         this.$refs.CrawlModal.clearInputs();
       });
+      */
     },
     editCrawl(crawl, index) {
       let obj = {...crawl};
