@@ -1,15 +1,15 @@
 <template>
-  <div id="crawl-modal" class="modal" tabindex="-1">
+  <div id="website-lists-modal" class="modal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Create or edit crawl</h5>
+          <h5 class="modal-title">Create or edit website list</h5>
         </div>
         <div class="modal-body">
           <div class="row">
             <div class="col">
               <div v-for="(input, index) in inputs" :key="index" class="mb-3">
-                <label :for="'crawl-modal-input-' + index" class="form-label">{{
+                <label :for="'website-lists-modal-input-' + index" class="form-label">{{
                   input.label
                 }}</label>
                 <textarea
@@ -19,9 +19,9 @@
                     'is-valid': valid[input.key],
                     'is-invalid': !valid[input.key],
                   }"
-                  :id="'crawl-modal-input-' + index"
+                  :id="'website-lists-modal-input-' + index"
                   :placeholder="input.placeholder"
-                  v-model="vCrawl[input.key]"
+                  v-model="vList[input.key]"
                 ></textarea>
                 <input
                   v-else
@@ -31,10 +31,12 @@
                     'is-valid': valid[input.key],
                     'is-invalid': !valid[input.key],
                   }"
-                  :id="'crawl-modal-input-' + index"
+                  :id="'website-lists-modal-input-' + index"
                   :placeholder="input.placeholder"
-                  v-model="vCrawl[input.key]"
+                  v-model="vList[input.key]"
                 />
+                <!-- :disabled="input.key === 'tag'" 
+                     TODO: should the tag be generated? do we really need it? -->
               </div>
             </div>
           </div>
@@ -71,48 +73,48 @@ export default {
         {
           key: "name",
           label: "Name",
-          placeholder: "Enter a name for the crawl.",
+          placeholder: "Enter a name for the list.",
           type: "text",
         },
         {
           key: "tag",
           label: "Tag",
-          placeholder: "Enter a tag for the crawl.",
+          placeholder: "Enter a tag for the list.",
           type: "text",
         },
         {
           key: "urls",
           label: "Websites",
-          placeholder: "Enter the URLs to crawl each in a new line.",
+          placeholder: "Enter the URLs to list in a new line each.",
           type: "textarea",
         },
       ],
-      vCrawl: { name: "", tag: "", urls: "" },
+      vList: { name: "", tag: "", urls: "" },
     };
   },
-  props: ["crawl", "tags"],
+  props: ["list", "tags"],
   watch: {
-    crawl: function(n) {
+    list: function (n) {
       if (n) {
-        Object.assign(this.vCrawl, n);
+        Object.assign(this.vList, n);
       }
-    }
+    },
   },
   computed: {
     valid() {
       return {
-        name: this.nameValid(this.vCrawl.name),
-        tag: this.tagValid(this.vCrawl.tag),
-        urls: this.urlsValid(this.vCrawl.urls),
+        name: this.nameValid(this.vList.name),
+        tag: this.tagValid(this.vList.tag),
+        urls: this.urlsValid(this.vList.urls),
       };
     },
   },
   methods: {
     clearInputs: function () {
-      this.vCrawl = { name: "", tag: "", urls: "" };
+      this.vList = { name: "", tag: "", urls: "" };
     },
     handleOk: function () {
-      this.$emit("save-crawl", this.vCrawl);
+      this.$emit("save-list", this.vList);
       this.clearInputs();
     },
     nameValid(value) {

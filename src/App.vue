@@ -2,6 +2,7 @@
   <div>
     <nav-bar></nav-bar>
 
+    <!--
     <tab-bar
       :groups="groups.default"
       :selected-index="selectedIndex"
@@ -9,10 +10,11 @@
       @tab-removed="groupAtIndexRemoved"
     >
     </tab-bar>
+    -->
 
     <div class="container-fluid h-100">
       <div class="row h-100">
-        <div class="col-2 border-right pt-3">
+        <div class="col-2 pt-3">
           <navigation
             :groups="groups.default"
             :selected-index="selectedIndex"
@@ -27,7 +29,7 @@
           </router-view>
         </div>
 
-        <div class="col-2 border-left pt-3">
+        <div class="col-2 pt-3">
           <sidebar
             :requests="data.requests"
             :js="js"
@@ -59,7 +61,6 @@ import SettingsModal from "./components/modals/SettingsModal.vue";
 import NavBar from "./components/NavBar.vue";
 import Sidebar from "./components/Sidebar.vue";
 import Navigation from "./components/Navigation.vue";
-import TabBar from "./components/TabBar.vue";
 
 import defaultGroups from "./model/DefaultGroups.js";
 
@@ -70,7 +71,6 @@ export default {
     SettingsModal,
     Sidebar,
     Navigation,
-    TabBar,
     NavBar,
   },
   data: () => {

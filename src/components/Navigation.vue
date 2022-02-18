@@ -40,7 +40,7 @@
 import FeatureExtractor from "../model/FeatureExtractor.js";
 import Base from "./Base.vue";
 import Graph from "./content/Graph.vue";
-import Crawl from "./content/Crawl.vue";
+import WebsiteLists from "./content/WebsiteLists.vue";
 import Overview from "./content/Overview.vue";
 import Blocklists from "./content/Blocklists.vue";
 
@@ -67,9 +67,9 @@ export default {
             component: Graph,
           },
           {
-            path: "/crawl",
-            name: "Crawls",
-            component: Crawl,
+            path: "/website-lists",
+            name: "Website Lists",
+            component: WebsiteLists,
           },
         ].sort((a, b) => a.name.localeCompare(b.name))
       ),
