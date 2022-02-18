@@ -91,6 +91,13 @@ export default {
     };
   },
   props: ["crawl", "tags"],
+  watch: {
+    crawl: function(n) {
+      if (n) {
+        Object.assign(this.vCrawl, n);
+      }
+    }
+  },
   computed: {
     valid() {
       return {
@@ -105,7 +112,7 @@ export default {
       this.vCrawl = { name: "", tag: "", urls: "" };
     },
     handleOk: function () {
-      this.$emit("create-crawl", this.vCrawl);
+      this.$emit("save-crawl", this.vCrawl);
       this.clearInputs();
     },
     nameValid(value) {
@@ -115,6 +122,7 @@ export default {
       return value.length > 0 && this.tags.indexOf(value) === -1;
     },
     urlsValid(value) {
+      /*
       for (let url of value.split(/\r\n|\r|\n/g)) {
         try {
           url.startsWith("https://") || url.startsWith("http://")
@@ -123,7 +131,7 @@ export default {
         } catch (err) {
           return false;
         }
-      }
+      }*/
       return true;
     },
   },

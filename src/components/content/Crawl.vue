@@ -4,22 +4,26 @@
       <div class="col">
         <b>Crawls</b>
       </div>
-    </div>    
-    <div class="row">
       <div class="col">
         <button 
           class="btn btn-outline-primary float-end" 
           data-bs-toggle="modal"
           data-bs-target="#crawl-modal"
-          @click="handleCreate"
+          @click="select(null)"
         >
-          <i icon="bi bi-plus-circle me-2"></i>
+          <i class="bi bi-plus-circle me-2"></i>
           <small>Create crawl</small>
         </button>
       </div>
     </div>
     <div class="row pb-5">
       <div class="col">
+
+        <div v-if="alert.visible" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+          <strong>{{ alert.message }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
         <div class="card mt-3"
           v-for="crawl, index in crawl.all"
           :key="index" 
@@ -27,12 +31,33 @@
           :sub-title="'#' + crawl.tag"
         >
           <div class="card-header">
-            <h5 class="card-title">{{ crawl.name }}</h5>
-            <h6 class="card-subtitle">{{ crawl.tag }}</h6>
+            <h5 class="card-title float-start">
+              {{ crawl.name }} <small>({{ crawl.tag }})</small>
+            </h5>
+            <div class="float-end">
+              <button 
+                class="btn btn-outline-secondary me-2" 
+                data-bs-toggle="modal"
+                data-bs-target="#crawl-modal"
+                @click="select(index)"
+              >
+                <i class="bi bi-pencil me-2"></i>
+                <small>Edit</small>
+              </button>
+              <button 
+                class="btn btn-outline-danger" 
+                data-bs-toggle="modal"
+                data-bs-target="#confirm-modal"
+                @click="select(index)"
+              >
+                <i class="bi bi-x-circle me-2"></i>
+                <small>Delete</small>
+              </button>
+            </div>
           </div>
 
           <div class="card-body">
-            <p><b>Number of websites:</b> {{crawl.urls.length}}</p>
+            <p><b>Number of websites:</b> {{ Object.values(crawl.urls).length }}</p>
             <p><b>Conducted crawls:</b></p>
             <!--
             <b-pagination pills
@@ -65,13 +90,7 @@
                 <div class="col-4">
                   <b-button variant="outline-primary" @click="handleStartCrawl(index)">
                     <b-icon icon="play"></b-icon> Run crawl
-                  </b-button>
-                  <b-button variant="outline-secondary" @click="editCrawl(crawl, index)">
-                    <b-icon icon="pencil"></b-icon> Edit
-                  </b-button>
-                  <b-button variant="outline-danger" @click="deleteCrawl(index)">
-                    <b-icon icon="trash"></b-icon> Delete
-                  </b-button>          
+                  </b-button>       
                 </div>
               </div>
             </div>
@@ -83,19 +102,27 @@
     <crawl-modal 
       :crawl="crawl.selected"
       :tags="this.crawl.tags"
-      @create-crawl="create"
+      @save-crawl="save"
     >
     </crawl-modal>
+    <confirm-modal
+      title="Delete crawl"
+      text="Are you sure that you want to delete this crawl?"
+      @ok="rm"
+    >
+    </confirm-modal>
   </div>  
 </template>
 
 <script>
 import CrawlModal from "../modals/CrawlModal.vue";
 import Crawler from "../../model/Crawler.js";
+import ConfirmModal from "../modals/ConfirmModal.vue";
 
 export default {
   components: {
     CrawlModal,
+    ConfirmModal
   },
   data: () => {
     return {
@@ -104,6 +131,10 @@ export default {
         tags: [],
         selected: null,
         info: {}
+      },
+      alert: {
+        visible: false,
+        message: "",
       },
       activeCrawl: -1,
     }
@@ -149,50 +180,36 @@ export default {
     */
   },
   methods: {
-    handleCreate: function() {
+    select: function(index) {
       this.crawl.selected = null;
-    },
-    create(crawl) {
-      crawl.urls = crawl.urls.split(/\r\n|\r|\n/g);
-      this.crawl.all.push(crawl);
-      this.crawl.tags.push(crawl.tag);
-      
-      chrome.storage.local.set({ crawls: this.crawl.all })
-        .then(() => {
-          
-        });
-    },
-    editCrawl(crawl, index) {
-      let obj = {...crawl};
-      obj.index = index;
-      obj.urls = crawl.urls.join("\r\n");
-      // this.$refs.CrawlModal.showModal(false, obj, this.crawls.map((c) => c.tag));
-    },
-    deleteCrawl(index) {
-      this.$bvModal.msgBoxConfirm("Are you sure?")
-        .then((value) => {
-          if (!value) {
-            return;
-          }
-
-          // this.crawls.splice(index, 1);
-          chrome.storage.local.set({crawls: this.crawls}, () => {
-            this.toast("Crawl deleted", "Crawl deleted successfully.", "danger");
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-    toast: function(title, message, variant) {
-      this.$bvToast.toast(message, {
-        toaster: "b-toaster-bottom-right",
-        title: title,
-        autoHideDelay: 5000,
-        appendToast: true,
-        variant: variant,
+      this.$nextTick(function() {
+        this.crawl.selected = this.crawl.all[index];
       });
     },
+    save(crawl) {
+      if (this.crawl.selected) {
+        let index = this.crawl.all.indexOf(this.crawl.selected);
+        this.crawl.all[index] = crawl;
+      } else {
+        this.crawl.all.push(crawl);
+        this.crawl.tags.push(crawl.tag);
+      }
+      this.store("Crawl successfully saved.");
+    },
+    rm() {
+      let index = this.crawl.all.indexOf(this.crawl.selected);
+      this.crawl.all.splice(index, 1);
+      this.store("Crawl successfully deleted.");
+    },
+    store(msg) {
+      chrome.storage.local.set({ crawls: this.crawl.all })
+        .then(() => {
+          this.alert.message = msg;
+          this.alert.visible = true;
+          setTimeout(() => this.alert.visible = false, 2500);
+        });
+    }
+    /*
     handleStartCrawl: function(index) {
       this.$bvModal.msgBoxConfirm("Are you sure?")
         .then((value) => {
@@ -207,6 +224,7 @@ export default {
           console.log(err);
         });
     },
+    */
   },
 }
 </script>

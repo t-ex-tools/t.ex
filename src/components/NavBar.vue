@@ -4,7 +4,7 @@
       <a class="navbar-brand" href="#">T.EX - The Transparency EXtension</a>
       <div class="d-flex">
         <button
-          class="btn btn-primary p-1 me-2"
+          class="btn btn-outline-light me-2"
           type="button"
           data-bs-toggle="modal"
           data-bs-target="#init-modal"
@@ -14,7 +14,7 @@
         </button>
 
         <button
-          class="btn btn-primary p-1"
+          class="btn btn-outline-light"
           type="button"
           data-bs-toggle="modal"
           data-bs-target="#settings-modal"
