@@ -39,10 +39,10 @@
 <script>
 import FeatureExtractor from "../model/FeatureExtractor.js";
 import Base from "./Base.vue";
-import Graph from "./content/Graph.vue";
 import WebsiteLists from "./content/WebsiteLists.vue";
 import Overview from "./content/Overview.vue";
 import Blocklists from "./content/Blocklists.vue";
+import Crawls from "./content/Crawls.vue";
 
 export default {
   data: () => {
@@ -62,14 +62,14 @@ export default {
             component: Blocklists,
           },
           {
-            path: "/graph",
-            name: "Network",
-            component: Graph,
-          },
-          {
             path: "/website-lists",
             name: "Website Lists",
             component: WebsiteLists,
+          },
+          {
+            path: "/crawls",
+            name: "Crawls",
+            component: Crawls,
           },
         ].sort((a, b) => a.name.localeCompare(b.name))
       ),

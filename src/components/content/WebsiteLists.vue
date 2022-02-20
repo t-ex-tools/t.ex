@@ -16,7 +16,7 @@
         </button>
       </div>
     </div>
-    <div class="row pb-5">
+    <div v-if="lists.all.length > 0" class="row pb-5">
       <div class="col">
         <div
           v-if="alert.visible"
@@ -32,73 +32,76 @@
           ></button>
         </div>
 
-        <div
-          class="card mt-3"
-          v-for="(list, index) in lists.all"
-          :key="index"
-          :header="list.name"
-          :sub-title="'#' + list.tag"
-        >
-          <div class="card-header d-flex align-items-end">
-            <h5 class="card-title me-auto">
-              {{ list.name }} <small>({{ list.tag }})</small>
-            </h5>
-            <div>
-              <button
-                class="btn btn-outline-secondary me-2"
-                data-bs-toggle="modal"
-                data-bs-target="#website-lists-modal"
-                @click="select(index)"
-              >
-                <i class="bi bi-pencil me-2"></i>
-                <small>Edit</small>
-              </button>
-              <button
-                class="btn btn-outline-danger"
-                data-bs-toggle="modal"
-                data-bs-target="#confirm-modal"
-                @click="select(index)"
-              >
-                <i class="bi bi-x-circle me-2"></i>
-                <small>Delete</small>
-              </button>
-            </div>
-          </div>
+        <table class="table table-hover table-striped align-middle mt-3">
+          <thead>
+            <th scope="col">Name</th>
+            <th scope="col">URLs</th>
+            <th scope="col">Actions</th>
+          </thead>
+          <tbody>
+            <tr 
+              v-for="(list, index) in lists.all.slice(view.page * view.window, (view.page + 1) * view.window)"
+              :key="index"
+            >
+              <td>{{ list.name }}</td>
+              <td>{{ urlInfo[index] }}</td>
+              <td>
+                <button
+                  class="btn btn-outline-secondary me-2"
+                  data-bs-toggle="modal"
+                  data-bs-target="#website-lists-modal"
+                  @click="select(view.page * view.window + index)"
+                >
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button
+                  class="btn btn-outline-danger"
+                  data-bs-toggle="modal"
+                  data-bs-target="#confirm-modal"
+                  @click="select(view.page * view.window + index)"
+                >
+                  <i class="bi bi-x-circle"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-          <div class="card-body">
-            <p>
-              <b>Number of websites:</b> {{ Object.values(list.urls).length }}
-            </p>
-            <p><b>Conducted crawls:</b></p>
-          </div>
-          <!--
-          <template #footer>
-            <div class="text-right">
-              <div class="row">
-                <b-div class="col-8">
-                  <div v-if="activeCrawl === index" class="text-left">
-                    <h6>Crawl running ...</h6>
-                    <b-progress :value="tabsCompleted" :max="tabsToFinish" show-progress animated></b-progress>
-                  </div>
-                </div>
-                <div class="col-4">
-                  <b-button variant="outline-primary" @click="handleStartCrawl(index)">
-                    <b-icon icon="play"></b-icon> Run crawl
-                  </b-button>       
-                </div>
-              </div>
-            </div>
-          </template>
-          -->
+    <div v-else class="row mt-3">
+      <div class="col">
+        <div class="card card-body">
+          No website lists created yet.
         </div>
       </div>
     </div>
+
+    <div v-if="lists.all.length > 0" class="d-flex">
+      <button
+        class="btn me-auto"
+        :class="{ 'btn-secondary': first, 'btn-outline-primary': !first }"
+        @click="view.page--"
+        :disabled="first"
+      >
+        <i class="bi bi-arrow-left-circle"></i>
+      </button>
+      <button
+        class="btn "
+        :class="{ 'btn-secondary': last, 'btn-outline-primary': !last }"
+        @click="view.page++"
+        :disabled="last"
+      >
+        <i class="bi bi-arrow-right-circle"></i>
+      </button>
+    </div>
+
     <website-lists-modal
       :list="lists.selected"
-      :tags="this.lists.tags"
       @save-list="save"
     >
     </website-lists-modal>
+
     <confirm-modal
       title="Delete website list"
       text="Are you sure that you want to delete this website list?"
@@ -110,7 +113,6 @@
 
 <script>
 import WebsiteListsModal from "../modals/WebsiteListsModal.vue";
-import Crawler from "../../model/Crawler.js";
 import ConfirmModal from "../modals/ConfirmModal.vue";
 
 export default {
@@ -120,53 +122,42 @@ export default {
   },
   data: () => {
     return {
+      view: {
+        page: 0,
+        window: 5,
+        preview: 5
+      },
       lists: {
         all: [],
-        tags: [],
         selected: null,
-        info: {},
       },
       alert: {
         visible: false,
         message: "",
-      },
-      activeCrawl: -1,
+      }
     };
+  },
+  computed: {
+    first() {
+      return this.view.page === 0;
+    },
+    last() {
+      return this.lists.all.length <= ((this.view.page + 1) * this.view.window)
+    },
+    urlInfo() {
+      return this.lists.all
+        .map((l) => {
+          let urls = l.urls.split(/\r\n|\r|\n/g);
+          return (urls.length <= this.view.preview) ?
+            urls.join(", ")
+            : urls.slice(0, this.view.preview).join(", ") + " and " + (urls.length - this.view.preview) + " more.";
+        });
+    }
   },
   mounted() {
     chrome.storage.local.get("lists").then((res) => {
       this.lists.all = res.lists ? Object.values(res.lists) : [];
-      this.lists.tags = this.lists.all.map((c) => c.tag);
-      chrome.storage.local.get(Object.values(this.lists.tags)).then((r) => {
-        this.lists.info = Object.keys(r).reduce((acc, val) => {
-          acc[val] = r[val].map((e) => {
-            e.doneAt = new Date(e.doneAt).toLocaleString();
-            e.startedAt = new Date(e.startedAt).toLocaleString();
-            return e;
-          });
-          return acc;
-        }, {});
-      });
     });
-
-    /*
-    window.addEventListener("crawler:crawlStatus", function(e) {
-      self.tabsCompleted = e.detail.crawlStatus.tabsCompleted; 
-      self.tabsToFinish = e.detail.crawlStatus.tabsToFinish;
-      (e.detail.crawlStatus.doneAt !== 0) ?
-        setTimeout(() => {
-          (self.crawlStats[e.detail.crawlStatus.tag]) ?
-            self.crawlStats[e.detail.crawlStatus.tag].push(e.detail.crawlStatus) :
-            self.crawlStats[e.detail.crawlStatus.tag] = [e.detail.crawlStatus];
-
-          self.activeCrawl = -1;
-          self.tabsCompleted = 0;
-          self.tabsToFinish = 1;
-          self.toast("Crawl complete", "Websites have been crawled successfully.", "success")
-        }, 5 * 1000) :
-        null;
-    });
-    */
   },
   methods: {
     select: function (index) {
@@ -181,7 +172,6 @@ export default {
         this.lists.all[index] = list;
       } else {
         this.lists.all.push(list);
-        this.lists.tags.push(list.tag);
       }
       this.store("Website list successfully saved.");
     },
@@ -189,6 +179,9 @@ export default {
       let index = this.lists.all.indexOf(this.lists.selected);
       this.lists.all.splice(index, 1);
       this.store("Website list successfully deleted.");
+      if (!this.first && this.last) {
+        this.view.page--;
+      }
     },
     store(msg) {
       chrome.storage.local.set({ lists: this.lists.all }).then(() => {
@@ -196,23 +189,7 @@ export default {
         this.alert.visible = true;
         setTimeout(() => (this.alert.visible = false), 2500);
       });
-    },
-    /*
-    handleStartCrawl: function(index) {
-      this.$bvModal.msgBoxConfirm("Are you sure?")
-        .then((value) => {
-          if (!value) {
-            return;
-          }
-          
-          this.activeCrawl = index;
-          Crawler.startCrawl(this.listss[index]);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-    */
+    }
   },
 };
 </script>

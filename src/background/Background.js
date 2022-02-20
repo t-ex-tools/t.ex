@@ -1,5 +1,10 @@
 import Requests from "./Requests.js";
 
+// TODO: seed local storage with free website lists
+chrome.runtime.onInstalled.addListener((details) => {
+  console.log(details);
+});
+
 var Background = (() => {
   const urlFilter = { urls: ["http://*/*", "https://*/*"] };
   let requests = {};

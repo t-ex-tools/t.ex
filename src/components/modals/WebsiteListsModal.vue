@@ -35,8 +35,6 @@
                   :placeholder="input.placeholder"
                   v-model="vList[input.key]"
                 />
-                <!-- :disabled="input.key === 'tag'" 
-                     TODO: should the tag be generated? do we really need it? -->
               </div>
             </div>
           </div>
@@ -51,7 +49,7 @@
             Cancel
           </button>
           <button
-            v-if="valid['name'] && valid['tag'] && valid['urls']"
+            v-if="valid['name'] && valid['urls']"
             type="button"
             class="btn btn-primary"
             data-bs-dismiss="modal"
@@ -66,6 +64,8 @@
 </template>
 
 <script>
+const empty = { name: "", urls: "" };
+
 export default {
   data: () => {
     return {
@@ -77,41 +77,32 @@ export default {
           type: "text",
         },
         {
-          key: "tag",
-          label: "Tag",
-          placeholder: "Enter a tag for the list.",
-          type: "text",
-        },
-        {
           key: "urls",
           label: "Websites",
           placeholder: "Enter the URLs to list in a new line each.",
           type: "textarea",
         },
       ],
-      vList: { name: "", tag: "", urls: "" },
+      vList: {...empty},
     };
   },
-  props: ["list", "tags"],
+  props: ["list"],
   watch: {
     list: function (n) {
-      if (n) {
-        Object.assign(this.vList, n);
-      }
+      this.vList = (n) ? {...n} : {...empty}
     },
   },
   computed: {
     valid() {
       return {
         name: this.nameValid(this.vList.name),
-        tag: this.tagValid(this.vList.tag),
         urls: this.urlsValid(this.vList.urls),
       };
     },
   },
   methods: {
     clearInputs: function () {
-      this.vList = { name: "", tag: "", urls: "" };
+      this.vList = {...empty};
     },
     handleOk: function () {
       this.$emit("save-list", this.vList);
@@ -120,11 +111,7 @@ export default {
     nameValid(value) {
       return value.length > 0;
     },
-    tagValid(value) {
-      return value.length > 0 && this.tags.indexOf(value) === -1;
-    },
     urlsValid(value) {
-      /*
       for (let url of value.split(/\r\n|\r|\n/g)) {
         try {
           url.startsWith("https://") || url.startsWith("http://")
@@ -133,7 +120,7 @@ export default {
         } catch (err) {
           return false;
         }
-      }*/
+      }
       return true;
     },
   },
