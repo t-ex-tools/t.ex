@@ -15,8 +15,12 @@
         <div class="modal-body">
           <div class="row">
             <div class="col">
-
-              <div v-if="indexes.length > 0" id="init-modal-accordion" class="accordion" role="tablist">
+              <div
+                v-if="indexes.length > 0"
+                id="init-modal-accordion"
+                class="accordion"
+                role="tablist"
+              >
                 <div
                   v-for="(option, index) in options"
                   :key="index"
@@ -68,38 +72,35 @@
           >
             Cancel
           </button>
-          
-          <button 
+
+          <button
             v-if="indexes.length > 0"
-            type="button" 
+            type="button"
             class="btn btn-primary"
             data-bs-toggle="modal"
             data-bs-target="#loading-modal"
-            @click="handleOk">
+            @click="handleOk"
+          >
             Load data
           </button>
         </div>
       </div>
     </div>
   </div>
-  <loading-modal
-    :loaded="chunks.loaded"
-    :total="chunks.total"
-  >
-  </loading-modal>
+  <loading-modal :loaded="chunks.loaded" :total="chunks.total"> </loading-modal>
 </template>
 
 <script>
 import LimitSlider from "./init-modal/LimitSlider.vue";
 import CrawlLoader from "./init-modal/CrawlLoader.vue";
 import LoadingModal from "./LoadingModal.vue";
-import settings from "../../assets/settings.json";
+import config from "../../assets/settings.json";
 
 export default {
   components: {
     LimitSlider,
     CrawlLoader,
-    LoadingModal
+    LoadingModal,
   },
   data: () => {
     return {
@@ -114,7 +115,7 @@ export default {
         },
       ],
       chunks: {
-        chunksAtOnce: settings.find((s) => s.key === "chunksAtOnce").default,
+        chunksAtOnce: config.chunksAtOnce.default,
         loaded: 0,
         total: -1,
       },
@@ -126,18 +127,19 @@ export default {
     };
   },
   mounted() {
-    chrome.storage.local.get(["indexes", "settings"])
-      .then((res) => {
-        this.indexes = res.indexes ? res.indexes.sort() : [];
-        if (this.indexes.length > 0) {
-          this.boundaries.upper = Date.now(),
-          this.boundaries.lower = this.indexes[this.indexes.length-1];
-        }
+    chrome.storage.local.get(["indexes", "settings"]).then((res) => {
+      this.indexes = res.indexes ? res.indexes.sort() : [];
+      if (this.indexes.length > 0) {
+        (this.boundaries.upper = Date.now()),
+          (this.boundaries.lower = this.indexes[this.indexes.length - 1]);
+      }
 
-        if (res.settings && res.settings.chunksAtOnce) {
-          this.chunks.chunksAtOnce = res.settings.chunksAtOnce;
-        }
-      });
+      if (res.settings) {
+        this.chunks.chunksAtOnce = res.settings.hasOwnProperty("chunksAtOnce")
+          ? res.settings.chunksAtOnce
+          : this.chunks.chunksAtOnce;
+      }
+    });
   },
   methods: {
     load: function (indexes) {
@@ -167,7 +169,6 @@ export default {
       let i = this.indexes
         .filter((t) => t >= this.boundaries.lower && t <= this.boundaries.upper)
         .map((t) => t.toString());
-      console.log(i);
       this.load(i);
     },
   },

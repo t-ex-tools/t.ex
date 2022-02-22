@@ -12,9 +12,9 @@ var Crawler = (() => {
     tabsToFinish: 0,
   };
   let settings = {
-    tabsAtOnce: config.find((s) => s.key === "tabsAtOnce").default,
-    tabTtl: config.find((s) => s.key === "tabTtl").default,
-    waitAfterComplete: config.find((s) => s.key === "waitAfterComplete").default
+    tabsAtOnce: config.tabsAtOnce.default,
+    tabTtl: config.tabTtl.default,
+    waitAfterComplete: config.waitAfterComplete.default
   }
 
   let onCreatedRef;
@@ -28,16 +28,20 @@ var Crawler = (() => {
           if (res.settings) {
             Object
               .keys(settings)
-              .forEach((k) => settings[k] = (res.settings[k]) ? res.settings[k] : settings[k]);
+              .forEach((k) => 
+                settings[k] = (res.settings.hasOwnProperty(k)) 
+                ? res.settings[k] 
+                : settings[k]
+              );
           }
           callback();
         });
     },
-    start: function (crawl) {
+    start: function (tag, list) {
       this.getSettings(() => {
-        urls = [...crawl.urls];
+        urls = [...list.urls];
 
-        log.tag = crawl.tag;
+        log.tag = tag;
         log.startedAt = Date.now();
         log.tabsToFinish = urls.length;
 

@@ -16,39 +16,39 @@
             <div class="col">
               <ul class="list-group mb-3">
                 <li
-                  v-for="(setting, index) in settings"
+                  v-for="(k, index) in Object.keys(settings)"
                   :key="index"
                   class="list-group-item"
                 >
                   <div class="row">
                     <div class="col-8">
-                      <div class="fw-bold">{{ setting.label }}</div>
-                      <small>{{ setting.description }}</small>
+                      <div class="fw-bold">{{ settings[k].label }}</div>
+                      <small>{{ settings[k].description }}</small>
                     </div>
                     <div class="col-4">
                       <div class="form-check form-switch">
                         <input
-                          v-if="setting.type === 'checkbox'"
+                          v-if="settings[k].type === 'checkbox'"
                           class="form-check-input float-end"
-                          :name="setting.key"
-                          :type="setting.type"
+                          :name="k"
+                          :type="settings[k].type"
                           role="switch"
                           @change="set"
                           :checked="
-                            values[setting.key]
-                              ? values[setting.key]
-                              : setting.default
+                            values[k]
+                              ? values[k]
+                              : settings[k].default
                           "
                         />
                         <input
                           v-else
-                          :name="setting.key"
+                          :name="k"
                           type="number"
                           class="form-control"
                           :value="
-                            values[setting.key]
-                              ? values[setting.key]
-                              : setting.default
+                            values[k]
+                              ? values[k]
+                              : settings[k].default
                           "
                           @blur="set"
                         />
@@ -71,13 +71,13 @@
 </template>
 
 <script>
-import settings from "../../assets/settings.json";
+import config from "../../assets/settings.json";
 
 export default {
   data: () => {
     return {
       values: {},
-      settings: settings,
+      settings: config,
     };
   },
   mounted() {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row">
+    <div class="row mb-3">
       <div class="col">
         <b>Website Lists</b>
       </div>
@@ -20,7 +20,7 @@
       <div class="col">
         <div
           v-if="alert.visible"
-          class="alert alert-success alert-dismissible fade show mt-3"
+          class="alert alert-success alert-dismissible fade show"
           role="alert"
         >
           <strong>{{ alert.message }}</strong>

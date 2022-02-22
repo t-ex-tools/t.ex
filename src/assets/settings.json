@@ -1,44 +1,38 @@
-[
-  {
-    "key": "httpBody",
+{
+  "httpBody": {
     "label": "HTTP Body",
     "description": "Record data that was transmitted in the HTTP body",
     "type": "checkbox",
     "default": false
   },
-  {
-    "key": "tabsAtOnce",
+  "tabsAtOnce": {
     "label": "Tabs at once",
     "description": "Max. number of tabs opened simultaneously during a crawl",
     "type": "number",
     "default": 20
   },
-  {
-    "key": "tabsTtl",
-    "label": "Tabs TTL",
+  "tabTtl": {
+    "label": "Tab TTL",
     "description": "Time-to-live of a tab for websites that load too long during a crawl (in seconds)",
     "type": "number",
     "default": 30
   },
-  {
-    "key": "waitAfterComplete",
+  "waitAfterComplete": {
     "label": "Wait after loading",
     "description": "Time to wait after tab is done loading during a crawl (in seconds)",
     "type": "number",
     "default": 5
   },
-  {
-    "key": "chunkSize",
+  "chunkSize": {
     "label": "Chunk size",
     "description": "Max. number of HTTP requests contained in a single chunk",
     "type": "number",
     "default": 1500
   },
-  {
-    "key": "chunksAtOnce",
+  "chunksAtOnce": {
     "label": "Chunk at once",
     "description": "Max. number of chunks loaded at once when loading the extension",
     "type": "number",
     "default": 6
   }
-]
+}
