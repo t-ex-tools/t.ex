@@ -1,16 +1,18 @@
 import config from "../assets/settings.json";
 
+const empty = {
+  tag: "",
+  startedAt: 0,
+  doneAt: 0,
+  tabsOpen: 0,
+  tabsOpened: 0,
+  tabsCompleted: 0,
+  tabsToFinish: 0,
+};
+
 var Crawler = (() => {
   let urls = [];
-  let log = {
-    tag: "",
-    startedAt: 0,
-    doneAt: 0,
-    tabsOpen: 0,
-    tabsOpened: 0,
-    tabsCompleted: 0,
-    tabsToFinish: 0,
-  };
+  let log = { ...empty };
   let settings = {
     tabsAtOnce: config.tabsAtOnce.default,
     tabTtl: config.tabTtl.default,
@@ -39,7 +41,7 @@ var Crawler = (() => {
     },
     start: function (tag, list) {
       this.getSettings(() => {
-        urls = [...list.urls];
+        urls = list.urls.split(/\r\n|\r|\n/g);
 
         log.tag = tag;
         log.startedAt = Date.now();
@@ -51,6 +53,7 @@ var Crawler = (() => {
         chrome.tabs.onCreated.addListener(onCreatedRef);
         chrome.tabs.onUpdated.addListener(onUpdatedRef);
         chrome.tabs.onRemoved.addListener(onRemovedRef);
+        console.debug("Crawler: tab listeners added.")
 
         chrome.tabs.create(this.openTab(), (tab) => this.closeTab(tab.id, settings.tabTtl));
       });
@@ -65,39 +68,35 @@ var Crawler = (() => {
       chrome.tabs.onCreated.removeListener(onCreatedRef);
       chrome.tabs.onUpdated.removeListener(onUpdatedRef);
       chrome.tabs.onRemoved.removeListener(onRemovedRef);
+      console.debug("Crawler: tab listeners removed.")
 
-      log = {
-        tabsOpen: 0,
-        tabsOpened: 0,
-        tabsCompleted: 0,
-        tabsToFinish: 0,
-      };
+      log = { ...empty };
     },
     onCreate: function () {
       log.tabsOpen += 1;
       log.tabsOpened += 1;
-      (log.tabsOpen < settings.tabsAtOnce && urls.length > 0) ?
-        chrome.tabs.create(this.openTab(), (tab) => this.closeTab(tab.id, settings.tabTtl)) :
-        null;
+      if (log.tabsOpen < settings.tabsAtOnce && urls.length > 0) {
+        chrome.tabs.create(this.openTab(), (tab) => this.closeTab(tab.id, settings.tabTtl));
+      }
     },
     onUpdated: function (tabId, changeInfo) {
-      (changeInfo.status === "complete") ?
-        this.closeTab(tabId, settings.waitAfterComplete) :
-        null;
+      if (changeInfo.status === "complete") {
+        this.closeTab(tabId, settings.waitAfterComplete);
+      }
     },
     onRemoved: function () {
       this.emit();
       log.tabsOpen -= 1;
-      log.tabsCompleted++,
-        (log.tabsOpen < settings.tabsAtOnce && urls.length > 0) ?
-          chrome.tabs.create(this.openTab())
-          : null;
+      log.tabsCompleted++;
+      if (log.tabsOpen < settings.tabsAtOnce && urls.length > 0) {
+        chrome.tabs.create(this.openTab())
+      }
     },
     openTab: function () {
       let url = this.url(urls.shift());
-      (urls.length === 0) ?
-        setTimeout(this.end.bind(this), (settings.tabTtl + settings.waitAfterComplete * 12) * 1000)
-        : null;
+      if (urls.length === 0) {
+        setTimeout(this.end.bind(this), settings.tabTtl * 1000)
+      }
       return {
         active: false,
         url: url
@@ -106,7 +105,9 @@ var Crawler = (() => {
     closeTab: (tabId, delay) => {
       setTimeout(() => {
         chrome.tabs.get(tabId, () => {
-          (chrome.runtime.lastError) ? null : chrome.tabs.remove(tabId);
+          if (!chrome.runtime.lastError) { 
+            chrome.tabs.remove(tabId);
+          }
         });
       }, delay * 1000);
     },

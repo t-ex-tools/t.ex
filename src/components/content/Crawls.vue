@@ -4,6 +4,7 @@
       <b>Crawls</b>
     </div>
   </div>
+
   <div v-if="!valid.lists" class="row mb-3">
     <div class="col">
       <div
@@ -14,7 +15,8 @@
       </div>
     </div>
   </div>
-  <div class="row">
+
+  <div class="row mb-3">
     <div class="col">
       <div class="card border-primary">
         <div class="card-header bg-primary text-white">
@@ -71,6 +73,7 @@
                   aria-valuemin="0" 
                   aria-valuemax="100"
                 >
+                  {{ percent }}%
                 </div>
               </div>
             </div>
@@ -85,6 +88,59 @@
       @ok="Crawler.start(crawl.tag, lists[crawl.list])"
     >
     </confirm-modal>
+  </div>
+
+  <div v-if="this.crawls.length > 0" class="row">
+    <div class="col">
+      <table class="table table-hover align-middle mt-3">
+        <thead>
+          <th scope="col">Tag</th>
+          <th scope="col">Started</th>
+          <th scope="col">Finished</th>
+          <th scope="col">Tabs opened</th>
+          <th scope="col">Tabs completed</th>
+        </thead>
+        <tbody>
+          <tr 
+            v-for="(crawl, index) in crawls.slice(view.page * view.window, (view.page + 1) * view.window)"
+            :key="index"
+          >
+            <td>{{ crawl.tag }}</td>
+            <td>{{ new Date(crawl.startedAt).toLocaleString() }}</td>
+            <td>{{ new Date(crawl.doneAt).toLocaleString() }}</td>
+            <td>{{ crawl.tabsOpened }}</td>
+            <td>{{ crawl.tabsCompleted }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div v-else class="row mt-3">
+    <div class="col">
+      <div class="card card-body">
+        No crawls conducted yet.
+      </div>
+    </div>
+  </div>
+
+  <div v-if="crawls.length > 0" class="d-flex">
+    <button
+      class="btn me-auto"
+      :class="{ 'btn-secondary': first, 'btn-outline-primary': !first }"
+      @click="view.page--"
+      :disabled="first"
+    >
+      <i class="bi bi-arrow-left-circle"></i>
+    </button>
+    <button
+      class="btn "
+      :class="{ 'btn-secondary': last, 'btn-outline-primary': !last }"
+      @click="view.page++"
+      :disabled="last"
+    >
+      <i class="bi bi-arrow-right-circle"></i>
+    </button>
   </div>
 </template>
 
@@ -106,10 +162,20 @@ export default {
         list: 0,
       },
       lists: [],
-      log: {}
+      log: {},
+      view: {
+        page: 0,
+        window: 5,
+      },
     }
   },
   computed: {
+    first() {
+      return this.view.page === 0;
+    },
+    last() {
+      return Object.values(this.crawls).length <= ((this.view.page + 1) * this.view.window)
+    },
     valid() {
       return {
         tag: this.crawl.tag.length > 0,
@@ -134,15 +200,14 @@ export default {
         this.lists = (res.lists) ? res.lists : [];
       }); 
     
+    const self = this;
     window.addEventListener("crawler:log", function(e) {
-      this.log = e.detail.log;
+      self.log = e.detail.log;
       if (e.detail.log.doneAt > 0) {
-        this.crawls.push(e.detail.log);
-        this.log = {};
+        self.crawls.push(e.detail.log);
+        self.log = {};
       }
     });
-  },
-  methods: { 
-  },
+  }
 }
 </script>
