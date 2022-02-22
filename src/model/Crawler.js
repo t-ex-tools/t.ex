@@ -1,6 +1,8 @@
+import config from "../assets/settings.json";
+
 var Crawler = (() => {
-  let crawl = [];
-  let runningCrawl = {
+  let urls = [];
+  let log = {
     tag: "",
     startedAt: 0,
     doneAt: 0,
@@ -9,12 +11,11 @@ var Crawler = (() => {
     tabsCompleted: 0,
     tabsToFinish: 0,
   };
-  let tabsAtOnce = 20;
-  let tabTtl = 30;
-  const waitAfterComplete = 5;
-
-  let load = (() => {
-  })();
+  let settings = {
+    tabsAtOnce: config.find((s) => s.key === "tabsAtOnce").default,
+    tabTtl: config.find((s) => s.key === "tabTtl").default,
+    waitAfterComplete: config.find((s) => s.key === "waitAfterComplete").default
+  }
 
   let onCreatedRef;
   let onUpdatedRef;
@@ -22,72 +23,76 @@ var Crawler = (() => {
 
   return {
     getSettings: (callback) => {
-      chrome.storage.local.get(["settingsTabsAtOnce", "settingsTabTtl"], (result) => {
-        (result.hasOwnProperty("settingsTabsAtOnce")) ?
-          tabsAtOnce = Number.parseInt(result.settingsTabsAtOnce) :
-          null;
-  
-        (result.hasOwnProperty("settingsTabTtl")) ?
-          tabTtl = Number.parseInt(result.settingsTabTtl) :        
-          null;
-
-        callback();
-      });
+      chrome.storage.local.get("settings")
+        .then((res) => {
+          if (res.settings) {
+            Object
+              .keys(settings)
+              .forEach((k) => settings[k] = (res.settings[k]) ? res.settings[k] : settings[k]);
+          }
+          callback();
+        });
     },
-    startCrawl: function(pCrawl) {
+    start: function (crawl) {
       this.getSettings(() => {
-        crawl = [...pCrawl.urls];
-        runningCrawl.tag = pCrawl.tag;
-        runningCrawl.startedAt = Date.now();
-        runningCrawl.tabsToFinish = crawl.length;
+        urls = [...crawl.urls];
+
+        log.tag = crawl.tag;
+        log.startedAt = Date.now();
+        log.tabsToFinish = urls.length;
+
         onCreatedRef = this.onCreate.bind(this);
         onUpdatedRef = this.onUpdated.bind(this);
         onRemovedRef = this.onRemoved.bind(this);
         chrome.tabs.onCreated.addListener(onCreatedRef);
         chrome.tabs.onUpdated.addListener(onUpdatedRef);
         chrome.tabs.onRemoved.addListener(onRemovedRef);
-        chrome.tabs.create(this.openTab(), (tab) => this.closeTab(tab.id, tabTtl));
+
+        chrome.tabs.create(this.openTab(), (tab) => this.closeTab(tab.id, settings.tabTtl));
       });
     },
-    endCrawl: function() {
-      runningCrawl.doneAt = Date.now();
-      chrome.runtime.sendMessage({flush: true});
-      this.saveCrawlStats({...runningCrawl});
-      this.emitStatus();
+    end: function () {
+      chrome.runtime.sendMessage({ flush: true });
+
+      log.doneAt = Date.now();
+      this.saveLog({ ...log });
+      this.emit();
+
       chrome.tabs.onCreated.removeListener(onCreatedRef);
       chrome.tabs.onUpdated.removeListener(onUpdatedRef);
       chrome.tabs.onRemoved.removeListener(onRemovedRef);
-      runningCrawl = {
+
+      log = {
         tabsOpen: 0,
         tabsOpened: 0,
         tabsCompleted: 0,
         tabsToFinish: 0,
       };
     },
-    onCreate: function() {
-      runningCrawl.tabsOpen += 1;
-      runningCrawl.tabsOpened += 1;
-      (runningCrawl.tabsOpen < tabsAtOnce && crawl.length > 0) ?
-        chrome.tabs.create(this.openTab(), (tab) => this.closeTab(tab.id, tabTtl)) :
+    onCreate: function () {
+      log.tabsOpen += 1;
+      log.tabsOpened += 1;
+      (log.tabsOpen < settings.tabsAtOnce && urls.length > 0) ?
+        chrome.tabs.create(this.openTab(), (tab) => this.closeTab(tab.id, settings.tabTtl)) :
         null;
     },
-    onUpdated: function(tabId, changeInfo) {
+    onUpdated: function (tabId, changeInfo) {
       (changeInfo.status === "complete") ?
-        this.closeTab(tabId, waitAfterComplete) :
+        this.closeTab(tabId, settings.waitAfterComplete) :
         null;
     },
-    onRemoved: function() {
-      this.emitStatus();
-      runningCrawl.tabsOpen -= 1;
-      runningCrawl.tabsCompleted++, 
-      (runningCrawl.tabsOpen < tabsAtOnce && crawl.length > 0) ?
-        chrome.tabs.create(this.openTab()) 
-        : null;
+    onRemoved: function () {
+      this.emit();
+      log.tabsOpen -= 1;
+      log.tabsCompleted++,
+        (log.tabsOpen < settings.tabsAtOnce && urls.length > 0) ?
+          chrome.tabs.create(this.openTab())
+          : null;
     },
-    openTab: function() {
-      let url = this.url(crawl.shift());
-      (crawl.length === 0) ?
-        setTimeout(this.endCrawl.bind(this), (tabTtl + waitAfterComplete * 12) * 1000)
+    openTab: function () {
+      let url = this.url(urls.shift());
+      (urls.length === 0) ?
+        setTimeout(this.end.bind(this), (settings.tabTtl + settings.waitAfterComplete * 12) * 1000)
         : null;
       return {
         active: false,
@@ -101,18 +106,19 @@ var Crawler = (() => {
         });
       }, delay * 1000);
     },
-    url: function(domain) {
+    url: function (domain) {
       return (domain.startsWith("https://")) ? domain : "https://" + domain;
     },
-    emitStatus: function() {
-      window.dispatchEvent(new CustomEvent("crawler:crawlStatus", {detail: {crawlStatus: {...runningCrawl}}}));
+    emit: function () {
+      window.dispatchEvent(new CustomEvent("crawler:log", { detail: { log: { ...log } } }));
     },
-    saveCrawlStats: function(crawlStats) {
-      chrome.storage.local.get(crawlStats.tag, (result) => {
-        let obj = {};
-        obj[crawlStats.tag] = [crawlStats].concat(result[crawlStats.tag] || []);
-        chrome.storage.local.set(obj, null);
-      });
+    saveLog: function (l) {
+      chrome.storage.local.get("crawls")
+        .then((res) => {
+          let crawls = (res.crawls) ? res.crawls : [];
+          crawls.push(l);
+          chrome.storage.local.set({ crawls: crawls });
+        });
     },
   };
 })();

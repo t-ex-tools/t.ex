@@ -16,7 +16,7 @@
         </button>
       </div>
     </div>
-    <div v-if="lists.all.length > 0" class="row pb-5">
+    <div v-if="lists.all.length > 0" class="row">
       <div class="col">
         <div
           v-if="alert.visible"
@@ -32,7 +32,7 @@
           ></button>
         </div>
 
-        <table class="table table-hover table-striped align-middle mt-3">
+        <table class="table table-hover align-middle mt-3">
           <thead>
             <th scope="col">Name</th>
             <th scope="col">URLs</th>
