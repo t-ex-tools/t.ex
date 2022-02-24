@@ -1,4 +1,4 @@
-import Requests from "./Requests.js";
+import Chunk from "./Chunk.js";
 
 // TODO: seed local storage with free website lists
 chrome.runtime.onInstalled.addListener((details) => {
@@ -7,20 +7,25 @@ chrome.runtime.onInstalled.addListener((details) => {
 
 var Background = (() => {
   const urlFilter = { urls: ["http://*/*", "https://*/*"] };
-  let requests = {};
-  let storeBody = false;
+  let http = {};
+  let httpBody = false;
 
   let load = (() => {
 
-    chrome.storage.local.get("settingsBodyFormData", (result) => {
-      storeBody = result.settingsBodyFormData || storeBody;
-    });
+    chrome.storage.local.get("settings")
+      .then((res) => {
+        httpBody = (res.settings && res.settings.httpBody)
+          ? res.settings.httpBody
+          : httpBody;
+      });
 
-    chrome.runtime.onMessage.addListener((message) => {
-      (message.hasOwnProperty("settingsBodyFormData")) ?
-        storeBody = message.settingsBodyFormData :
-        null;
-    });
+    chrome.runtime
+      .onMessage
+      .addListener((msg) => {
+        if (msg.hasOwnProperty("httpBody")) {
+          httpBody = msg.httpBody;
+        }
+      });
 
     chrome.webRequest
       .onBeforeRequest
@@ -29,19 +34,18 @@ var Background = (() => {
           return;
         }
 
-        if (!storeBody && details.hasOwnProperty("requestBody")) {
+        if (!httpBody && details.hasOwnProperty("requestBody")) {
           delete details.requestBody;
         }
 
-        Background.setRequest(details.requestId, details);
+        Background.set(details.requestId, details);
+        Background.tab(details.tabId, (tab) => {
+          Background.set(details.requestId, { source: tab.url, complete: true });
 
-        Background.getCompletedTabFromId(details.tabId, (tab) => {
-          Background.setRequest(details.requestId, { source: tab.url, complete: true });
-
-          (Background.getRequest(details.requestId).requestHeaders &&
-            Background.getRequest(details.requestId).response) ?
-            Background.pushToQueue(details.requestId) :
-            null;
+          if (Background.get(details.requestId).requestHeaders &&
+              Background.get(details.requestId).response) {
+              Background.push(details.requestId);
+          }
         });
       },
         urlFilter,
@@ -50,12 +54,12 @@ var Background = (() => {
     chrome.webRequest
       .onBeforeSendHeaders
       .addListener((details) => {
-        Background.setRequest(details.requestId, { requestHeaders: details.requestHeaders }),
+        Background.set(details.requestId, { requestHeaders: details.requestHeaders });
 
-          (Background.getRequest(details.requestId).complete &&
-            Background.getRequest(details.requestId).response) ?
-            Background.pushToQueue(details.requestId) :
-            null;
+        if (Background.get(details.requestId).complete && 
+            Background.get(details.requestId).response) {
+            Background.push(details.requestId)
+        }
       },
         urlFilter,
         ["requestHeaders", "extraHeaders"]);
@@ -63,24 +67,24 @@ var Background = (() => {
     chrome.webRequest
       .onResponseStarted
       .addListener((details) => {
-        Background.setRequest(details.requestId, { response: details });
+        Background.set(details.requestId, { response: details });
 
-        (Background.getRequest(details.requestId).complete &&
-          Background.getRequest(details.requestId).requestHeaders) ?
-          Background.pushToQueue(details.requestId) :
-          null;
+        if (Background.get(details.requestId).complete &&
+            Background.get(details.requestId).requestHeaders) {
+            Background.push(details.requestId);
+        }
       },
         urlFilter,
         ["responseHeaders", "extraHeaders"]);
 
     chrome.webRequest
       .onCompleted
-      .addListener((details) => Background.setRequest(details.requestId, { success: true }),
+      .addListener((details) => Background.set(details.requestId, { success: true }),
         urlFilter);
 
     chrome.webRequest
       .onErrorOccurred
-      .addListener((details) => Background.setRequest(details.requestId, { success: false }),
+      .addListener((details) => Background.set(details.requestId, { success: false }),
         urlFilter);
 
     return () => true;
@@ -89,19 +93,19 @@ var Background = (() => {
   return {
     isLoaded: () => load(),
 
-    getRequest: (requestId) => requests[requestId],
+    get: (requestId) => http[requestId],
 
-    setRequest: (requestId, obj) => {
-      let tmp = (requests[requestId]) ? requests[requestId] : {};
-      requests[requestId] = Object.assign(tmp, obj);
+    set: (requestId, obj) => {
+      let tmp = (http[requestId]) ? http[requestId] : {};
+      http[requestId] = Object.assign(tmp, obj);
     },
 
-    pushToQueue: (requestId) => {
-      Requests.add(Background.getRequest(requestId));
-      delete Background.getRequest(requestId);
+    push: (requestId) => {
+      Chunk.add("http", Background.get(requestId));
+      delete Background.get(requestId);
     },
 
-    getCompletedTabFromId: (tabId, callback) => {
+    tab: (tabId, callback) => {
       try {
         chrome.tabs.get(tabId, function (tab) {
           if (chrome.runtime.lastError || typeof tab === "undefined") {

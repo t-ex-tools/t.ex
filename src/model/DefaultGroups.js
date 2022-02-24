@@ -22,7 +22,7 @@ export default [{
   label: "All",
   members: [{
     id: Util.randomString(),
-    label: "All requests",
+    label: "All http",
     filter: () => true,
   }]}, 
 ].concat(defaultGroups);

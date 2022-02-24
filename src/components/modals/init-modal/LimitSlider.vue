@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      Configure the lower bound to determine the time range of HTTP requests to
+      Configure the lower bound to determine the time range of HTTP http to
       load. The upper bound is always configured as the present.
     </div>
     <div class="mt-3">

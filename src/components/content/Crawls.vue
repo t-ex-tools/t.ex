@@ -152,7 +152,7 @@ export default {
   components: {
     ConfirmModal
   },
-  props: ["requests"],
+  props: ["http"],
   data: () => {
     return {
       Crawler,

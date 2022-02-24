@@ -10,7 +10,7 @@ var UrlFeatures = (() => {
   let vLengths = (r) => FeatureExtractor.lengths("url.query.valueLengths@" + r.url, params(r), 1);
 
   const features = {
-    "requests.url.source": { 
+    "http.url.source": { 
       title: "Source", 
       subtitle: "The full URL of the source of the request.",
       impl: (r) => {
@@ -24,21 +24,21 @@ var UrlFeatures = (() => {
       lom: 1,
       cardinalityType: 0,
     },
-    "requests.url.hostname": { 
+    "http.url.hostname": { 
       title: "Hostname", 
       subtitle: "The Hostname of the target URL.",
       impl: (r) => url(r).hostname,
       lom: 1,
       cardinalityType: 0,
     },
-    "requests.url.pathname": { 
+    "http.url.pathname": { 
       title: "Path name", 
       subtitle: "The path name of the target URL.",
       impl: (r) => url(r).pathname,
       lom: 1,
       cardinalityType: 0,
     },
-    "requests.url.filetype": { 
+    "http.url.filetype": { 
       title: "File type", 
       subtitle: "The file type extension of the target URL's path.",
       impl: (r) => {
@@ -48,7 +48,7 @@ var UrlFeatures = (() => {
       lom: 1,
       cardinalityType: 0,
     },
-    "requests.url.jsurls": { 
+    "http.url.jsurls": { 
       title: "JavaScript URLs", 
       subtitle: "Explicit JavaScript URLs.",
       impl: (r) => {
@@ -59,7 +59,7 @@ var UrlFeatures = (() => {
       lom: 1,
       cardinalityType: 0,
     },
-    "requests.url.jsfiles": { 
+    "http.url.jsfiles": { 
       title: "JavaScript files", 
       subtitle: "Explicitly requested JavaScript files.",
       impl: (r) => {
@@ -70,49 +70,49 @@ var UrlFeatures = (() => {
       lom: 1,
       cardinalityType: 0,
     },
-    "requests.url.protocol": { 
+    "http.url.protocol": { 
       title: "Protocol", 
       subtitle: "The protocol used for the target URL.", 
       impl: (r) => url(r).protocol,
       lom: 1,
       cardinalityType: 0,
     },
-    "requests.url.query": { 
+    "http.url.query": { 
       title: "Query Parameters", 
       subtitle: "Key-value pairs in search string.",
       impl: (r) => params(r),
       lom: 1,
       cardinalityType: 1,
     },
-    "requests.url.query.keys": { 
+    "http.url.query.keys": { 
       title: "Query Parameters Keys", 
       subtitle: "Key-value pairs in search string.",
       impl: (r) => params(r).map((e) => e[0]),
       lom: 1,
       cardinalityType: 1,
     },
-    "requests.url.query.values": { 
+    "http.url.query.values": { 
       title: "Query Parameters Values", 
       subtitle: "Key-value pairs in search string.",
       impl: (r) => params(r).map((e) => e[1]),
       lom: 1,
       cardinalityType: 1,
     },
-    "requests.url.query.nkvp": { 
+    "http.url.query.nkvp": { 
       title: "Number of query parameters", 
       subtitle: "Number of key-value pairs in search string.",
       impl: (r) => params(r).length,
       lom: 4,
       cardinalityType: 2,
     },
-    "requests.url.query.keyLength.total": { 
+    "http.url.query.keyLength.total": { 
       title: "QP | Lengths of keys", 
       subtitle: "Total length of the query parameters' keys.",
       impl: (r) => Statistics.total(kLengths(r)),
       lom: 4,
       cardinalityType: 2,
     },
-    "requests.url.query.valueLength.total": { 
+    "http.url.query.valueLength.total": { 
       title: "QP | Lengths of values", 
       subtitle: "Total length of the query parameters' values.",
       impl: (r) => Statistics.total(vLengths(r)),

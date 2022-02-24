@@ -82,7 +82,7 @@ export default {
   },
   mounted() {
     chrome.storage.local.get("settings").then((res) => {
-      this.values = res.settings;
+      this.values = (res.settings) ? res.settings : {};
     });
   },
   methods: {

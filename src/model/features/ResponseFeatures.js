@@ -12,56 +12,56 @@ var ResponseFeatures = (() => {
   let vLengths = (r) => FeatureExtractor.lengths("responseHeaders.valueLengths@" + JSON.stringify(r.response.responseHeaders), header(r), 1);
 
   const features = {
-    "requests.response.statusCode": {
+    "http.response.statusCode": {
       title: "Response Status Code",
       subtitle: "Status Code of the HTTP Response.",
       impl: (r) => r.response.statusCode,
       lom: 1,
       cardinalityType: 1,
     },
-    "requests.response.fromCache": {
+    "http.response.fromCache": {
       title: "Response from Cache",
       subtitle: "Whether HTTP Response was served from cache or not.",
       impl: (r) => r.response.fromCache,
       lom: 1,
       cardinalityType: 1,
     },    
-    "requests.responseHeaders": {
+    "http.responseHeaders": {
       title: "Response Headers",
       subtitle: "Header fields of the response.",
       impl: (r) => header(r),
       lom: 1,
       cardinalityType: 1,
     },
-    "requests.responseHeaders.keys": {
+    "http.responseHeaders.keys": {
       title: "Response Headers Keys",
       subtitle: "Header fields of the response.",
       impl: (r) => header(r).map((e) => e[0]),
       lom: 1,
       cardinalityType: 1,
     },
-    "requests.responseHeaders.values": {
+    "http.responseHeaders.values": {
       title: "Response Headers Values",
       subtitle: "Header fields of the response.",
       impl: (r) => header(r).map((e) => e[1]),
       lom: 1,
       cardinalityType: 1,
     },
-    "requests.responseHeaders.nkvp": {
+    "http.responseHeaders.nkvp": {
       title: "RSP | Number of header fields",
       subtitle: "Number of key-value pairs in the response's header fields.",
       impl: (r) => header(r).length,
       lom: 4,
       cardinalityType: 2,
     },
-    "requests.responseHeaders.keyLength.total": {
+    "http.responseHeaders.keyLength.total": {
       title: "RSP | Lengths of keys",
       subtitle: "Total length of the header fields' keys.",
       impl: (r) => Statistics.total(kLengths(r)),
       lom: 4,
       cardinalityType: 2,
     },
-    "requests.responseHeaders.valueLength.total": {
+    "http.responseHeaders.valueLength.total": {
       title: "RSP | Lengths of values",
       subtitle: "Total length of the header fields' values.",
       impl: (r) => Statistics.total(vLengths(r)),

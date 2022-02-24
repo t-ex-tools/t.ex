@@ -18,21 +18,21 @@ var BodyFeatures = (() => {
   let vLengths = (r) => FeatureExtractor.lengths("requestBody.valueLength@" + JSON.stringify(r.requestBody), extractBody(r), 1);
 
   const features = {
-    "requests.requestBody": {
+    "http.requestBody": {
       title: "Request Body",
       subtitle: "Content of the request body.",
       impl: (r) => extractBody(r),
       lom: 1,
       cardinalityType: 1,
     },
-    "requests.requestBody.keyLength.total": {
+    "http.requestBody.keyLength.total": {
       title: "RB | Lengths of keys",
       subtitle: "Total lengths of keys in the request's body.",
       impl: (r) => Statistics.total(kLengths(r)),
       lom: 4,
       cardinalityType: 2,
     },
-    "requests.requestBody.valueLength.total": {
+    "http.requestBody.valueLength.total": {
       title: "RB | Lengths of values",
       subtitle: "Total lengths of values in the request's body.",
       impl: (r) => Statistics.total(vLengths(r)),

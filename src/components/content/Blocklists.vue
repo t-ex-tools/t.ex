@@ -13,7 +13,7 @@ import Util from "../../model/Util.js";
 export default {
   components: {
   },
-  props: ["requests", "dataTag"],
+  props: ["http", "dataTag"],
   data: () => {
     return {
       loading: {
@@ -36,7 +36,7 @@ export default {
   mounted() {
     /*
     this.loading.isLoading = true;
-    Util.labeledStream(this.requests, (chunk, current, total) => {
+    Util.labeledStream(this.http, (chunk, current, total) => {
       this.numOfRequests = total;
       if (current === total) {
         this.loading = {isLoading: false, current: 0, max: 1};

@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col">
         <b>Stats</b>
-        <div v-for="(dataType, index) in ['requests', 'js']" :key="index">
+        <div v-for="(dataType, index) in ['http', 'js']" :key="index">
           <div class="row">
             <div class="col">
               <small>
@@ -59,7 +59,7 @@ export default {
       dangerAt: 95,
     };
   },
-  props: ["requests", "js"],
+  props: ["http", "js"],
   methods: {
     size(dataType) {
       return Util.memorySizeOf(this[dataType]);

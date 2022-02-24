@@ -10,7 +10,7 @@
         <div class="modal-body">
           <div class="row">
             <div class="col">
-              <div class="progress">
+              <div v-if="total > 0" class="progress">
                 <div
                   class="progress-bar bg-primary"
                   :style="'width: ' + percent + '%'"
@@ -21,6 +21,14 @@
                 >
                   {{ percent }}%
                 </div>
+              </div>
+
+              <div
+                v-else
+                class="alert alert-warning show"
+                role="alert"
+              >
+                <strong>Error: received total = 0</strong>
               </div>
             </div>
           </div>

@@ -6,14 +6,14 @@
     </div>
 
     <select
-      v-if="options.length > 0"
+      v-if="crawls.length > 0"
       class="form-select"
-      aria-label="Default select example"
       size="5"
-      @update="updateLimit"
+      @change="updateLimit"
+      v-model="selected"
     >
-      <option v-for="(option, index) in options" :key="index" :value="index">
-        {{ option.label }}
+      <option v-for="(option, index) in crawls" :key="index" :value="index">
+        {{ option.tag }} ({{ new Date(option.startedAt).toLocaleString() }})
       </option>
     </select>
 
@@ -27,36 +27,21 @@ export default {
     return {
       selected: 0,
       crawls: [],
-      options: [],
     };
   },
-  props: [],
   mounted() {
-    chrome.storage.local.get("crawls", (result) => {
-      let crawls = (result.crawls) ? Object.values(result.crawls) : [];
-      let tags = crawls.map((c) => c.tag);
-      chrome.storage.local.get(Object.values(tags), (r) => {
-        crawls = Object.values(r).reduce((acc, val) => acc.concat(val), []);
-        this.options = crawls.map((c, i) => ({
-          label: c.tag + " " + new Date(c.startedAt).toLocaleString(),
-          startedAt: c.startedAt,
-          doneAt: c.doneAt,
-          value: i,
-        }));
+    chrome.storage.local.get("crawls")
+      .then((res) => {
+        this.crawls = (res.crawls) ? res.crawls : [];
       });
-    });
   },
   methods: {
-    updateLimit: function (checked) {
-      this.options[checked]
-        ? this.$emit("update-limit", {
-            lower: this.options[checked].startedAt,
-            upper: this.options[checked].doneAt,
-            dataTag: this.options[checked].label
-              .replace(/\:/g, "-")
-              .replace(/\,\s/g, "_"),
-          })
-        : null;
+    updateLimit: function () {
+      this.$emit("update-limit", {
+        lower: this.crawls[this.selected].startedAt,
+        upper: this.crawls[this.selected].doneAt,
+        dataTag: this.crawls[this.selected].tag
+      });
     },
   },
 };

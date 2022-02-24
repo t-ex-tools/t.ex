@@ -12,42 +12,42 @@ var HeaderFeatures = (() => {
   let vLengths = (r) => FeatureExtractor.lengths("requestHeaders.valueLengths@" + JSON.stringify(r.requestHeaders), header(r), 1);
 
   const features = {
-    "requests.requestHeaders": {
+    "http.requestHeaders": {
       title: "Request Headers",
-      subtitle: "Header fields of the requests.",
+      subtitle: "Header fields of the http.",
       impl: (r) => header(r),
       lom: 1,
       cardinalityType: 1,
     },
-    "requests.requestHeaders.keys": {
+    "http.requestHeaders.keys": {
       title: "Request Headers Keys",
-      subtitle: "Header fields of the requests.",
+      subtitle: "Header fields of the http.",
       impl: (r) => header(r).map((e) => e[0]),
       lom: 1,
       cardinalityType: 1,
     },
-    "requests.requestHeaders.values": {
+    "http.requestHeaders.values": {
       title: "Request Headers Values",
-      subtitle: "Header fields of the requests.",
+      subtitle: "Header fields of the http.",
       impl: (r) => header(r).map((e) => e[1]),
       lom: 1,
       cardinalityType: 1,
     },
-    "requests.requestHeaders.nkvp": {
+    "http.requestHeaders.nkvp": {
       title: "Number of header fields",
-      subtitle: "Number of key-value pairs in the requests' header fields.",
+      subtitle: "Number of key-value pairs in the http' header fields.",
       impl: (r) => header(r).length,
       lom: 4,
       cardinalityType: 2,
     },
-    "requests.requestHeaders.keyLength.total": {
+    "http.requestHeaders.keyLength.total": {
       title: "RH | Lengths of keys",
       subtitle: "Total length of the header fields' keys.",
       impl: (r) => Statistics.total(kLengths(r)),
       lom: 4,
       cardinalityType: 2,
     },
-    "requests.requestHeaders.valueLength.total": {
+    "http.requestHeaders.valueLength.total": {
       title: "RH | Lengths of values",
       subtitle: "Total length of the header fields' values.",
       impl: (r) => Statistics.total(vLengths(r)),

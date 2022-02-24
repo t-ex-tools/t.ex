@@ -11,7 +11,7 @@
 import Util from "../../model/Util.js";
 
 export default {
-  props: ["requests"],
+  props: ["http"],
   data: () => {
     return {
     }

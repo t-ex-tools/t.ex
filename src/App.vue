@@ -25,13 +25,13 @@
         </div>
 
         <div class="col-8 pt-3">
-          <router-view :requests="data.requests" :js="js" :data-tag="dataTag">
+          <router-view :http="data.http" :js="js" :data-tag="dataTag">
           </router-view>
         </div>
 
         <div class="col-2 pt-3">
           <sidebar
-            :requests="data.requests"
+            :http="data.http"
             :js="js"
             v-on:trigger-download="download"
           >
@@ -78,7 +78,7 @@ export default {
       data: {
         memoryLimit: 256 * 1000000,
         tag: Util.randomString(),
-        requests: [],
+        http: [],
         js: [],
       },
       groups: {
@@ -92,11 +92,11 @@ export default {
       this.data.tag = tag;
     },
     appendData(chunk) {
-      this.data.requests.push(chunk.requests);
+      this.data.http.push(chunk.http);
       this.data.js.push(chunk.js);
     },
     passData: function (source) {
-      return source === "requests" ? this.data.requests : this.js;
+      return source === "http" ? this.data.http : this.js;
     },
     updateRoutes: function (routes) {
       const self = this;

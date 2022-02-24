@@ -18,7 +18,7 @@
     <div :id="'chart-' + id()"></div>
     <div>
       <small v-for="(t, i) in totals" :key="i">
-        <i>{{ labels[i] }} {{ t }} requests; </i>
+        <i>{{ labels[i] }} {{ t }} http; </i>
       </small>
     </div>
     <div>

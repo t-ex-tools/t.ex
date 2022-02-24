@@ -59,11 +59,11 @@ var Crawler = (() => {
       });
     },
     end: function () {
-      chrome.runtime.sendMessage({ flush: true });
-
       log.doneAt = Date.now();
       this.saveLog({ ...log });
       this.emit();
+
+      chrome.runtime.sendMessage({ flush: true });
 
       chrome.tabs.onCreated.removeListener(onCreatedRef);
       chrome.tabs.onUpdated.removeListener(onUpdatedRef);
