@@ -113,8 +113,7 @@ API.elementMethods.forEach((m) => {
 let events = [];
 window.addEventListener("js", (e) => {
   events.push(e.detail);
-});
-
-window.addEventListener("beforeunload", () => {
-  window.dispatchEvent(new CustomEvent("cs", {detail: JSON.stringify(events)}));
+  if (events.length >= 3000) {
+    window.dispatchEvent(new CustomEvent("cs", {detail: JSON.stringify(events)}));
+  }
 });

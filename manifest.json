@@ -19,7 +19,7 @@
       "./src/content_scripts/inject.js"
     ],
     "run_at": "document_start",
-    "matches": ["<all_urls>"],
+    "matches": [ "<all_urls>" ],
     "all_frames": true
   }],
   "action": {
@@ -27,13 +27,15 @@
     "default_title": "T.EX - Transparency EXtension",
     "default_popup": "./src/popup/index.html"
   },
-  "web_accessible_resources": [{
-    "resources": [
-      "./src/content_scripts/index.js",
-      "./src/content_scripts/interfaces.js"
-    ],
-    "matches": [ "<all_urls>" ]
-  }],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/content_scripts/index.js",
+        "src/content_scripts/interfaces.js"
+      ],
+      "matches": [ "<all_urls>" ]
+    }
+  ],
   "permissions": [
     "background",
     "webRequest",

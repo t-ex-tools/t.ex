@@ -25,7 +25,8 @@ var Chunk = (() => {
       }
 
       if (msg.hasOwnProperty("js")) {
-        Chunk.add("js", msg.js)
+        console.log(msg);
+        Chunk.add("js", msg.js);
       }
 
       if (msg.hasOwnProperty("chunkSize")) {
@@ -39,6 +40,9 @@ var Chunk = (() => {
     if (completed.length < chunkSize) {
       return;
     }
+
+    console.debug("#HTTP: " + completed.length);
+    console.debug("#JS: " + queue.js);
 
     save(completed, [ ...queue.js ]);
     queue.http = queue.http.filter((e) => !e.complete);
@@ -56,6 +60,8 @@ var Chunk = (() => {
 
     chrome.storage.local.set(chunk)
       .then(() => {
+        console.debug("Chunk saved.")
+
         chrome.storage.local.get("indexes")
         .then((res) => {
             if (res.hasOwnProperty("indexes")) {
@@ -71,6 +77,9 @@ var Chunk = (() => {
   return {
     add: (type, data) => {
       queue[type].push(data);
+      if (queue.http.length % 100 === 0) {
+        console.debug("Queue size: " + queue.http.length);
+      }
       if (chunkSize <= queue.http.length) {
         check();
       }

@@ -12,7 +12,7 @@ export default {
       "innerHeight", 
       "innerWidth", 
       "outerHeight", 
-      "outerWidth", 
+      "outerWidth",   
       "pageXOffset", 
       "pageYOffset", 
       "screenLeft", 
