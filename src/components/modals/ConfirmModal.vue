@@ -1,15 +1,21 @@
 <template>
-  <div id="confirm-modal" class="modal" tabindex="-1">
+  <div
+    id="confirm-modal"
+    class="modal"
+    tabindex="-1"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">{{ title }}</h5>
+          <h5 class="modal-title">
+            {{ title }}
+          </h5>
           <button
             type="button"
             class="btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
-          ></button>
+          />
         </div>
         <div class="modal-body">
           <p>{{ text }}</p>
@@ -38,7 +44,17 @@
 
 <script>
 export default {
-  props: ["title", "text"],
+  props: {
+    title: {
+      type: String,
+      default: () => ""
+    },
+    text: {
+      type: String,
+      default: () => ""
+    }
+  },
+  emits: ["ok"],
   methods: {
     handleOk: function () {
       this.$emit("ok");

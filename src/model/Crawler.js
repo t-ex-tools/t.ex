@@ -41,6 +41,9 @@ var Crawler = (() => {
     },
     start: function (tag, list) {
       this.getSettings(() => {
+        
+        chrome.runtime.sendMessage({ recording: true });
+        
         urls = list.urls.split(/\r\n|\r|\n/g);
 
         log.tag = tag;
@@ -63,7 +66,7 @@ var Crawler = (() => {
       this.saveLog({ ...log });
       this.emit();
 
-      chrome.runtime.sendMessage({ flush: true });
+      chrome.runtime.sendMessage({ recording: false, flush: true });
 
       chrome.tabs.onCreated.removeListener(onCreatedRef);
       chrome.tabs.onUpdated.removeListener(onUpdatedRef);

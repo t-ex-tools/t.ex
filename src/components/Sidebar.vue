@@ -3,7 +3,10 @@
     <div class="row">
       <div class="col">
         <b>Stats</b>
-        <div v-for="(dataType, index) in ['http', 'js']" :key="index">
+        <div
+          v-for="(dataType, index) in ['http', 'js']"
+          :key="index"
+        >
           <div class="row">
             <div class="col">
               <small>
@@ -24,7 +27,7 @@
                   :aria-valuenow="size(dataType)"
                   aria-valuemin="0"
                   :aria-valuemax="max"
-                ></div>
+                />
               </div>
             </div>
           </div>
@@ -52,6 +55,16 @@
 import Util from "../model/Util.js";
 
 export default {
+  props: {
+    http: {
+      type: Array,
+      default: () => []
+    },
+    js: {
+      type: Array,
+      default: () => []
+    }
+  },
   data: () => {
     return {
       max: 8 * 1000000,
@@ -59,7 +72,6 @@ export default {
       dangerAt: 95,
     };
   },
-  props: ["http", "js"],
   methods: {
     size(dataType) {
       return Util.memorySizeOf(this[dataType]);
@@ -73,14 +85,7 @@ export default {
           ? "danger"
           : "warning"
         : "success";
-    },
-    triggerDownload(dataType) {
-      this.$emit("trigger-download", {
-        label: label,
-        dataType: this[dataType],
-      });
-    },
+    }
   },
-  mounted() {},
 };
 </script>

@@ -11,12 +11,15 @@
           data-bs-target="#website-lists-modal"
           @click="select(null)"
         >
-          <i class="bi bi-plus-circle me-2"></i>
+          <i class="bi bi-plus-circle me-2" />
           <small>Create list</small>
         </button>
       </div>
     </div>
-    <div v-if="lists.all.length > 0" class="row">
+    <div
+      v-if="lists.all.length > 0"
+      class="row"
+    >
       <div class="col">
         <div
           v-if="alert.visible"
@@ -29,14 +32,20 @@
             class="btn-close"
             data-bs-dismiss="alert"
             aria-label="Close"
-          ></button>
+          />
         </div>
 
         <table class="table table-hover align-middle mt-3">
           <thead>
-            <th scope="col">Name</th>
-            <th scope="col">URLs</th>
-            <th scope="col">Actions</th>
+            <th scope="col">
+              Name
+            </th>
+            <th scope="col">
+              URLs
+            </th>
+            <th scope="col">
+              Actions
+            </th>
           </thead>
           <tbody>
             <tr 
@@ -52,7 +61,7 @@
                   data-bs-target="#website-lists-modal"
                   @click="select(view.page * view.window + index)"
                 >
-                  <i class="bi bi-pencil"></i>
+                  <i class="bi bi-pencil" />
                 </button>
                 <button
                   class="btn btn-outline-danger"
@@ -60,7 +69,7 @@
                   data-bs-target="#confirm-modal"
                   @click="select(view.page * view.window + index)"
                 >
-                  <i class="bi bi-x-circle"></i>
+                  <i class="bi bi-x-circle" />
                 </button>
               </td>
             </tr>
@@ -69,7 +78,10 @@
       </div>
     </div>
 
-    <div v-else class="row mt-3">
+    <div
+      v-else
+      class="row mt-3"
+    >
       <div class="col">
         <div class="card card-body">
           No website lists created yet.
@@ -77,37 +89,38 @@
       </div>
     </div>
 
-    <div v-if="lists.all.length > 0" class="d-flex">
+    <div
+      v-if="lists.all.length > 0"
+      class="d-flex"
+    >
       <button
         class="btn me-auto"
         :class="{ 'btn-secondary': first, 'btn-outline-primary': !first }"
-        @click="view.page--"
         :disabled="first"
+        @click="view.page--"
       >
-        <i class="bi bi-arrow-left-circle"></i>
+        <i class="bi bi-arrow-left-circle" />
       </button>
       <button
         class="btn "
         :class="{ 'btn-secondary': last, 'btn-outline-primary': !last }"
-        @click="view.page++"
         :disabled="last"
+        @click="view.page++"
       >
-        <i class="bi bi-arrow-right-circle"></i>
+        <i class="bi bi-arrow-right-circle" />
       </button>
     </div>
 
     <website-lists-modal
       :list="lists.selected"
       @save-list="save"
-    >
-    </website-lists-modal>
+    />
 
     <confirm-modal
       title="Delete website list"
       text="Are you sure that you want to delete this website list?"
       @ok="rm"
-    >
-    </confirm-modal>
+    />
   </div>
 </template>
 

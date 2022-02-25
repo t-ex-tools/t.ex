@@ -1,15 +1,21 @@
 <template>
-  <div id="settings-modal" class="modal" tabindex="-1">
+  <div
+    id="settings-modal"
+    class="modal"
+    tabindex="-1"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Settings</h5>
+          <h5 class="modal-title">
+            Settings
+          </h5>
           <button
             type="button"
             class="btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
-          ></button>
+          />
         </div>
         <div class="modal-body">
           <div class="row">
@@ -22,7 +28,9 @@
                 >
                   <div class="row">
                     <div class="col-8">
-                      <div class="fw-bold">{{ settings[k].label }}</div>
+                      <div class="fw-bold">
+                        {{ settings[k].label }}
+                      </div>
                       <small>{{ settings[k].description }}</small>
                     </div>
                     <div class="col-4">
@@ -33,13 +41,13 @@
                           :name="k"
                           :type="settings[k].type"
                           role="switch"
-                          @change="set"
                           :checked="
                             values[k]
                               ? values[k]
                               : settings[k].default
                           "
-                        />
+                          @change="set"
+                        >
                         <input
                           v-else
                           :name="k"
@@ -51,7 +59,7 @@
                               : settings[k].default
                           "
                           @blur="set"
-                        />
+                        >
                       </div>
                     </div>
                   </div>
@@ -61,7 +69,11 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-dismiss="modal"
+          >
             Exit settings
           </button>
         </div>

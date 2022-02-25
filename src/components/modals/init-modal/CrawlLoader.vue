@@ -7,22 +7,32 @@
 
     <select
       v-if="crawls.length > 0"
+      v-model="selected"
       class="form-select"
       size="5"
       @change="updateLimit"
-      v-model="selected"
     >
-      <option v-for="(option, index) in crawls" :key="index" :value="index">
+      <option
+        v-for="(option, index) in crawls"
+        :key="index"
+        :value="index"
+      >
         {{ option.tag }} ({{ new Date(option.startedAt).toLocaleString() }})
       </option>
     </select>
 
-    <div class="card card-body bg-light mt-2" v-else>No crawls yet.</div>
+    <div
+      v-else
+      class="card card-body bg-light mt-2"
+    >
+      No crawls yet.
+    </div>
   </div>
 </template>
 
 <script>
 export default {
+  emits: ["update-limit"],
   data: () => {
     return {
       selected: 0,

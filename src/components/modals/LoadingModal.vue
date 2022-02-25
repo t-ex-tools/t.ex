@@ -1,16 +1,33 @@
 <template>
-  <div id="loading-modal" class="modal" tabindex="-1">
+  <div
+    id="loading-modal"
+    class="modal"
+    tabindex="-1"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 v-if="percent < 100" class="modal-title">Loading ...</h5>
-          <h5 v-else class="modal-title">Loading complete!</h5>
+          <h5
+            v-if="percent < 100"
+            class="modal-title"
+          >
+            Loading ...
+          </h5>
+          <h5
+            v-else
+            class="modal-title"
+          >
+            Loading complete!
+          </h5>
         </div>
 
         <div class="modal-body">
           <div class="row">
             <div class="col">
-              <div v-if="total > 0" class="progress">
+              <div
+                v-if="total > 0"
+                class="progress"
+              >
                 <div
                   class="progress-bar bg-primary"
                   :style="'width: ' + percent + '%'"
@@ -34,8 +51,15 @@
           </div>
         </div>
 
-        <div v-if="percent === 100" class="modal-footer">
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+        <div
+          v-if="percent === 100"
+          class="modal-footer"
+        >
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-dismiss="modal"
+          >
             Proceed
           </button>
         </div>
@@ -46,11 +70,20 @@
 
 <script>
 export default {
+  props: {
+    loaded: {
+      type: Number,
+      default: () => 0
+    },
+    total: {
+      type: Number,
+      default: () => 0
+    }
+  },
   computed: {
     percent() {
       return Math.round((this.loaded / this.total) * 100);
     },
   },
-  props: ["loaded", "total"],
 };
 </script>

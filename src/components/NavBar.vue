@@ -1,7 +1,10 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">T.EX - The Transparency EXtension</a>
+      <a
+        class="navbar-brand"
+        href="#"
+      >T.EX - The Transparency EXtension</a>
       <div class="d-flex">
         <button
           class="btn btn-outline-light me-2"
@@ -9,7 +12,7 @@
           data-bs-toggle="modal"
           data-bs-target="#init-modal"
         >
-          <i class="bi bi-gear me-2"></i>
+          <i class="bi bi-gear me-2" />
           <small>Load data</small>
         </button>
 
@@ -19,7 +22,7 @@
           data-bs-toggle="modal"
           data-bs-target="#settings-modal"
         >
-          <i class="bi bi-gear me-2"></i>
+          <i class="bi bi-gear me-2" />
           <small>Settings</small>
         </button>
       </div>
@@ -29,9 +32,9 @@
 
 <script>
 export default {
+  props: [],
   data: () => {
     return {};
   },
-  props: [],
 };
 </script>

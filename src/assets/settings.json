@@ -1,4 +1,16 @@
 {
+  "darkMode": {
+    "label": "Dark Mode",
+    "description": "Enable dark mode for less illuminated night shifts.",
+    "type": "checkbox",
+    "default": false
+  },
+  "backgroundRecording": {
+    "label": "Background recording",
+    "description": "Enable background recording of HTTP/S and JavaScript data.",
+    "type": "checkbox",
+    "default": false
+  },
   "httpBody": {
     "label": "HTTP Body",
     "description": "Record data that was transmitted in the HTTP body",

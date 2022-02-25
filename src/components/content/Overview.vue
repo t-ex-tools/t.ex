@@ -2,7 +2,6 @@
   <div class="row">
     <div class="col">
       <b>Overview</b>
-      
     </div>
   </div>    
 </template>
@@ -11,7 +10,12 @@
 import Util from "../../model/Util.js";
 
 export default {
-  props: ["http"],
+  props: {
+    http: {
+      type: Array,
+      default: () => []
+    }
+  },
   data: () => {
     return {
     }

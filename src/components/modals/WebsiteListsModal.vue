@@ -1,40 +1,53 @@
 <template>
-  <div id="website-lists-modal" class="modal" tabindex="-1">
+  <div
+    id="website-lists-modal"
+    class="modal"
+    tabindex="-1"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Create or edit website list</h5>
+          <h5 class="modal-title">
+            Create or edit website list
+          </h5>
         </div>
         <div class="modal-body">
           <div class="row">
             <div class="col">
-              <div v-for="(input, index) in inputs" :key="index" class="mb-3">
-                <label :for="'website-lists-modal-input-' + index" class="form-label">{{
+              <div
+                v-for="(input, index) in inputs"
+                :key="index"
+                class="mb-3"
+              >
+                <label
+                  :for="'website-lists-modal-input-' + index"
+                  class="form-label"
+                >{{
                   input.label
                 }}</label>
                 <textarea
                   v-if="input.type === 'textarea'"
+                  :id="'website-lists-modal-input-' + index"
+                  v-model="vList[input.key]"
                   class="form-control"
                   :class="{
                     'is-valid': valid[input.key],
                     'is-invalid': !valid[input.key],
                   }"
-                  :id="'website-lists-modal-input-' + index"
                   :placeholder="input.placeholder"
-                  v-model="vList[input.key]"
-                ></textarea>
+                />
                 <input
                   v-else
+                  :id="'website-lists-modal-input-' + index"
+                  v-model="vList[input.key]"
                   type="text"
                   class="form-control"
                   :class="{
                     'is-valid': valid[input.key],
                     'is-invalid': !valid[input.key],
                   }"
-                  :id="'website-lists-modal-input-' + index"
                   :placeholder="input.placeholder"
-                  v-model="vList[input.key]"
-                />
+                >
               </div>
             </div>
           </div>
@@ -67,6 +80,13 @@
 const empty = { name: "", urls: "" };
 
 export default {
+  props: {
+    list: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  emits: ["save-list"],
   data: () => {
     return {
       inputs: [
@@ -86,18 +106,17 @@ export default {
       vList: {...empty},
     };
   },
-  props: ["list"],
-  watch: {
-    list: function (n) {
-      this.vList = (n) ? {...n} : {...empty}
-    },
-  },
   computed: {
     valid() {
       return {
         name: this.nameValid(this.vList.name),
         urls: this.urlsValid(this.vList.urls),
       };
+    },
+  },
+  watch: {
+    list: function (n) {
+      this.vList = (n) ? {...n} : {...empty}
     },
   },
   methods: {

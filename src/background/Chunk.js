@@ -5,13 +5,17 @@ var Chunk = (() => {
     http: [],
     js: []
   };
-  let chunkSize = 1500;
+  let settings = {
+    chunkSize: 1500,
+    backgroundRecording: false
+  };
+  let recording = false;
 
   chrome.storage.local.get("settings")
     .then((res) => {
-      chunkSize = (res.settings && res.settings.chunkSize)
+      settings.chunkSize = (res.settings && res.settings.chunkSize)
         ? res.settings.chunkSize
-        : chunkSize;
+        : settings.chunkSize;
     });
 
   chrome.runtime
@@ -19,8 +23,8 @@ var Chunk = (() => {
     .addListener((msg) => {
 
       if (msg.hasOwnProperty("flush")) {
-        save([...queue.http], [...queue.js]),
-          queue.http = [];
+        save([...queue.http], [...queue.js]);
+        queue.http = [];
         queue.js = [];
       }
 
@@ -29,7 +33,7 @@ var Chunk = (() => {
       }
 
       if (msg.hasOwnProperty("chunkSize")) {
-        chunkSize = Number.parseInt(msg.chunkSize)
+        settings.chunkSize = Number.parseInt(msg.chunkSize)
       }
     });
 
@@ -83,8 +87,21 @@ var Chunk = (() => {
         check();
       }
     },
+    set: (config) => {
+      Object
+        .keys(settings)
+        .forEach((k) => {
+          settings[k] = config[k].default;
+          console.debug("Set " + k + " to " + config[k]);
+        });
+    }
   };
 
 })();
+
+// TODO: will override settings retrieved from local storage
+fetch("../assets/settings.json")
+  .then((res) => res.json())
+  .then((config) => Chunk.set(config));
 
 export default Chunk;

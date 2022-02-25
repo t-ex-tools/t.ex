@@ -2,19 +2,26 @@
   <div class="card card-body">
     <ul class="nav nav-pills flex-column">
       <b>Navigation</b>
-      <li class="nav-item" v-for="route in staticRoutes" :key="route.name">
-        <router-link class="nav-link" :to="route.path">
+      <li
+        v-for="route in staticRoutes"
+        :key="route.name"
+        class="nav-item"
+      >
+        <router-link
+          class="nav-link"
+          :to="route.path"
+        >
           {{ route.name }}
         </router-link>
       </li>
 
-      <hr />
+      <hr>
 
       <b>Statistics</b>
       <li
-        class="nav-item dropdown"
         v-for="(g, index) in FeatureExtractor.navigation()"
         :key="index"
+        class="nav-item dropdown"
       >
         <a
           class="nav-link dropdown-toggle"
@@ -22,11 +29,16 @@
           href="#"
           role="button"
           aria-expanded="false"
-          >{{ g.label }}</a
-        >
+        >{{ g.label }}</a>
         <ul class="dropdown-menu">
-          <li v-for="feature in g.featureGroup" :key="feature.name">
-            <router-link class="dropdown-item" :to="feature.path">
+          <li
+            v-for="feature in g.featureGroup"
+            :key="feature.name"
+          >
+            <router-link
+              class="dropdown-item"
+              :to="feature.path"
+            >
               {{ feature.name }}
             </router-link>
           </li>
@@ -43,8 +55,24 @@ import WebsiteLists from "./content/WebsiteLists.vue";
 import Overview from "./content/Overview.vue";
 import Blocklists from "./content/Blocklists.vue";
 import Crawls from "./content/Crawls.vue";
+import { markRaw } from "vue";
 
 export default {
+  props: {
+    groups: {
+      type: Array,
+      default: () => []
+    },
+    selectedIndex: {
+      type: Number,
+      default: () => 0
+    },
+    dataTag: {
+      type: String,
+      default: () => ""
+    }
+  },
+  emits: ["routes-changed"],
   data: () => {
     return {
       FeatureExtractor: FeatureExtractor,
@@ -52,31 +80,30 @@ export default {
         {
           path: "/",
           name: "Start",
-          component: Overview,
+          component: markRaw(Overview),
         },
       ].concat(
         [
           {
             path: "/blocklists",
             name: "Labeling",
-            component: Blocklists,
+            component: markRaw(Blocklists),
           },
           {
             path: "/website-lists",
             name: "Website Lists",
-            component: WebsiteLists,
+            component: markRaw(WebsiteLists),
           },
           {
             path: "/crawls",
             name: "Crawls",
-            component: Crawls,
+            component: markRaw(Crawls),
           },
         ].sort((a, b) => a.name.localeCompare(b.name))
       ),
       routes: [],
     };
   },
-  props: ["groups", "selectedIndex", "dataTag"],
   created() {
     this.routes = this.staticRoutes.concat(
       FeatureExtractor.features().map((f) => {
@@ -84,7 +111,7 @@ export default {
         return {
           path: "/" + f,
           name: featureInfo.title,
-          component: Base,
+          component: markRaw(Base),
           props: () => {
             // NOTE:  When a tab is closed, activate-tab event is fired twice.
             //        Once with wrong old index and once with corrected index,

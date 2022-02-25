@@ -1,8 +1,16 @@
 <template>
   <div>
     <ul class="nav nav-tabs">
-      <li v-for="(g, i) in groups" :key="i" class="nav-item">
-        <a class="nav-link active" aria-current="page" href="#">
+      <li
+        v-for="(g, i) in groups"
+        :key="i"
+        class="nav-item"
+      >
+        <a
+          class="nav-link active"
+          aria-current="page"
+          href="#"
+        >
           {{ g.label }}
         </a>
       </li>
@@ -14,12 +22,12 @@
 import FeatureExtractor from "../model/FeatureExtractor.js";
 
 export default {
+  props: ["groups", "selectedIndex"],
   data: () => {
     return {
       index: 0,
     };
   },
-  props: ["groups", "selectedIndex"],
   watch: {
     index: function (newIndex) {
       this.$emit("tabs-changed", newIndex);

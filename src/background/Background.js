@@ -1,6 +1,7 @@
 import Chunk from "./Chunk.js";
 
 // TODO: seed local storage with free website lists
+// TODO: seed initial settings
 chrome.runtime.onInstalled.addListener((d) => {
   console.log(d);
 });

@@ -10,20 +10,20 @@
     </div>
     <input
       id="limit-range"
-      class="form-range mt-1"
       v-model="limit"
+      class="form-range mt-1"
       type="range"
       min="0"
       :max="indexes.length - 1"
       @change="updateLimit"
-    />
+    >
     <div class="mt-2">
       Load request between
       <b>
         {{
           new Date(indexes[indexes.length - 1 - limit]).toDateString() +
-          ", " +
-          new Date(indexes[indexes.length - 1 - limit]).toLocaleTimeString()
+            ", " +
+            new Date(indexes[indexes.length - 1 - limit]).toLocaleTimeString()
         }}
       </b>
       and now.
@@ -33,12 +33,18 @@
 
 <script>
 export default {
+  props: {
+    indexes: {
+      type: Array,
+      default: () => []
+    },
+  },
+  emits: ["update-limit"],
   data: () => {
     return {
       limit: 0,
     };
   },
-  props: ["indexes"],
   methods: {
     updateLimit: function () {
       this.$emit("update-limit", {

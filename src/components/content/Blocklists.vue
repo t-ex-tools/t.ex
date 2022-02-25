@@ -2,7 +2,6 @@
   <div class="row">
     <div class="col">
       <b>Blocklists</b>
-      
     </div>
   </div>  
 </template>
@@ -13,7 +12,16 @@ import Util from "../../model/Util.js";
 export default {
   components: {
   },
-  props: ["http", "dataTag"],
+  props: {
+    http: {
+      type: Array,
+      default: () => []
+    },
+    tag: {
+      type: String,
+      default: () => ""
+    }
+  },
   data: () => {
     return {
       loading: {
@@ -127,7 +135,7 @@ export default {
       csv = '"N=",' + this.numOfRequests + "\r\n" + csv;
       chrome.downloads.download({
         filename: 
-          this.dataTag
+          this.tag
           + "-"
           + list 
           + "-" 

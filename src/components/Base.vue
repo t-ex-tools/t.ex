@@ -1,19 +1,30 @@
 <template>
   <div class="pb-5">
-    <div class="row" v-if="results === null">
+    <div
+      v-if="results === null"
+      class="row"
+    >
       <div class="col">
-        <div class="card card-body m-2">No results found.</div>
+        <div class="card card-body m-2">
+          No results found.
+        </div>
       </div>
     </div>
 
-    <div class="row" v-else>
+    <div
+      v-else
+      class="row"
+    >
       <div class="col">
         <div
           class="card card-body m-2"
           :title="featureInfo.title"
           :sub-title="featureInfo.subtitle"
         >
-          <div class="progress" v-if="loading.isLoading">
+          <div
+            v-if="loading.isLoading"
+            class="progress"
+          >
             <div
               class="progress-bar bg-primary"
               :style="'width: ' + loading.current + '%'"
@@ -25,24 +36,23 @@
               {{ loading.current }}
             </div>
           </div>
-
+          <!--
           <table-chart
             v-if="featureInfo.lom <= 2"
             :feature="featureInfo"
             :totals="totals"
             :labels="labels"
-            :rawData="rawData"
-            :dataTag="dataTag"
-          >
-          </table-chart>
+            :raw-data="rawData"
+            :data-tag="dataTag"
+          />
           <box-plot
             v-else
             :feature="featureInfo"
             :totals="totals"
             :labels="labels"
-            :rawData="rawData"
-          >
-          </box-plot>
+            :raw-data="rawData"
+          />
+          -->
         </div>
       </div>
     </div>
@@ -50,16 +60,31 @@
 </template>
 
 <script>
-import BoxPlot from "./charts/BoxPlot.vue";
-import TableChart from "./charts/TableChart.vue";
 import Statistics from "../model/Statistics.js";
 
 export default {
-  components: {
-    TableChart: TableChart,
-    BoxPlot: BoxPlot,
+  props: {
+    queries: {
+      type: Array,
+      default: () => []
+    },
+    feature: {
+      type: String,
+      default: () => ""
+    },
+    featureInfo: {
+      type: Object,
+      default: () => {}
+    },
+    tab: {
+      type: Number,
+      default: () => 0
+    },
+    tag: {
+      type: String,
+      default: () => ""
+    },
   },
-  props: ["queries", "feature", "featureInfo", "tabIndex", "dataTag"],
   data: () => {
     return {
       loading: {

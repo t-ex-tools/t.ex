@@ -1,15 +1,21 @@
 <template>
-  <div id="init-modal" class="modal" tabindex="-1">
+  <div
+    id="init-modal"
+    class="modal"
+    tabindex="-1"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Load recorded data</h5>
+          <h5 class="modal-title">
+            Load recorded data
+          </h5>
           <button
             type="button"
             class="btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
-          ></button>
+          />
         </div>
 
         <div class="modal-body">
@@ -26,7 +32,10 @@
                   :key="index"
                   class="accordion-item"
                 >
-                  <h2 class="accordion-header" :id="'heading-' + index">
+                  <h2
+                    :id="'heading-' + index"
+                    class="accordion-header"
+                  >
                     <button
                       class="accordion-button"
                       type="button"
@@ -51,14 +60,16 @@
                         :is="option.component"
                         :indexes="indexes"
                         @update-limit="setBoundaries"
-                      >
-                      </component>
+                      />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div v-else class="card card-body bg-warning">
+              <div
+                v-else
+                class="card card-body bg-warning"
+              >
                 No data recorded yet.
               </div>
             </div>
@@ -87,7 +98,11 @@
       </div>
     </div>
   </div>
-  <loading-modal :loaded="chunks.loaded" :total="chunks.total"> </loading-modal>
+  
+  <loading-modal
+    :loaded="chunks.loaded"
+    :total="chunks.total"
+  />
 </template>
 
 <script>
@@ -95,6 +110,7 @@ import LimitSlider from "./init-modal/LimitSlider.vue";
 import CrawlLoader from "./init-modal/CrawlLoader.vue";
 import LoadingModal from "./LoadingModal.vue";
 import config from "../../assets/settings.json";
+import { markRaw } from "vue";
 
 export default {
   components: {
@@ -102,16 +118,17 @@ export default {
     CrawlLoader,
     LoadingModal,
   },
+  emits: ["data", "set-tag"],
   data: () => {
     return {
       options: [
         {
           label: "Select time range",
-          component: LimitSlider,
+          component: markRaw(LimitSlider),
         },
         {
           label: "Load crawl",
-          component: CrawlLoader,
+          component: markRaw(CrawlLoader),
         },
       ],
       chunks: {

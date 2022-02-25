@@ -4,8 +4,10 @@ var vm = new Vue({
   el: "#app",
   components: {
   },
-  data: {
-  },
+  data: function() {
+return {
+  };
+},
   mounted() {
   },
   methods: {
