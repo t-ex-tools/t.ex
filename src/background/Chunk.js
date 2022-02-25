@@ -1,4 +1,4 @@
-import LZString from "../libraries/lz-string/lz-string.min.js";
+import LZString from "../libs/lz-string/lz-string.min.js";
 
 var Chunk = (() => {
   let queue = {
@@ -9,28 +9,27 @@ var Chunk = (() => {
 
   chrome.storage.local.get("settings")
     .then((res) => {
-      chunkSize = (res.settings && res.settings.chunkSize) 
-        ? res.settings.chunkSize 
+      chunkSize = (res.settings && res.settings.chunkSize)
+        ? res.settings.chunkSize
         : chunkSize;
-    }); 
+    });
 
   chrome.runtime
     .onMessage
     .addListener((msg) => {
 
       if (msg.hasOwnProperty("flush")) {
-        save([ ...queue.http ], [ ...queue.js ]),
-        queue.http = [];
+        save([...queue.http], [...queue.js]),
+          queue.http = [];
         queue.js = [];
       }
 
       if (msg.hasOwnProperty("js")) {
-        console.log(msg);
         Chunk.add("js", msg.js);
       }
 
       if (msg.hasOwnProperty("chunkSize")) {
-        chunkSize = Number.parseInt(msg.chunkSize) 
+        chunkSize = Number.parseInt(msg.chunkSize)
       }
     });
 
@@ -42,9 +41,9 @@ var Chunk = (() => {
     }
 
     console.debug("#HTTP: " + completed.length);
-    console.debug("#JS: " + queue.js);
+    console.debug("#JS: " + queue.js.length);
 
-    save(completed, [ ...queue.js ]);
+    save(completed, [...queue.js]);
     queue.http = queue.http.filter((e) => !e.complete);
     queue.js = [];
   };
@@ -63,7 +62,7 @@ var Chunk = (() => {
         console.debug("Chunk saved.")
 
         chrome.storage.local.get("indexes")
-        .then((res) => {
+          .then((res) => {
             if (res.hasOwnProperty("indexes")) {
               res.indexes.push(id);
             } else {
@@ -71,12 +70,12 @@ var Chunk = (() => {
             }
             chrome.storage.local.set(res);
           });
-        });
+      });
   };
 
   return {
     add: (type, data) => {
-      queue[type].push(data);
+      queue[type] = queue[type].concat(data);
       if (queue.http.length % 100 === 0) {
         console.debug("Queue size: " + queue.http.length);
       }

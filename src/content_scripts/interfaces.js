@@ -13,6 +13,7 @@ export default {
       "innerWidth", 
       "outerHeight", 
       "outerWidth",   
+      /*
       "pageXOffset", 
       "pageYOffset", 
       "screenLeft", 
@@ -21,6 +22,7 @@ export default {
       "screenY", 
       "scrollX", 
       "scrollY"
+      */
     ],
     methods: [],  
   }, {
@@ -130,7 +132,6 @@ export default {
     properties: [
       "baseLatency",
       "outputLatency",
-
     ],
     methods: [],
   }, {

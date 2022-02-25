@@ -32,7 +32,7 @@
         <div class="col-2 pt-3">
           <sidebar
             :http="data.http"
-            :js="js"
+            :js="data.js"
             v-on:trigger-download="download"
           >
           </sidebar>

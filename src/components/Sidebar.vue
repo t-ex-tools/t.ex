@@ -54,7 +54,7 @@ import Util from "../model/Util.js";
 export default {
   data: () => {
     return {
-      max: 768 * 1000000,
+      max: 8 * 1000000,
       warningAt: 75,
       dangerAt: 95,
     };

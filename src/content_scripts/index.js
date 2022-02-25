@@ -6,55 +6,61 @@ let inject = (w) => {
       let pd = Object.getOwnPropertyDescriptor(api.interface, p);
       if (!pd) {
         return;
-      } 
+      }
 
       Object.defineProperty(api.interface, p, {
         get: function () {
           let result = pd.get.apply(this);
-          window.dispatchEvent(new CustomEvent("js", {detail: {
-            interface: api.label, 
-            property: p, 
-            method: "get", 
-            result: result,
-            stack: parseStack((new Error()).stack),
-            url: window.location.href,
-            timeStamp: Date.now()
-          }}));
+          window.dispatchEvent(new CustomEvent("js", {
+            detail: {
+              interface: api.label,
+              property: p,
+              method: "get",
+              result: result,
+              stack: parseStack((new Error()).stack),
+              url: window.location.href,
+              timeStamp: Date.now()
+            }
+          }));
           return result;
         },
         set: function () {
-          window.dispatchEvent(new CustomEvent("js", {detail: {
-            interface: api.label, 
-            property: p, 
-            method: "set", 
-            arguments: arguments,
-            stack: parseStack((new Error()).stack),
-            url: window.location.href,
-            timeStamp: Date.now()
-          }}));
+          window.dispatchEvent(new CustomEvent("js", {
+            detail: {
+              interface: api.label,
+              property: p,
+              method: "set",
+              arguments: arguments,
+              stack: parseStack((new Error()).stack),
+              url: window.location.href,
+              timeStamp: Date.now()
+            }
+          }));
           pd.set.apply(this, arguments);
         }
       });
     });
-  
+
     api.methods.forEach((m) => {
       let om = api.interface[m];
       if (!om) {
         return;
       }
-      
+
       Object.defineProperty(api.interface, m, {
         value: function () {
           let result = om.apply(this, arguments);
-          window.dispatchEvent(new CustomEvent("js", {detail: {
-            interface: api.label, 
-            method: m, 
-            arguments: arguments, 
-            result: result,
-            stack: parseStack((new Error()).stack),
-            url: window.location.href,
-            timeStamp: Date.now()
-          }}));
+          window.dispatchEvent(new CustomEvent("js", {
+            detail: {
+              interface: api.label,
+              method: m,
+              arguments: arguments,
+              result: result,
+              stack: parseStack((new Error()).stack),
+              url: window.location.href,
+              timeStamp: Date.now()
+            }
+          }));
           return result;
         }
       });
@@ -78,7 +84,7 @@ let parseStack = (stack) => {
   let match = stack.match(re);
   return (match) ? [...new Set(match
     .map((s) => {
-      let url = s.split(":"); 
+      let url = s.split(":");
       return url[0] + ":" + url[1];
     }))
   ] : [];
@@ -96,10 +102,10 @@ API.elementMethods.forEach((m) => {
     value: function () {
       let elem = om.apply(this, arguments);
       let elemType = Object.prototype.toString.call(elem);
-      
+
       if (elemType === "[object HTMLCollection]" || elemType === "[object NodeList]") {
-        for (let e of elem) { 
-          injectIframe(e) 
+        for (let e of elem) {
+          injectIframe(e)
         }
       } else {
         injectIframe(elem);
@@ -113,7 +119,8 @@ API.elementMethods.forEach((m) => {
 let events = [];
 window.addEventListener("js", (e) => {
   events.push(e.detail);
-  if (events.length >= 3000) {
-    window.dispatchEvent(new CustomEvent("cs", {detail: JSON.stringify(events)}));
-  }
+});
+
+window.addEventListener("beforeunload", () => {
+  window.dispatchEvent(new CustomEvent("cs", { detail: JSON.stringify(events) }));
 });
