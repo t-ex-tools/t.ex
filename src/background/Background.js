@@ -1,8 +1,8 @@
 import Chunk from "./Chunk.js";
 
 // TODO: seed local storage with free website lists
-chrome.runtime.onInstalled.addListener((details) => {
-  console.log(details);
+chrome.runtime.onInstalled.addListener((d) => {
+  console.log(d);
 });
 
 var Background = (() => {
@@ -10,89 +10,82 @@ var Background = (() => {
   let http = {};
   let httpBody = false;
 
-  let load = (() => {
+  chrome.storage.local.get("settings")
+    .then((res) => {
+      httpBody = (res.settings && res.settings.httpBody)
+        ? res.settings.httpBody
+        : httpBody;
+    });
 
-    chrome.storage.local.get("settings")
-      .then((res) => {
-        httpBody = (res.settings && res.settings.httpBody)
-          ? res.settings.httpBody
-          : httpBody;
-      });
+  chrome.runtime
+    .onMessage
+    .addListener((msg) => {
+      if (msg.hasOwnProperty("httpBody")) {
+        httpBody = msg.httpBody;
+      }
+    });
 
-    chrome.runtime
-      .onMessage
-      .addListener((msg) => {
-        if (msg.hasOwnProperty("httpBody")) {
-          httpBody = msg.httpBody;
+  chrome.webRequest
+    .onBeforeRequest
+    .addListener((d) => {
+      if (d.tabId < 0) {
+        return;
+      }
+
+      if (!httpBody && d.hasOwnProperty("requestBody")) {
+        delete d.requestBody;
+      }
+
+      Background.set(d.requestId, d);
+      Background.tab(d.tabId, (tab) => {
+        Background.set(d.requestId, { source: tab.url, complete: true });
+
+        if (Background.get(d.requestId).requestHeaders &&
+          Background.get(d.requestId).response) {
+          Background.push(d.requestId);
         }
       });
+    },
+      urlFilter,
+      ["requestBody"]);
 
-    chrome.webRequest
-      .onBeforeRequest
-      .addListener((details) => {
-        if (details.tabId < 0) {
-          return;
-        }
+  chrome.webRequest
+    .onBeforeSendHeaders
+    .addListener((d) => {
+      Background.set(d.requestId, { requestHeaders: d.requestHeaders });
 
-        if (!httpBody && details.hasOwnProperty("requestBody")) {
-          delete details.requestBody;
-        }
+      if (Background.get(d.requestId).complete &&
+        Background.get(d.requestId).response) {
+        Background.push(d.requestId)
+      }
+    },
+      urlFilter,
+      ["requestHeaders", "extraHeaders"]);
 
-        Background.set(details.requestId, details);
-        Background.tab(details.tabId, (tab) => {
-          Background.set(details.requestId, { source: tab.url, complete: true });
+  chrome.webRequest
+    .onResponseStarted
+    .addListener((d) => {
+      Background.set(d.requestId, { response: d });
 
-          if (Background.get(details.requestId).requestHeaders &&
-              Background.get(details.requestId).response) {
-              Background.push(details.requestId);
-          }
-        });
-      },
-        urlFilter,
-        ["requestBody"]);
+      if (Background.get(d.requestId).complete &&
+        Background.get(d.requestId).requestHeaders) {
+        Background.push(d.requestId);
+      }
+    },
+      urlFilter,
+      ["responseHeaders", "extraHeaders"]);
 
-    chrome.webRequest
-      .onBeforeSendHeaders
-      .addListener((details) => {
-        Background.set(details.requestId, { requestHeaders: details.requestHeaders });
+  chrome.webRequest
+    .onCompleted
+    .addListener((d) => Background.set(d.requestId, { success: true }),
+      urlFilter);
 
-        if (Background.get(details.requestId).complete && 
-            Background.get(details.requestId).response) {
-            Background.push(details.requestId)
-        }
-      },
-        urlFilter,
-        ["requestHeaders", "extraHeaders"]);
-
-    chrome.webRequest
-      .onResponseStarted
-      .addListener((details) => {
-        Background.set(details.requestId, { response: details });
-
-        if (Background.get(details.requestId).complete &&
-            Background.get(details.requestId).requestHeaders) {
-            Background.push(details.requestId);
-        }
-      },
-        urlFilter,
-        ["responseHeaders", "extraHeaders"]);
-
-    chrome.webRequest
-      .onCompleted
-      .addListener((details) => Background.set(details.requestId, { success: true }),
-        urlFilter);
-
-    chrome.webRequest
-      .onErrorOccurred
-      .addListener((details) => Background.set(details.requestId, { success: false }),
-        urlFilter);
-
-    return () => true;
-  })();
+  chrome.webRequest
+    .onErrorOccurred
+    .addListener((d) => Background.set(d.requestId, { success: false }),
+      urlFilter);
 
   return {
-    isLoaded: () => load(),
-
     get: (requestId) => http[requestId],
 
     set: (requestId, obj) => {
@@ -101,7 +94,7 @@ var Background = (() => {
     },
 
     push: (requestId) => {
-      Chunk.add("http", [ Background.get(requestId) ]);
+      Chunk.add("http", [Background.get(requestId)]);
       delete Background.get(requestId);
     },
 
@@ -119,6 +112,6 @@ var Background = (() => {
           callback(null);
         }
       }
-    },
+    }
   }
 })();
