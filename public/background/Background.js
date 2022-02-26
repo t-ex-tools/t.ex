@@ -1,4 +1,5 @@
 import Chunk from "./Chunk.js";
+import config from "../js/Settings.js";
 
 // TODO: seed local storage with free website lists
 // TODO: seed initial settings
@@ -9,7 +10,7 @@ chrome.runtime.onInstalled.addListener((d) => {
 var Background = (() => {
   const urlFilter = { urls: ["http://*/*", "https://*/*"] };
   let http = {};
-  let httpBody = false;
+  let httpBody = config.httpBody.default;
 
   chrome.storage.local.get("settings")
     .then((res) => {
@@ -21,8 +22,8 @@ var Background = (() => {
   chrome.runtime
     .onMessage
     .addListener((msg) => {
-      if (msg.hasOwnProperty("httpBody")) {
-        httpBody = msg.httpBody;
+      if (msg.hasOwnProperty("settings")) {
+        httpBody = msg.settings.httpBody;
       }
     });
 

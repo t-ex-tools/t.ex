@@ -107,6 +107,7 @@ export default {
       }
 
       chrome.storage.local.set({ settings: this.values }).then(() => {
+        // TODO: seems not to work
         chrome.runtime.sendMessage({ settings: this.values });
       });
     },

@@ -1,4 +1,5 @@
-import LZString from "../libs/lz-string/lz-string.min.js";
+import LZString from "../js/lz-string.min.js";
+import config from "../js/Settings.js";
 
 var Chunk = (() => {
   let queue = {
@@ -6,16 +7,16 @@ var Chunk = (() => {
     js: []
   };
   let settings = {
-    chunkSize: 1500,
-    backgroundRecording: false
+    chunkSize: config.chunkSize.default,
+    backgroundRecording: config.backgroundRecording.default
   };
   let recording = false;
 
   chrome.storage.local.get("settings")
     .then((res) => {
-      settings.chunkSize = (res.settings && res.settings.chunkSize)
-        ? res.settings.chunkSize
-        : settings.chunkSize;
+      if (res.settings) {
+        Chunk.set(res.settings);
+      }
     });
 
   chrome.runtime
@@ -32,8 +33,8 @@ var Chunk = (() => {
         Chunk.add("js", msg.js);
       }
 
-      if (msg.hasOwnProperty("chunkSize")) {
-        settings.chunkSize = Number.parseInt(msg.chunkSize)
+      if (msg.hasOwnProperty("settings")) {
+        Chunk.set(msg.settings)
       }
     });
 
@@ -79,7 +80,10 @@ var Chunk = (() => {
 
   return {
     add: (type, data) => {
-      queue[type] = queue[type].concat(data);
+      if (recording || settings.backgroundRecording) {
+        queue[type] = queue[type].concat(data);
+      }
+      
       if (queue.http.length % 100 === 0) {
         console.debug("Queue size: " + queue.http.length);
       }
@@ -91,8 +95,10 @@ var Chunk = (() => {
       Object
         .keys(settings)
         .forEach((k) => {
-          settings[k] = config[k].default;
-          console.debug("Set " + k + " to " + config[k]);
+          settings[k] = (config.hasOwnProperty(k))
+            ? config[k] 
+            : settings[k];
+          console.debug("Set " + k + " to " + settings[k]);
         });
     }
   };

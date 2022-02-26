@@ -7,8 +7,8 @@ export default {
     handler: (value) => {
       let link = document.getElementById("bootstrap-theme"); 
       link.href = (value) 
-        ? "/dist/css/bootstrap-night.css"
-        : "/dist/css/bootstrap.min.css";
+        ? "/css/bootstrap-night.css"
+        : "/css/bootstrap.min.css";
     }
   },
   backgroundRecording: {

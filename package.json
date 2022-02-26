@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "concurrently \"vue-cli-service build --watch --no-clean\" \"npm run copy:css:light\" \"npm run copy:css:dark\"",
-    "build": "concurrently \"vue-cli-service build\" \"npm run copy:css:light\" \"npm run copy:css:dark\"",
+    "serve": "concurrently \"vue-cli-service build --watch --no-clean\" \"npm run cp:files\"",
+    "build": "concurrently \"vue-cli-service build\" \"npm run cp:files\"",
     "lint": "vue-cli-service lint",
-    "copy:css:dark": "ncp node_modules/bootstrap-dark-5/dist/css/bootstrap-night.css dist/css/bootstrap-night.css",
-    "copy:css:light": "ncp node_modules/bootstrap/dist/css/bootstrap.min.css dist/css/bootstrap.min.css"
+    "cp:files": "concurrently \"npm run cp:css:dark\" \"npm run cp:css:light\" \"npm run cp:cfg\" \"npm run cp:lz\"",
+    "cp:css:dark": "ncp node_modules/bootstrap-dark-5/dist/css/bootstrap-night.css dist/css/bootstrap-night.css",
+    "cp:css:light": "ncp node_modules/bootstrap/dist/css/bootstrap.min.css dist/css/bootstrap.min.css",
+    "cp:cfg": "ncp src/model/Settings.js dist/js/Settings.js",
+    "cp:lz": "ncp src/libs/lz-string.min.js dist/js/lz-string.min.js"
   },
   "dependencies": {
     "bootstrap": "^5.1.3",
