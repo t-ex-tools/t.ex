@@ -109,7 +109,7 @@
 import LimitSlider from "./init-modal/LimitSlider.vue";
 import CrawlLoader from "./init-modal/CrawlLoader.vue";
 import LoadingModal from "./LoadingModal.vue";
-import config from "../../assets/settings.json";
+import config from "../../model/Settings.js";
 import { markRaw } from "vue";
 
 export default {

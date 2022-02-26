@@ -113,6 +113,4 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-@import "~bootstrap/dist/css/bootstrap.css";
 </style>

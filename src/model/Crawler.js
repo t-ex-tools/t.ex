@@ -1,4 +1,4 @@
-import config from "../assets/settings.json";
+import config from "../model/Settings.js";
 
 const empty = {
   tag: "",

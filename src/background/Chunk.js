@@ -40,7 +40,7 @@ var Chunk = (() => {
   let check = () => {
     let completed = queue.http.filter((e) => e.complete);
 
-    if (completed.length < chunkSize) {
+    if (completed.length < settings.chunkSize) {
       return;
     }
 
@@ -83,7 +83,7 @@ var Chunk = (() => {
       if (queue.http.length % 100 === 0) {
         console.debug("Queue size: " + queue.http.length);
       }
-      if (chunkSize <= queue.http.length) {
+      if (settings.chunkSize <= queue.http.length) {
         check();
       }
     },
@@ -98,10 +98,5 @@ var Chunk = (() => {
   };
 
 })();
-
-// TODO: will override settings retrieved from local storage
-fetch("../assets/settings.json")
-  .then((res) => res.json())
-  .then((config) => Chunk.set(config));
 
 export default Chunk;

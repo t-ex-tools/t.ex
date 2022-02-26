@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import config from "../../assets/settings.json";
+import config from "../../model/Settings.js";
 
 export default {
   data: () => {
@@ -101,6 +101,10 @@ export default {
     set(evt) {
       this.values[evt.target.name] =
         evt.target.type === "checkbox" ? evt.target.checked : evt.target.value;
+
+      if (config[evt.target.name].handler) {
+        config[evt.target.name].handler(this.values[evt.target.name]);
+      }
 
       chrome.storage.local.set({ settings: this.values }).then(() => {
         chrome.runtime.sendMessage({ settings: this.values });
