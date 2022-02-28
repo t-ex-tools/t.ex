@@ -82,25 +82,22 @@ export default {
           name: "Start",
           component: markRaw(Overview),
         },
-      ].concat(
-        [
-          {
-            path: "/blocklists",
-            name: "Labeling",
-            component: markRaw(Blocklists),
-          },
-          {
-            path: "/website-lists",
-            name: "Website Lists",
-            component: markRaw(WebsiteLists),
-          },
-          {
-            path: "/crawls",
-            name: "Crawls",
-            component: markRaw(Crawls),
-          },
-        ].sort((a, b) => a.name.localeCompare(b.name))
-      ),
+        {
+          path: "/website-lists",
+          name: "Website Lists",
+          component: markRaw(WebsiteLists),
+        },
+        {
+          path: "/crawls",
+          name: "Crawls",
+          component: markRaw(Crawls),
+        },
+        {
+          path: "/blocklists",
+          name: "Labeling",
+          component: markRaw(Blocklists),
+        }                
+      ],
       routes: [],
     };
   },
