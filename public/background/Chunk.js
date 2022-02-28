@@ -21,10 +21,10 @@ var Chunk = (() => {
 
   chrome.runtime
     .onMessage
-    .addListener((msg) => {
+    .addListener((msg, sender, response) => {
 
       if (msg.hasOwnProperty("flush")) {
-        save([...queue.http], [...queue.js]);
+        save([...queue.http], [...queue.js], response);
         queue.http = [];
         queue.js = [];
       }
@@ -35,6 +35,11 @@ var Chunk = (() => {
 
       if (msg.hasOwnProperty("settings")) {
         Chunk.set(msg.settings)
+      }
+
+      if (msg.hasOwnProperty("recording")) {
+        recording = msg.recording;
+        console.debug("Background: Recording set to " + recording)
       }
     });
 
@@ -53,8 +58,12 @@ var Chunk = (() => {
     queue.js = [];
   };
 
-  let save = (http, js) => {
-    let id = Date.now()
+  let save = (http, js, callback) => {
+    let id = Date.now();
+    if (callback) {
+      callback(id);
+    }
+
     let chunk = {
       [id]: {
         http: LZString.compressToUTF16(JSON.stringify(http)),

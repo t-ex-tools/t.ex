@@ -116,11 +116,6 @@ API.elementMethods.forEach((m) => {
   });
 });
 
-let events = [];
 window.addEventListener("js", (e) => {
-  events.push(e.detail);
-});
-
-window.addEventListener("beforeunload", () => {
-  window.dispatchEvent(new CustomEvent("cs", { detail: JSON.stringify(events) }));
+  window.dispatchEvent(new CustomEvent("cs", { detail: e.detail }));
 });

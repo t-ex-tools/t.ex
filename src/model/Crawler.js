@@ -41,7 +41,6 @@ var Crawler = (() => {
     },
     start: function (tag, list) {
       this.getSettings(() => {
-        
         chrome.runtime.sendMessage({ recording: true });
         
         urls = list.urls.split(/\r\n|\r|\n/g);
@@ -62,18 +61,22 @@ var Crawler = (() => {
       });
     },
     end: function () {
-      log.doneAt = Date.now();
-      this.saveLog({ ...log });
-      this.emit();
-
-      chrome.runtime.sendMessage({ recording: false, flush: true });
+      // TODO: to be fixed in Chrome 99 sendMessage() to return Promise
+      chrome.runtime
+        .sendMessage(
+          { recording: false, flush: true },
+          (id) => {
+            log.doneAt = id;
+            this.saveLog({ ...log });
+            this.emit();
+            log = { ...empty };
+          }
+        );
 
       chrome.tabs.onCreated.removeListener(onCreatedRef);
       chrome.tabs.onUpdated.removeListener(onUpdatedRef);
       chrome.tabs.onRemoved.removeListener(onRemovedRef);
       console.debug("Crawler: tab listeners removed.")
-
-      log = { ...empty };
     },
     onCreate: function () {
       log.tabsOpen += 1;
