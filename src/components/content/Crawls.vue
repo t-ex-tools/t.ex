@@ -20,6 +20,20 @@
       </div>
     </div>
 
+    <div
+      v-if="settings.hasOwnProperty('backgroundRecording') && settings.backgroundRecording"
+      class="row mb-3"
+    >
+      <div class="col">
+        <div
+          class="alert alert-warning alert-dismissible fade show"
+          role="alert"
+        >
+          <strong>Background recording is turned on. This may cause noise!</strong>  
+        </div>
+      </div>
+    </div>    
+
     <div class="row mb-3">
       <div class="col">
         <div class="card border-primary">
@@ -190,6 +204,7 @@ export default {
         page: 0,
         window: 5,
       },
+      settings: {}
     }
   },
   computed: {
@@ -217,11 +232,16 @@ export default {
     }
   },
   mounted() {
-    chrome.storage.local.get(["crawls", "lists"])
+    chrome.storage.local.get(["crawls", "lists", "settings"])
       .then((res) => {
         this.crawls = (res.crawls) ? res.crawls : [];
         this.lists = (res.lists) ? res.lists : [];
-      }); 
+        this.settings = (res.settings) ? res.settings : {};
+      });
+
+    this.emitter.on("settings", (cfg) => {
+      this.settings = cfg.settings;
+    });
     
     const self = this;
     window.addEventListener("crawler:log", function(e) {

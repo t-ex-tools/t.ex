@@ -45,6 +45,16 @@ export default {
       limit: 0,
     };
   },
+  mounted() {
+    const self = this;
+    
+    let c = document.getElementById("init-modal-accordion");
+    c.addEventListener("show.bs.collapse", function(e) {
+      if (e.target.id === "item-0") {
+        self.updateLimit();
+      }
+    });
+  },
   methods: {
     updateLimit: function () {
       this.$emit("update-limit", {

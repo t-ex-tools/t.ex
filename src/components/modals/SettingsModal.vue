@@ -106,10 +106,12 @@ export default {
         config[evt.target.name].handler(this.values[evt.target.name]);
       }
 
-      chrome.storage.local.set({ settings: this.values }).then(() => {
-        // TODO: seems not to work
-        chrome.runtime.sendMessage({ settings: this.values });
+      const cfg = { settings: this.values };
+      chrome.storage.local.set(cfg).then(() => {
+        chrome.runtime.sendMessage(cfg);
       });
+
+      this.emitter.emit("settings", cfg);
     },
   },
 };

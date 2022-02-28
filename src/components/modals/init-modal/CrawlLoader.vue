@@ -40,12 +40,28 @@ export default {
     };
   },
   mounted() {
-    chrome.storage.local.get("crawls")
+    const self = this;
+    self.load();
+
+    let elem = document.getElementById("init-modal");
+    elem.addEventListener("show.bs.modal", function() {
+      self.load();
+    });
+
+    let c = document.getElementById("init-modal-accordion");
+    c.addEventListener("show.bs.collapse", function(e) {
+      if (e.target.id === "item-1") {
+        self.updateLimit();
+      }
+    });
+  },
+  methods: {
+    load: function() {
+      chrome.storage.local.get("crawls")
       .then((res) => {
         this.crawls = (res.crawls) ? res.crawls : [];
       });
-  },
-  methods: {
+    },
     updateLimit: function () {
       this.$emit("update-limit", {
         lower: this.crawls[this.selected].startedAt,

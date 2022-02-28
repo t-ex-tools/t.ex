@@ -143,19 +143,25 @@ export default {
       indexes: [],
     };
   },
-  mounted() {
-    chrome.storage.local.get(["indexes", "settings"]).then((res) => {
-      this.indexes = res.indexes ? res.indexes.sort() : [];
-      if (this.indexes.length > 0) {
-        (this.boundaries.upper = Date.now()),
-          (this.boundaries.lower = this.indexes[this.indexes.length - 1]);
-      }
+  mounted() {    
+    chrome.storage.local.get(["indexes", "settings"])
+      .then((res) => {
+        this.setIndexes(res.indexes);
 
-      if (res.settings) {
-        this.chunks.chunksAtOnce = res.settings.hasOwnProperty("chunksAtOnce")
-          ? res.settings.chunksAtOnce
-          : this.chunks.chunksAtOnce;
-      }
+        if (res.settings) {
+          this.chunks.chunksAtOnce = res.settings.hasOwnProperty("chunksAtOnce")
+            ? res.settings.chunksAtOnce
+            : this.chunks.chunksAtOnce;
+        }
+      });
+
+    const self = this;
+    let elem = document.getElementById("init-modal");
+    elem.addEventListener("show.bs.modal", function() {
+      chrome.storage.local.get(["indexes"])
+        .then((res) => {
+          self.setIndexes(res.indexes);
+        });
     });
   },
   methods: {
@@ -177,10 +183,18 @@ export default {
           });
       }
     },
+    setIndexes(indexes) {
+      this.indexes = indexes ? indexes.sort() : [];
+      if (this.indexes.length > 0) {
+        this.boundaries.upper = Date.now();
+        this.boundaries.lower = this.indexes[this.indexes.length - 1];
+      }
+    },
     setBoundaries(boundaries) {
       this.$emit("set-tag", boundaries.dataTag);
       delete boundaries.dataTag;
       this.boundaries = boundaries;
+      console.debug("Boundaries retrieved " + JSON.stringify(this.boundaries));
     },
     handleOk() {
       let i = this.indexes

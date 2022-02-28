@@ -6,6 +6,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import Overview from "./components/content/Overview.vue";
 import { markRaw } from "vue";
 import config from "./model/Settings.js";
+import mitt from "mitt";
 
 chrome.storage.local.get("settings")
   .then((res) => {
@@ -22,4 +23,6 @@ var router = createRouter({ history: createWebHashHistory(), routes: [{
 },] });
 
 app.use(router)
+app.config.globalProperties.emitter = mitt();
+
 app.mount('#app')
