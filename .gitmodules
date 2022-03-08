@@ -1,3 +1,0 @@
-[submodule "app/model/labeler-core"]
-	path = app/model/labeler-core
-	url = git@github.com:t-ex-tools/labeler-core.git
