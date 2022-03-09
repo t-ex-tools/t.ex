@@ -1,10 +1,10 @@
-import LZString from "../libs/lz-string.min.js";
+import LZString from "../js/lz-string.min.js";
 
-import EasyListParser from "../model/labeler-core/EasyListParser.js";
-import EasyListEvaluator from "../model/labeler-core/EasyListEvaluator.js";
-import DisconnectMeParser from "../model/labeler-core/DisconnectMeParser.js";
-import DisconnectMeEvaluator from "../model/labeler-core/DisconnectMeEvaluator.js";
-import BlockList from "../model/labeler-core/BlockList.js";
+import EasyListParser from "../labeler-core/EasyListParser.js";
+import EasyListEvaluator from "../labeler-core/EasyListEvaluator.js";
+import DisconnectMeParser from "../labeler-core/DisconnectMeParser.js";
+import DisconnectMeEvaluator from "../labeler-core/DisconnectMeEvaluator.js";
+import BlockList from "../labeler-core/BlockList.js";
 
 let blocklists = [];
 
@@ -28,6 +28,7 @@ let blocklists = [];
 
 self.addEventListener("message", (msg) => {
   if (msg.data.port && msg.data.data) {
+    console.log("ndijsn")
     let chunks = msg.data.data.filter((chunk) => chunk);
     let numRequests = [];
     chunks.forEach((chunk, index) => {

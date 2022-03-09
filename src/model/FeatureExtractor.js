@@ -46,7 +46,7 @@ var FeatureExtractor = (() => {
 
   return {
     features: () => Object.keys(features),
-    extract: (f) => features[f].impl,
+    extract: (f, d) => features[f].impl(d),
     extractAll: (r) => {
       return Object.entries(features).reduce((acc, value) => {
         acc[value[0]] = value[1].impl(r)

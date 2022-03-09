@@ -5,64 +5,56 @@ var Statistics = (() => {
   let stats = {};
 
   return {
-    push: (chunk, feature, id) => {
-      let keys = Object.keys(stats);
-      if (keys.length === 0) {
-        return;
-      }
-
-      chunk.forEach((r, i) => {
-        let x = FeatureExtractor.extract(feature)(r);
-        (typeof x === "object") ?
+    count: (chunk, feature, id, gi) => {
+      chunk.forEach((d) => {
+        let x = FeatureExtractor.extract(feature, d);
+        if (typeof x === "object") {
           x.forEach((e) => {
             let kv = FeatureExtractor.encode(e);
-            (stats[id].data[feature][kv]) ? 
-              stats[id].data[feature][kv]++ 
+            (stats[id].data[feature][kv]) 
+              ? stats[id].data[feature][kv]++ 
               : stats[id].data[feature][kv] = 1;
           })
-          : (stats[id].data[feature][x]) ?
-            stats[id].data[feature][x]++
+        } else {
+          (stats[id][gi].data[feature][x]) 
+            ? stats[id].data[feature][x]++
             : stats[id].data[feature][x] = 1;
+        }
       });
     },
-    // TODO: new signature
-    //       query(data, groups, feature, id)
-    query: function(filter, feature, id) {
+    query: function(data, groups, feature, id) {
+      /*
       if (stats[id] && stats[id].data[feature]) {
         return {
           get: () => stats[id],
         };
       }
+      */
 
-      let result = {
-        count: 0,
-        query: filter,
-        data: {}
-      };
-      result.data[feature] = {};
-      stats[id] = result;
+      stats[id] = {};
 
-      // TODO: pass data as parameter
-      // let dataSource = data(feature.split(".").shift());
-      Util.labeledStream(dataSource, (chunk, index, total) => {
+      Util.labeledStream(data, (chunk, index, total) => {
         if (chunk) {
-          let fChunk = chunk.filter(filter);
-          result.count += fChunk.length; 
-          this.push(fChunk, feature, id);
+          groups.forEach((g, i) => {
+            let c = chunk.filter(g);
+            if (!stats[id][i]) {
+              stats[id][i] = { count: 0, data: {} };
+            }
+            stats[id][i].count += c.length;
+            console.log(stats[id][i])
+            this.count(c, feature, id, i);
+            console.log(stats[id][i])
+          });
         }
 
-        window.dispatchEvent(new CustomEvent("statistics:update", {
+        window.dispatchEvent(new CustomEvent("statistics:loading:update", {
           detail: {
-            currentChunk: index,
-            numberOfChunks: total
+            loaded: index,
+            total: total
           }
-        }))
+        }));
         
       });
-      
-      return {
-        get: () => result,
-      };
     },
     clear: function(id) {
       delete stats[id];

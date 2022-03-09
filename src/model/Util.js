@@ -1,5 +1,5 @@
 var Util = (() => {
-  let Labeler = new Worker(chrome.runtime.getURL("src/workers/Labeler.js"), { type: "module" });
+  let Labeler = new Worker("../workers/Labeler.js", { type: "module" });
 
   return {
     

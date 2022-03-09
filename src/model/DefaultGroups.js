@@ -6,22 +6,21 @@ let defaultGroups =
     "EasyPrivacy", 
     "Disconnect.me"
   ].map((e, i) => ({
+    id: Util.randomString(),
     label: e,
     members: [{
-      id: Util.randomString(),
       label: "Labeled by",
       filter: (r) => r.labels[i].isLabeled
     }, {
-      id: Util.randomString(),
       label: "Not labeled by",
       filter: (r) => !r.labels[i].isLabeled
     }]
   }));
 
 export default [{
+  id: Util.randomString(),
   label: "All",
   members: [{
-    id: Util.randomString(),
     label: "All http",
     filter: () => true,
   }]}, 

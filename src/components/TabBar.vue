@@ -22,7 +22,17 @@
 import FeatureExtractor from "../model/FeatureExtractor.js";
 
 export default {
-  props: ["groups", "selectedIndex"],
+  props: {
+    groups: {
+      type: Array,
+      default: () => []
+    },
+    selectedIndex: {
+      type: Number,
+      default: () => 0
+    }
+  },
+  emits: ["tabs-changed"],
   data: () => {
     return {
       index: 0,
@@ -37,29 +47,6 @@ export default {
     this.index = this.selectedIndex;
   },
   methods: {
-    // TODO: enable selection from TableChart and BoxPlot
-    addGroup: function (group, featureIndex, value) {
-      let feature = FeatureExtractor.features()[featureIndex];
-      let i = this.selectedIndex;
-
-      let label =
-        group + " - " + FeatureExtractor.info(feature).title + " = " + value;
-
-      let prevFilter = this.groups[i].members.find(
-        (e) => e.label === group
-      ).filter;
-
-      let filter = (r) => {
-        let f = FeatureExtractor.extract(feature)(r);
-        let b =
-          typeof f === "object"
-            ? f.find((e) => FeatureExtractor.encode(e) === value)
-            : f === value;
-        return prevFilter(r) && b;
-      };
-
-      // this.groups.push({label: label, members: [{label: label, filter: filter}]});
-    },
     tabChanged: function (currentTabs, previousTabs) {
       currentTabs.length > previousTabs.length
         ? previousTabs.length > 0
