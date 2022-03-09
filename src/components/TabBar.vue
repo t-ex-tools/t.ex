@@ -2,7 +2,7 @@
   <div>
     <ul class="nav nav-tabs">
       <li
-        v-for="(g, i) in groups"
+        v-for="(q, i) in queries"
         :key="i"
         class="nav-item"
       >
@@ -11,7 +11,7 @@
           aria-current="page"
           href="#"
         >
-          {{ g.label }}
+          {{ q.label }}
         </a>
       </li>
     </ul>
@@ -19,11 +19,9 @@
 </template>
 
 <script>
-import FeatureExtractor from "../model/FeatureExtractor.js";
-
 export default {
   props: {
-    groups: {
+    queries: {
       type: Array,
       default: () => []
     },

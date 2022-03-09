@@ -1,4 +1,4 @@
-import Util from "../model/Util.js";
+import Util from "./Util.js";
 
 let defaultGroups = 
   [

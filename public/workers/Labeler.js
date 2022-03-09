@@ -28,7 +28,6 @@ let blocklists = [];
 
 self.addEventListener("message", (msg) => {
   if (msg.data.port && msg.data.data) {
-    console.log("ndijsn")
     let chunks = msg.data.data.filter((chunk) => chunk);
     let numRequests = [];
     chunks.forEach((chunk, index) => {

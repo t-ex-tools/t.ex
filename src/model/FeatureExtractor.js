@@ -32,7 +32,13 @@ var FeatureExtractor = (() => {
     { label: "Response features", obj: ResponseFeatures },
   ];
 
-  let fromCache = (key, f) => (key = SparkMD5.hash(key),
+  // https://stackoverflow.com/a/8831937
+  // from Mingwei Samuel's comment on Jul 13, 2020 at 8:58
+  let hash = (str) => {
+    return Array.from(str).reduce((hash, char) => 0 | (31 * hash + char.charCodeAt(0)), 0);
+  }
+
+  let fromCache = (key, f) => (key = hash(key),
     (cache[key]) ?
       cache[key] :
       (cache[key] = f(key), cache[key])
