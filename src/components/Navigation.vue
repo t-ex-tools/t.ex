@@ -59,14 +59,6 @@ import { markRaw } from "vue";
 
 export default {
   props: {
-    groups: {
-      type: Array,
-      default: () => []
-    },
-    selectedIndex: {
-      type: Number,
-      default: () => 0
-    },
     dataTag: {
       type: String,
       default: () => ""
@@ -110,18 +102,9 @@ export default {
           name: featureInfo.title,
           component: markRaw(Base),
           props: () => {
-            // NOTE:  When a tab is closed, activate-tab event is fired twice.
-            //        Once with wrong old index and once with corrected index,
-            //        thus the unnecessary check if group exists at index,
-            //        while assuming there is always a group at index = 0.
-            let index = this.groups[this.selectedIndex]
-              ? this.selectedIndex
-              : 0;
             return {
-              queries: this.groups[index].members,
               feature: f,
               featureInfo: featureInfo,
-              tabIndex: index,
               dataTag: this.dataTag,
             };
           },

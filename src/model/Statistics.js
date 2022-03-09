@@ -2,15 +2,11 @@ import FeatureExtractor from "./FeatureExtractor.js";
 import Util from "./Util.js";
 
 var Statistics = (() => {
-  let source = null;
-  let data = {};
+  let stats = {};
 
   return {
-    initialize: function(getData) {
-      source = getData;
-    },
     push: (chunk, feature, id) => {
-      let keys = Object.keys(data);
+      let keys = Object.keys(stats);
       if (keys.length === 0) {
         return;
       }
@@ -20,19 +16,21 @@ var Statistics = (() => {
         (typeof x === "object") ?
           x.forEach((e) => {
             let kv = FeatureExtractor.encode(e);
-            (data[id].data[feature][kv]) ? 
-              data[id].data[feature][kv]++ 
-              : data[id].data[feature][kv] = 1;
+            (stats[id].data[feature][kv]) ? 
+              stats[id].data[feature][kv]++ 
+              : stats[id].data[feature][kv] = 1;
           })
-          : (data[id].data[feature][x]) ?
-            data[id].data[feature][x]++
-            : data[id].data[feature][x] = 1;
+          : (stats[id].data[feature][x]) ?
+            stats[id].data[feature][x]++
+            : stats[id].data[feature][x] = 1;
       });
     },
+    // TODO: new signature
+    //       query(data, groups, feature, id)
     query: function(filter, feature, id) {
-      if (data[id] && data[id].data[feature]) {
+      if (stats[id] && stats[id].data[feature]) {
         return {
-          get: () => data[id],
+          get: () => stats[id],
         };
       }
 
@@ -42,9 +40,10 @@ var Statistics = (() => {
         data: {}
       };
       result.data[feature] = {};
-      data[id] = result;
+      stats[id] = result;
 
-      let dataSource = source(feature.split(".")[0]);
+      // TODO: pass data as parameter
+      // let dataSource = data(feature.split(".").shift());
       Util.labeledStream(dataSource, (chunk, index, total) => {
         if (chunk) {
           let fChunk = chunk.filter(filter);
@@ -66,7 +65,7 @@ var Statistics = (() => {
       };
     },
     clear: function(id) {
-      delete data[id];
+      delete stats[id];
     },
     total: function(data) {
       return data.reduce((acc, val) => acc += val, 0);

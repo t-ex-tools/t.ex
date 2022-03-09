@@ -93,7 +93,8 @@ var Chunk = (() => {
         queue[type] = queue[type].concat(data);
       }
       
-      if (queue.http.length % 100 === 0) {
+      if (queue.http.length % 100 === 0 &&
+          queue.http.length > 0) {
         console.debug("Queue size: " + queue.http.length);
       }
       if (settings.chunkSize <= queue.http.length) {

@@ -1,28 +1,7 @@
 var Util = (() => {
   let Labeler = new Worker(chrome.runtime.getURL("src/workers/Labeler.js"), { type: "module" });
-  let Decompressor = new Worker(chrome.runtime.getURL("src/workers/Decompressor.js"), { type: "module" });
-
-  let load = (() => {})();
 
   return {
-    domainName: (hostname) => 
-      hostname
-        .split(".")
-        .slice(-2)
-        .join("."),
-
-    isTracker: (hostname, dataset) => 
-      typeof dataset[Util.domainName(hostname)] !== "undefined",
-
-    stream: (data, handler) => {
-      let port = Util.randomString();
-      Decompressor.postMessage({port: port, data: data});
-      Decompressor.addEventListener("message", (msg) => {
-        if (msg.data.port === port && msg.data.chunk) {
-          handler(msg.data.chunk, msg.data.currentChunk, msg.data.numberOfChunks);
-        }
-      })
-    },
     
     labeledStream: (data, handler) => {
       let port = Util.randomString();
@@ -32,33 +11,6 @@ var Util = (() => {
           handler(msg.data.chunk, msg.data.currentChunk, msg.data.numberOfChunks);
         }
       })
-    },
-
-    toJsLiteral: (results, labels, totals, colType) => {
-      let d = Object.entries(results.reduce((acc, col, index) => {
-        Object.keys(col || {}).forEach((key) => {
-          (!acc[key]) ? acc[key] = new Array(results.length).fill(0) : null;
-          acc[key][index] = col[key];
-        })
-        return acc;
-      }, {})).map((e) => [e[0], ...e[1]]);
-
-      return {
-        cols: [{
-          id: "feature", 
-          label: "Feature", 
-          type: (colType) ? colType : "string"
-        }, 
-          ...labels.map((f) => ({id: f, label: f, type: "number"}))
-        ],
-        rows: d.map((e) => ({
-          c: e.map((v, i) => 
-            (i > 0) ? 
-              (totals[i-1] > 0) ? {v: v * 100 / totals[i-1]} : {v: 0} 
-            : {v: v})
-          })
-        ),
-      };
     },
 
     // NOTE:  taken from SO -> https://stackoverflow.com/a/8084248

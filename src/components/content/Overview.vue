@@ -18,14 +18,14 @@
           </div>
           <div class="col-md-11">
             <div class="card-body">
-              <h5 class="card-title">
+              <h5 class="card-title fw-bold">
                 Data collection
               </h5>
               <p class="card-text">
                 You can use T.EX to collect data by specifying
                 <router-link to="/website-lists">
                   lists of websites
-                </router-link> 
+                </router-link>
                 to be
                 <router-link to="/crawls">
                   crawled.

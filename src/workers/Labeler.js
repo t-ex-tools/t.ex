@@ -1,4 +1,4 @@
-import LZString from "../libraries/lz-string/lz-string.min.js";
+import LZString from "../libs/lz-string.min.js";
 
 import EasyListParser from "../model/labeler-core/EasyListParser.js";
 import EasyListEvaluator from "../model/labeler-core/EasyListEvaluator.js";
