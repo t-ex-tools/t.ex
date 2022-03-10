@@ -11,27 +11,26 @@ var Statistics = (() => {
         if (typeof x === "object") {
           x.forEach((e, j, arr) => {
             let kv = FeatureExtractor.encode(e);
-            (stats[id][gi].data[feature][kv]) 
-              ? stats[id][gi].data[feature][kv]++ 
+            (stats[id][gi].data[feature][kv])
+              ? stats[id][gi].data[feature][kv]++
               : stats[id][gi].data[feature][kv] = 1;
 
-            if (j === arr.length-1 &&
-                i === array.length-1) {
-                  fn(stats[id]);
-                }
+            if (j === arr.length - 1) {
+              fn(stats[id]);
+            }
           });
         } else {
-          (stats[id][gi].data[feature][x]) 
+          (stats[id][gi].data[feature][x])
             ? stats[id][gi].data[feature][x]++
             : stats[id][gi].data[feature][x] = 1;
 
-          if (i === array.length-1) {
+          if (i === array.length - 1) {
             fn(stats[id]);
           }
         }
       });
     },
-    query: function(data, query, feature, callback) {
+    query: function (data, query, feature, callback) {
 
       stats[query.id] = {};
 
@@ -54,6 +53,9 @@ var Statistics = (() => {
           }
         }));
       });
+    },
+    total: function(data) {
+      return data.reduce((acc, val) => acc += val, 0);
     }
   };
 })();

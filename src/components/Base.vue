@@ -155,7 +155,9 @@ export default {
         Object.values(this.http),
         this.queries.default[this.queries.selected],
         this.feature,
-        (data) => this.data = data
+        (data) => {
+          this.data = data;
+        }
       );
     }
   },
