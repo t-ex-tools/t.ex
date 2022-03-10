@@ -1,10 +1,14 @@
 <template>
-  <div class="pb-5">
+  <div>
     <div class="row">
       <div class="col">
         <div class="card card-body mb-3">
-          <div class="fw-bold">{{ featureInfo.title }}</div>
-          <div>{{ featureInfo.subtitle }}</div>
+          <div class="fw-bold">
+            {{ featureInfo.title }}
+          </div>
+          <div>
+            {{ featureInfo.subtitle }}
+          </div>
         </div>
       </div>
     </div>    
@@ -19,7 +23,10 @@
     </div>
     <div class="row mb-3">
       <div class="col">
-        <div v-if="loading.isLoading" class="progress">
+        <div 
+          v-if="loading.isLoading" 
+          class="progress"
+        >
           <div
             class="progress-bar bg-primary"
             :style="'width: ' + percent + '%'"
@@ -38,8 +45,7 @@
         <data-table
           :headings="headings()"
           :items="table(data)"
-        >
-        </data-table>
+        />
       </div>
     </div>
   </div>

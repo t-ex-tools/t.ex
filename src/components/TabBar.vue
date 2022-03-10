@@ -1,6 +1,9 @@
 <template>
   <div>
-    <ul class="nav nav-tabs" role="tablist">
+    <ul 
+      class="nav nav-tabs" 
+      role="tablist"
+    >
       <li
         v-for="(q, i) in queries"
         :key="i"

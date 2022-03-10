@@ -1,9 +1,14 @@
 <template>
-  <div v-if="items.length > 0" class="table-responsive">
+  <div 
+    v-if="items.length > 0" 
+    class="table-responsive"
+  >
     <table class="table table-sm table-hover align-middle">
       <thead>
         <tr>
-          <th scope="col">Value</th>
+          <th scope="col">
+            Value
+          </th>
           <th 
             v-for="heading, index in headings"
             :key="index"
