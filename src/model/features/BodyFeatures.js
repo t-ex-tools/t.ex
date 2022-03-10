@@ -4,7 +4,7 @@ import Statistics from "../Statistics.js";
 var BodyFeatures = (() => {
 
   let extractBody = (r) => (r.requestBody) ?
-    FeatureExtractor.cache(SparkMD5.hash(JSON.stringify(r.requestBody)),
+    FeatureExtractor.cache(FeatureExtractor.hash(JSON.stringify(r.requestBody)),
       () => (r.requestBody) ?
         (r.requestBody.raw) ?
           [["raw", new TextDecoder("utf-8").decode(r.requestBody.raw.bytes)]]

@@ -1,18 +1,24 @@
 <template>
   <div class="pb-5">
-    <div v-if="Object.values(data) === 0" class="row">
+    <div class="row">
       <div class="col">
-        <div class="card card-body m-2">No results found.</div>
+        <div class="card card-body mb-3">
+          <div class="fw-bold">{{ featureInfo.title }}</div>
+          <div>{{ featureInfo.subtitle }}</div>
+        </div>
       </div>
-    </div>
-    <div v-else class="row">
+    </div>    
+    <div class="row">
       <div class="col">
         <tab-bar
           :queries="queries.default"
           :selected-index="queries.selected"
-          @tabs-changed="() => null"
-          @tab-removed="() => null"
+          @tabs-changed="(i) => queries.selected = i"
         />
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col">
         <div v-if="loading.isLoading" class="progress">
           <div
             class="progress-bar bg-primary"
@@ -25,9 +31,15 @@
             {{ percent }}%
           </div>
         </div>
-        <div>
-          {{ JSON.stringify(table) }}
-        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <data-table
+          :headings="headings()"
+          :items="table(data)"
+        >
+        </data-table>
       </div>
     </div>
   </div>
@@ -37,12 +49,14 @@
 import Statistics from "../model/Statistics.js";
 import DefaultQueries from "../model/DefaultQueries.js";
 import TabBar from "./TabBar.vue";
+import DataTable from "./DataTable.vue";
 
 const empty = { isLoading: false, loaded: 0, total: 0 };
 
 export default {
   components: {
     TabBar,
+    DataTable
   },
   props: {
     http: {
@@ -79,6 +93,38 @@ export default {
   computed: {
     percent() {
       return Math.round((this.loading.loaded / this.loading.total) * 100);
+    }
+  },
+  watch: {
+    feature: {
+      immediate: true,
+      handler: function () {
+        this.data = {};
+        this.query();
+      }
+    },
+    queries: {
+      deep: true,
+      handler: function() {
+        this.data = {};
+        this.query();
+      }
+    }
+  },
+  mounted() {
+    window.addEventListener("statistics:loading:update", (e) => {
+      if (e.detail.loaded === e.detail.total) {
+        this.loading = { ...empty };
+      } else {
+        this.loading.isLoading = true;
+        this.loading.loaded = e.detail.loaded;
+        this.loading.total = e.detail.total;
+      }
+    });
+  },
+  methods: {
+    headings() {
+      return this.queries.default[this.queries.selected].members.map((e) => e.label);
     },
     table() {
       let rows = Object
@@ -97,32 +143,15 @@ export default {
             );
           return [e, ...v];
         });
+    },
+    query() {
+      Statistics.query(
+        Object.values(this.http),
+        this.queries.default[this.queries.selected],
+        this.feature,
+        (data) => this.data = data
+      );
     }
   },
-  watch: {
-    feature: {
-      immediate: true,
-      handler: function (n) {
-        Statistics.query(
-          Object.values(this.http),
-          this.queries.default[this.queries.selected],
-          n,
-          (data) => this.data = data
-        );
-      },
-    },
-  },
-  mounted() {
-    window.addEventListener("statistics:loading:update", (e) => {
-      if (e.detail.loaded === e.detail.total) {
-        this.loading = { ...empty };
-      } else {
-        this.loading.isLoading = true;
-        this.loading.loaded = e.detail.loaded;
-        this.loading.total = e.detail.total;
-      }
-    });
-  },
-  methods: { },
 };
 </script>

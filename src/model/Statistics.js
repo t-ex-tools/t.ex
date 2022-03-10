@@ -5,20 +5,29 @@ var Statistics = (() => {
   let stats = {};
 
   return {
-    count: (c, feature, id, gi) => {
-      c.forEach((d) => {
+    count: (c, feature, id, gi, fn) => {
+      c.forEach((d, i, array) => {
         let x = FeatureExtractor.extract(feature, d);
         if (typeof x === "object") {
-          x.forEach((e) => {
+          x.forEach((e, j, arr) => {
             let kv = FeatureExtractor.encode(e);
             (stats[id][gi].data[feature][kv]) 
               ? stats[id][gi].data[feature][kv]++ 
               : stats[id][gi].data[feature][kv] = 1;
-          })
+
+            if (j === arr.length-1 &&
+                i === array.length-1) {
+                  fn(stats[id]);
+                }
+          });
         } else {
           (stats[id][gi].data[feature][x]) 
             ? stats[id][gi].data[feature][x]++
             : stats[id][gi].data[feature][x] = 1;
+
+          if (i === array.length-1) {
+            fn(stats[id]);
+          }
         }
       });
     },
@@ -34,10 +43,7 @@ var Statistics = (() => {
               stats[query.id][i] = { count: 0, data: { [feature]: {} } };
             }
             stats[query.id][i].count += c.length;
-            this.count(c, feature, query.id, i);
-            if (i === arr.length-1) {
-              callback(stats[query.id]);
-            }
+            this.count(c, feature, query.id, i, callback);
           });
         }
 

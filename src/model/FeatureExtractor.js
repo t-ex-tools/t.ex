@@ -83,6 +83,7 @@ var FeatureExtractor = (() => {
     encode: (e) => (typeof e === "object") ? e[0] + ": " + e[1] : e,
     cache: fromCache,
     lengths: extractLengths,
+    hash: hash
   };
 })();
 

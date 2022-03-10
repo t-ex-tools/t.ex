@@ -1,18 +1,20 @@
 <template>
   <div>
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs" role="tablist">
       <li
         v-for="(q, i) in queries"
         :key="i"
         class="nav-item"
+        role="presentation"
       >
-        <a
-          class="nav-link active"
+        <button
+          :class="{ 'nav-link': true, 'active': i === selectedIndex}"
           aria-current="page"
-          href="#"
+          role="tab"
+          @click="$emit('tabs-changed', i)"
         >
           {{ q.label }}
-        </a>
+        </button>
       </li>
     </ul>
   </div>
@@ -30,31 +32,7 @@ export default {
       default: () => 0
     }
   },
-  emits: ["tabs-changed"],
-  data: () => {
-    return {
-      index: 0,
-    };
-  },
-  watch: {
-    index: function (newIndex) {
-      this.$emit("tabs-changed", newIndex);
-    },
-  },
-  created() {
-    this.index = this.selectedIndex;
-  },
-  methods: {
-    tabChanged: function (currentTabs, previousTabs) {
-      currentTabs.length > previousTabs.length
-        ? previousTabs.length > 0
-          ? (this.index = currentTabs.length - 1)
-          : (this.index = 0)
-        : null;
-
-      this.$emit("tabs-changed", this.index);
-    },
-  },
+  emits: ["tabs-changed"]
 };
 </script>
 
