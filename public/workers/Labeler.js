@@ -6,6 +6,7 @@ import DisconnectMeParser from "../labeler-core/DisconnectMeParser.js";
 import DisconnectMeEvaluator from "../labeler-core/DisconnectMeEvaluator.js";
 import BlockList from "../labeler-core/BlockList.js";
 
+let cache = [];
 let blocklists = [];
 
 [{
@@ -27,24 +28,53 @@ let blocklists = [];
 });
 
 self.addEventListener("message", (msg) => {
-  if (msg.data.port && msg.data.data) {
-    let chunks = msg.data.data.filter((chunk) => chunk);
-    let numRequests = [];
-    chunks.forEach((chunk, index) => {
-      let pChunk = JSON.parse(LZString.decompressFromUTF16(chunk));
-      (index === 0) ?
-        numRequests = new Array(chunks.length).fill(pChunk.length)
-        : numRequests[index] = pChunk.length;
-      pChunk.forEach((request, i) => {
-        // TODO: only a requested blocklist
-        request.labels = blocklists.map((e) => e.isLabeled(request));
+
+  if (!msg.data.port || !msg.data.chunks) {
+    return;
+  }
+
+  let n = [];
+  msg.data.chunks
+    .forEach((chunk, index) => {
+      if (cache[index]) {
+        
         self.postMessage({
           port: msg.data.port, 
-          chunk: (i === pChunk.length-1) ? pChunk : null,
-          currentChunk: numRequests.slice(0, index).reduce((acc, val) => acc + val, 0) + i+1,
-          numberOfChunks: numRequests.reduce((acc, val) => acc + val, 0),
-        });        
-      });
-    })
-  }
+          chunk: cache[index],
+          loaded: cache[index].length,
+          total: cache[index].length,
+        });
+
+      } else {
+
+        let d = JSON.parse(LZString.decompressFromUTF16(chunk));
+
+        if (index === 0) {
+          n = new Array(msg.data.chunks.length).fill(d.length)
+        } else {
+          n[index] = d.length;
+        }
+        
+        d.forEach((r, i) => {
+          // TODO: only activated blocklists
+          // TODO: how to label JS?
+          // TODO: how to label other data sources? 
+          // TODO: where does this info come from?
+          r.labels = blocklists.map((e) => e.isLabeled(r));
+          
+          // TODO: caching can cause OutOfMemory
+          if (i === d.length-1) {
+            cache[index] = d;
+          }
+  
+          self.postMessage({
+            port: msg.data.port,
+            chunk: (i === d.length-1) ? d : null,
+            loaded: n.slice(0, index).reduce((acc, val) => acc + val, 0) + i+1,
+            total: n.reduce((acc, val) => acc + val, 0),
+          });
+        });
+
+      }
+    });
 });

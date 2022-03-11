@@ -3,6 +3,7 @@
     v-if="items.length > 0" 
     class="table-responsive"
   >
+    <!-- TODO: CSV Export of table -->
     <table class="table table-sm table-hover align-middle">
       <thead>
         <tr>
@@ -27,9 +28,15 @@
           <td
             v-for="col, idx in row"
             :key="idx"
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            :title="col"
           >
-            <!-- TODO: more intelligent solution -->
-            {{ (idx === 0) ? col.slice(0, 64) : col }}
+            {{ 
+              (idx === 0 && col.length >= view.max) 
+                ? col.slice(0, view.max) + " ..."
+                : col 
+            }}
           </td>
         </tr>
       </tbody>
@@ -73,6 +80,7 @@ export default {
       view: {
         page: 0,
         window: 15,
+        max: 64
       },
     };
   },
@@ -91,13 +99,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-table {
-  table-layout: fixed;
-}
-
-table td {
-  overflow-x: hidden;
-}
-</style>

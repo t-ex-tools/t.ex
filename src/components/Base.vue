@@ -144,15 +144,15 @@ export default {
             .values(this.data)
             .map((el) => 
               (el.data[this.feature][e])
-              ? el.data[this.feature][e]
-              : 0
+                ? el.data[this.feature][e]
+                : 0
             );
           return [e, ...v];
         });
     },
     query() {
       Statistics.query(
-        Object.values(this.http),
+        Object.values(this.http), // TODO: for some features this.js
         this.queries.default[this.queries.selected],
         this.feature,
         (data) => {
