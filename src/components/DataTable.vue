@@ -7,13 +7,17 @@
     <table class="table table-sm table-hover align-middle">
       <thead>
         <tr>
-          <th scope="col">
+          <th 
+            scope="col"
+            @click="sort"
+          >
             Value
           </th>
           <th 
             v-for="heading, index in headings"
             :key="index"
             scope="col"
+            @click="sort"
           >
             {{ heading }}
           </th>
@@ -80,7 +84,11 @@ export default {
       view: {
         page: 0,
         window: 15,
-        max: 64
+        max: 64,
+        sort: {
+          by: 0,
+          asc: true
+        }
       },
     };
   },
@@ -92,10 +100,44 @@ export default {
       return this.items.length <= ((this.view.page + 1) * this.view.window);
     },
     page() {
-      return this.items.slice(this.view.page * this.view.window, (this.view.page + 1) * this.view.window);
+      return [...this.items]
+        .sort((a, b) => 
+          (this.view.sort.by === 0)
+            ? this.sortString(a, b)
+            : this.sortNumber(a, b)
+        )
+        .slice(
+          this.view.page * this.view.window, 
+          (this.view.page + 1) * this.view.window
+        );
     }
   },
   methods: {
+    sort(e) {
+      this.view.page = 0;
+      if (this.view.sort.by === e.target.cellIndex) {
+        this.view.sort.asc = !this.view.sort.asc
+      } else {
+        this.view.sort.by = e.target.cellIndex;
+        this.view.sort.asc = true;
+      }
+    },
+    sortString(a, b) {
+      return (this.view.sort.asc)
+        ? a[this.view.sort.by].localeCompare(b[this.view.sort.by])
+        : b[this.view.sort.by].localeCompare(a[this.view.sort.by]);
+    },
+    sortNumber(a, b) {
+      return (this.view.sort.asc) 
+        ? a[this.view.sort.by] - b[this.view.sort.by]
+        : b[this.view.sort.by] - a[this.view.sort.by];
+    }
   },
 };
 </script>
+
+<style scoped>
+th {
+  cursor: pointer;
+}
+</style>
