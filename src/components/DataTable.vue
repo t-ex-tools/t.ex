@@ -8,18 +8,20 @@
       <thead>
         <tr>
           <th 
-            scope="col"
-            @click="sort"
-          >
-            Value
-          </th>
-          <th 
-            v-for="heading, index in headings"
+            v-for="heading, index in thead"
             :key="index"
             scope="col"
             @click="sort"
           >
             {{ heading }}
+            <i
+              v-if="view.sort.by === index" 
+              :class="{
+                'bi': true,
+                'bi-caret-up-fill': view.sort.asc,
+                'bi-caret-down-fill': !view.sort.asc
+              }"
+            />
           </th>
         </tr>
       </thead>
@@ -98,6 +100,9 @@ export default {
     },
     last() {
       return this.items.length <= ((this.view.page + 1) * this.view.window);
+    },
+    thead() {
+      return ["Value"].concat(this.headings);
     },
     page() {
       return [...this.items]
