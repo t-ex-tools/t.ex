@@ -6,7 +6,7 @@ import DisconnectMeParser from "../labeler-core/DisconnectMeParser.js";
 import DisconnectMeEvaluator from "../labeler-core/DisconnectMeEvaluator.js";
 import BlockList from "../labeler-core/BlockList.js";
 
-let cache = [];
+let cache = {};
 let blocklists = [];
 
 [{
@@ -29,24 +29,27 @@ let blocklists = [];
 
 self.addEventListener("message", (msg) => {
 
-  if (!msg.data.port || !msg.data.chunks) {
-    return;
+  if (!msg.data.port || 
+      !msg.data.chunks ||
+      !msg.data.type) {
+        return;
   }
 
   let n = [];
   msg.data.chunks
     .forEach((chunk, index) => {
-      if (cache[index]) {
-        
+
+      if (cache[msg.data.type] && 
+          cache[msg.data.type][index]) {
+      
         self.postMessage({
           port: msg.data.port, 
-          chunk: cache[index],
-          loaded: cache[index].length,
-          total: cache[index].length,
+          chunk: cache[msg.data.type][index],
+          loaded: cache[msg.data.type][index].length,
+          total: cache[msg.data.type][index].length,
         });
 
       } else {
-
         let d = JSON.parse(LZString.decompressFromUTF16(chunk));
 
         if (index === 0) {
@@ -56,15 +59,18 @@ self.addEventListener("message", (msg) => {
         }
         
         d.forEach((r, i) => {
-          // TODO: only activated blocklists
-          // TODO: how to label JS?
-          // TODO: how to label other data sources? 
-          // TODO: where does this info come from?
+          if (r === null) {
+            return;
+          }
+
           r.labels = blocklists.map((e) => e.isLabeled(r));
           
           // TODO: caching can cause OutOfMemory
           if (i === d.length-1) {
-            cache[index] = d;
+            if (!cache[msg.data.type]) {
+              cache[msg.data.type] = [];
+            }
+            cache[msg.data.type][index] = d;
           }
   
           self.postMessage({

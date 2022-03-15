@@ -49,14 +49,7 @@ var JsFeatures = (() => {
     "js.script.url": { 
       title: "Script URL", 
       subtitle: "The script that initiated the operation.",
-      impl: (js) => (js.stack[0]) ? script(js.stack[0]) : "", 
-      lom: 1,
-      cardinalityType: 0,
-    },
-    "js.stack": { 
-      title: "Stack", 
-      subtitle: "The call-stack of the property accessed or the method called through the interface.",
-      impl: (js) => [...js.stack.entries()],
+      impl: (js) => (js.url) ? script(js.url) : "", 
       lom: 1,
       cardinalityType: 0,
     },

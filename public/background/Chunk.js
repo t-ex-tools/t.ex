@@ -31,6 +31,7 @@ var Chunk = (() => {
 
       if (msg.hasOwnProperty("js")) {
         Chunk.add("js", msg.js);
+        response();
       }
 
       if (msg.hasOwnProperty("settings")) {

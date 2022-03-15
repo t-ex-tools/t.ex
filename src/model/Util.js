@@ -3,10 +3,14 @@ var Util = (() => {
 
   return {
     
-    labeledStream: (chunks, handler) => {
+    labeledStream: (chunks, type, handler) => {
       let port = Util.randomString();
       
-      Labeler.postMessage({ port: port, chunks: chunks });
+      Labeler.postMessage({ 
+        port: port, 
+        chunks: chunks, 
+        type: type 
+      });
 
       Labeler.addEventListener("message", (msg) => {
         if (msg.data.port === port) {

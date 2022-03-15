@@ -30,11 +30,11 @@ var Statistics = (() => {
         }
       });
     },
-    query: function (data, query, feature, callback) {
+    query: function (data, type, query, feature, callback) {
 
       stats[query.id] = {};
 
-      Util.labeledStream(data, (chunk, index, total) => {
+      Util.labeledStream(data, type, (chunk, index, total) => {
         if (chunk) {
           query.members.forEach((g, i, arr) => {
             let c = chunk.filter(g.filter);

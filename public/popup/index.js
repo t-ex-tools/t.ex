@@ -1,19 +1,5 @@
-import Vue from "../libraries/vue.js/vue.js"
+document.getElementById("app-btn").onclick = () => 
+  chrome.tabs.create({url: chrome.runtime.getURL("index.html")});
 
-var vm = new Vue({
-  el: "#app",
-  components: {
-  },
-  data: function() {
-return {
-  };
-},
-  mounted() {
-  },
-  methods: {
-    openApp: () => chrome.tabs.create({url: chrome.extension.getURL("app/index.html")}),
-    flushRequests: function() {
-      chrome.runtime.sendMessage({flush: true});
-    },
-  }
-});
+document.getElementById("flush-btn").onclick = () => 
+  chrome.runtime.sendMessage({ flush: true });

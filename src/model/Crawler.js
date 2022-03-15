@@ -110,11 +110,18 @@ var Crawler = (() => {
     },
     closeTab: (tabId, delay) => {
       setTimeout(() => {
-        chrome.tabs.get(tabId, () => {
-          if (!chrome.runtime.lastError) { 
-            chrome.tabs.remove(tabId);
+        chrome.tabs.sendMessage(
+          tabId,
+          { "close": true },
+          {},
+          (msg) => {
+            chrome.tabs.get(tabId, () => {
+              if (!chrome.runtime.lastError) { 
+                chrome.tabs.remove(tabId);
+              }
+            });    
           }
-        });
+        );
       }, delay * 1000);
     },
     url: function (domain) {

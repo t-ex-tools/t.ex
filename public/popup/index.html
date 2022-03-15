@@ -1,29 +1,27 @@
 <!doctype html>
 <html lang="en" class="h-100">
   <head>
-    <link rel="stylesheet" href="../app/libraries/bootstrap/bootstrap.min.css"/>
-    <link rel="stylesheet" href="../app/libraries/bootstrap-vue/bootstrap-vue.css"/>
+    <link rel="stylesheet" href="../css/bootstrap.min.css"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <style>
-      body {width: 320px;}
+      body { width: 320px; }
     </style>
   </head>
-  <body class="h-100" :onunload="flushRequests()">
-    <div id="app" class="h-100">
+  <body class="h-100">
+    <div class="h-100">
 
       <div class="container-fluid h-100">
         <div class="row h-100">
-          <div class="col pt-3">
-            <b-list-group class="mb-3">
-              <b-list-group-item button @click="openApp()">Open t.EX</b-list-group-item>
-              <b-list-group-item button @click="flushRequests()">Flush http queue</b-list-group-item>
-            </b-list-group>
+          <div class="col">
+            <div class="list-group py-3">
+              <a id="app-btn" href="#" class="list-group-item">Open T.EX</a>
+              <a id="flush-btn" href="#" class="list-group-item">Flush Queue</a>
+            </div>
           </div>
         </div>
       </div>
       
     </div>
-    <script src="../app/libraries/vue.js/vue.js"></script>
     <script type="module" src="index.js"></script>
   </body>
 </html>

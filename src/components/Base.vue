@@ -130,7 +130,10 @@ export default {
   },
   methods: {
     headings() {
-      return this.queries.default[this.queries.selected].members.map((e) => e.label);
+      return this.queries
+        .default[this.queries.selected]
+        .members
+          .map((e) => e.label);
     },
     table() {
       let rows = Object
@@ -151,8 +154,11 @@ export default {
         });
     },
     query() {
+      let type = this.feature.split(".")[0];
+
       Statistics.query(
-        Object.values(this.http), // TODO: for some features this.js
+        Object.values(this[type]),
+        type,
         this.queries.default[this.queries.selected],
         this.feature,
         (data) => {

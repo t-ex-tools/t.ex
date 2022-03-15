@@ -12,29 +12,23 @@ let inject = (w) => {
         get: function () {
           let result = pd.get.apply(this);
           window.dispatchEvent(new CustomEvent("js", {
-            detail: {
+            detail: evt({
               interface: api.label,
               property: p,
               method: "get",
-              result: result,
-              stack: parseStack((new Error()).stack),
-              url: window.location.href,
-              timeStamp: Date.now()
-            }
+              result: result
+            })
           }));
           return result;
         },
         set: function () {
           window.dispatchEvent(new CustomEvent("js", {
-            detail: {
+            detail: evt({
               interface: api.label,
               property: p,
               method: "set",
-              arguments: arguments,
-              stack: parseStack((new Error()).stack),
-              url: window.location.href,
-              timeStamp: Date.now()
-            }
+              arguments: arguments
+            })
           }));
           pd.set.apply(this, arguments);
         }
@@ -51,15 +45,12 @@ let inject = (w) => {
         value: function () {
           let result = om.apply(this, arguments);
           window.dispatchEvent(new CustomEvent("js", {
-            detail: {
+            detail: evt({ 
               interface: api.label,
               method: m,
               arguments: arguments,
-              result: result,
-              stack: parseStack((new Error()).stack),
-              url: window.location.href,
-              timeStamp: Date.now()
-            }
+              result: result
+            })
           }));
           return result;
         }
@@ -87,7 +78,17 @@ let parseStack = (stack) => {
       let url = s.split(":");
       return url[0] + ":" + url[1];
     }))
-  ] : [];
+  ][0] : null;
+};
+
+let evt = (e) => {
+  let url = parseStack((new Error()).stack);
+  return Object.assign({
+    url: (url) ? url : window.location.href,
+    source: window.location.href,
+    type: "script",
+    timeStamp: Date.now()
+  }, e);
 };
 
 try {
