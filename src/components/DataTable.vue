@@ -8,7 +8,7 @@
       <thead>
         <tr>
           <th 
-            v-for="heading, index in thead"
+            v-for="heading, index in headings"
             :key="index"
             scope="col"
             @click="sort"
@@ -100,9 +100,6 @@ export default {
     },
     last() {
       return this.items.length <= ((this.view.page + 1) * this.view.window);
-    },
-    thead() {
-      return ["Value"].concat(this.headings);
     },
     page() {
       return [...this.items]

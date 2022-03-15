@@ -11,8 +11,42 @@
           </div>
         </div>
       </div>
+    </div>
+    <div
+      v-if="noData"
+      class="row mb-3"
+    >
+      <div class="col">
+        <div
+          class="alert alert-warning alert-dismissible fade show"
+          role="alert"
+        >
+          <strong>
+            No data loaded yet. Use the <b>Load data</b> 
+            button at the top right to load data.
+          </strong>  
+        </div>
+      </div>
     </div>    
-    <div class="row">
+    <div 
+      v-if="!noData"
+      class="row"
+    >
+      <div class="col">
+        <button
+          class="btn btn-outline-light float-end"
+          type="button"
+          @click="download"
+        >
+          <i class="bi bi-table me-2" />
+          <small>Export CSV</small>
+        </button>        
+      </div>
+    </div>
+    <div 
+      v-if="!noData"
+      class="row"
+    >
       <div class="col">
         <tab-bar
           :queries="queries.default"
@@ -43,8 +77,8 @@
     <div class="row">
       <div class="col">
         <data-table
-          :headings="headings()"
-          :items="table(data)"
+          :headings="headings"
+          :items="table"
         />
       </div>
     </div>
@@ -72,7 +106,7 @@ export default {
     js: {
       type: Array,
       default: () => [],
-    },
+    },   
     feature: {
       type: String,
       default: () => "",
@@ -81,7 +115,7 @@ export default {
       type: Object,
       default: () => {},
     },
-    tag: {
+    dataTag: {
       type: String,
       default: () => "",
     },
@@ -97,43 +131,20 @@ export default {
     };
   },
   computed: {
+    noData() {
+      return Object.values(this.http).length === 0 && 
+        Object.values(this.js).length === 0;
+    },
     percent() {
       return Math.round((this.loading.loaded / this.loading.total) * 100);
-    }
-  },
-  watch: {
-    feature: {
-      immediate: true,
-      handler: function () {
-        this.data = {};
-        this.query();
-      }
     },
-    queries: {
-      deep: true,
-      handler: function() {
-        this.data = {};
-        this.query();
-      }
-    }
-  },
-  mounted() {
-    window.addEventListener("statistics:loading:update", (e) => {
-      if (e.detail.loaded === e.detail.total) {
-        this.loading = { ...empty };
-      } else {
-        this.loading.isLoading = true;
-        this.loading.loaded = e.detail.loaded;
-        this.loading.total = e.detail.total;
-      }
-    });
-  },
-  methods: {
     headings() {
-      return this.queries
+      return ["Value"].concat(
+        this.queries
         .default[this.queries.selected]
         .members
-          .map((e) => e.label);
+          .map((e) => e.label)
+      );
     },
     table() {
       let rows = Object
@@ -153,6 +164,49 @@ export default {
           return [e, ...v];
         });
     },
+  },
+  watch: {
+    http: {
+      deep: true,
+      handler: function() {
+        this.reset();
+      }
+    },
+    js: {
+      deep: true,
+      handler: function() {
+        this.reset();
+      }
+    },        
+    feature: {
+      immediate: true,
+      handler: function() {
+        this.reset();
+      }
+    },
+    queries: {
+      deep: true,
+      handler: function() {
+        this.reset();
+      }
+    }
+  },
+  mounted() {
+    window.addEventListener("statistics:loading:update", (e) => {
+      if (e.detail.loaded === e.detail.total) {
+        this.loading = { ...empty };
+      } else {
+        this.loading.isLoading = true;
+        this.loading.loaded = e.detail.loaded;
+        this.loading.total = e.detail.total;
+      }
+    });
+  },
+  methods: {
+    reset() {
+      this.data = {};
+      this.query();      
+    },
     query() {
       let type = this.feature.split(".")[0];
 
@@ -165,6 +219,30 @@ export default {
           this.data = data;
         }
       );
+    },
+    download() {
+      let csv = [this.headings]
+        .concat(this.table)
+        .map((row) => {
+          return row
+            .map((h) => '"' + h.toString().replace(/"/g, '\\\"') + '"')
+            .join(",");
+        })
+        .join("\n");
+
+      chrome.downloads.download({
+        filename: 
+          this.dataTag
+          + "-"
+          + this.feature
+          + "-" 
+          + this.queries.default[this.queries.selected].label 
+          + ".csv",
+        url: URL.createObjectURL(
+            new Blob([csv], { type: "data:application/csv;charset=utf-8" })
+          )
+      });
+
     }
   },
 };
