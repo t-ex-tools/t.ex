@@ -31,20 +31,6 @@
               </div>
             </div>
           </div>
-          <!--
-          <div class="row">
-            <div class="col">
-              <button
-                class="btn btn-outline-primary mt-2 mb-3 float-right"
-                type="button"
-                @click="triggerDownload(dataType)"
-              >
-                <i class="bi bi-download me-2"></i>
-                <small>Export {{ dataType }}</small>
-              </button>
-            </div>
-          </div>
-          -->
         </div>
       </div>
     </div>

@@ -1,5 +1,10 @@
 <template>
   <div>
+    <div class="row mb-3">
+      <div class="col">
+        <b>Features</b>
+      </div>
+    </div>
     <div class="row">
       <div class="col">
         <div class="card card-body mb-3">

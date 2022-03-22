@@ -1,7 +1,7 @@
 <template>
-  <div class="card card-body">
+  <b>Navigation</b>
+  <div class="card card-body mt-3">
     <ul class="nav nav-pills flex-column">
-      <b>Navigation</b>
       <li
         v-for="route in staticRoutes"
         :key="route.name"
@@ -15,9 +15,7 @@
         </router-link>
       </li>
 
-      <hr>
-
-      <b>Statistics</b>
+      <b class="mt-3">Features</b>
       <li
         v-for="(g, index) in FeatureExtractor.navigation()"
         :key="index"
@@ -55,6 +53,7 @@ import WebsiteLists from "./content/WebsiteLists.vue";
 import Overview from "./content/Overview.vue";
 import Blocklists from "./content/Blocklists.vue";
 import Crawls from "./content/Crawls.vue";
+import Export from "./content/Export.vue";
 import { markRaw } from "vue";
 
 export default {
@@ -85,9 +84,14 @@ export default {
           component: markRaw(Crawls),
         },
         {
-          path: "/blocklists",
+          path: "/labeling",
           name: "Labeling",
           component: markRaw(Blocklists),
+        },
+        {
+          path: "/export",
+          name: "Export",
+          component: markRaw(Export),
         }                
       ],
       routes: [],

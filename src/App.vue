@@ -4,25 +4,18 @@
 
     <div class="container-fluid h-100">
       <div class="row h-100">
-        <div class="col-2 pt-3">
+        <div class="col-3 pt-3">
           <navigation
             :data-tag="data.tag"
             @routes-changed="updateRoutes"
           />
         </div>
 
-        <div class="col-8 pt-3">
+        <div class="col-9 pt-3">
           <router-view
             :http="data.http"
             :js="data.js"
             :data-tag="data.tag"
-          />
-        </div>
-
-        <div class="col-2 pt-3">
-          <sidebar
-            :http="data.http"
-            :js="data.js"
           />
         </div>
       </div>
@@ -44,7 +37,6 @@ import InitModal from "./components/modals/InitModal.vue";
 import SettingsModal from "./components/modals/SettingsModal.vue";
 
 import NavBar from "./components/NavBar.vue";
-import Sidebar from "./components/Sidebar.vue";
 import Navigation from "./components/Navigation.vue";
 
 window.location.hash = "#/";
@@ -54,7 +46,6 @@ export default {
   components: {
     InitModal,
     SettingsModal,
-    Sidebar,
     Navigation,
     NavBar,
   },

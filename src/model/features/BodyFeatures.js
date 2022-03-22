@@ -19,22 +19,22 @@ var BodyFeatures = (() => {
 
   const features = {
     "http.requestBody": {
-      title: "Request Body",
-      subtitle: "Content of the request body.",
+      title: "Request body",
+      subtitle: "Content of the request body",
       impl: (r) => extractBody(r),
       lom: 1,
       cardinalityType: 1,
     },
     "http.requestBody.keyLength.total": {
-      title: "RB | Lengths of keys",
-      subtitle: "Total lengths of keys in the request's body.",
+      title: "Key length",
+      subtitle: "Total length of keys in the request body",
       impl: (r) => Statistics.total(kLengths(r)),
       lom: 4,
       cardinalityType: 2,
     },
     "http.requestBody.valueLength.total": {
-      title: "RB | Lengths of values",
-      subtitle: "Total lengths of values in the request's body.",
+      title: "Value length",
+      subtitle: "Total length of values in the request body",
       impl: (r) => Statistics.total(vLengths(r)),
       lom: 4,
       cardinalityType: 2,

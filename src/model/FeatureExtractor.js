@@ -74,6 +74,7 @@ var FeatureExtractor = (() => {
           featureGroup:
             Object.keys(features).map((k) => ({
               name: features[k].title,
+              subtitle: features[k].subtitle,
               path: k
             }))
         };
