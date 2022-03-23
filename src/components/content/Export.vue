@@ -5,7 +5,7 @@
     </div>
   </div>
 
-  <div class="row mb-3">
+  <div class="row">
     <div class="col">
       <div class="accordion" id="types">
         <div v-for="(type, index) in types" :key="index" class="accordion-item">
@@ -79,6 +79,20 @@
       </div>
     </div>
   </div>
+
+  <div class="row mt-3">
+    <div class="col">
+      <button
+        class="btn btn-outline-light float-end"
+        type="button"
+        @click="download"
+      >
+        <i class="bi bi-download me-2" />
+        <small>Export data</small>
+      </button>
+    </div>
+  </div>
+
 </template>
 
 <script>
@@ -93,7 +107,9 @@ export default {
           http: "HTTP/S requests & responses",
           js: "JavaScript API accesses"
         }
-      }
+      },
+      selected: 0,
+      features: [],
     };
   },
   computed: {
@@ -105,6 +121,18 @@ export default {
       ];
     },
   },
+  mounted() {
+    const self = this;
+    let c = document.getElementById("types");
+    c.addEventListener("show.bs.collapse", function(e) {
+      let tmp = e.target.id.split("-").pop();
+      if (self.selected !== tmp) {
+        self.features = [];
+        [...document.querySelectorAll(".form-check-input")]
+          .forEach((n) => n.checked = false);
+      }
+    });
+  },
   methods: {
     groups(type) {
       return FeatureExtractor
@@ -112,7 +140,19 @@ export default {
         .filter((f) => f.featureGroup[0].path.split(".").shift() === type);
     },
     select(e) {
-      console.log(e.target.name, e.target.checked)
+      if (e.target.checked) {
+        this.features.push(e.target.name);
+      } else {
+        this.features.splice(this.features.indexOf(e.target.name), 1);
+      }
+    },
+    download() {
+      console.log(this.features);
+      // TODO: get impl()
+      // TODO: labeledStream()
+      // TODO: determine output object
+      // TODO: chunk properly
+      // TODO: download file
     }
   }
 };

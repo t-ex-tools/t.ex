@@ -11,7 +11,7 @@
           />
         </div>
 
-        <div class="col-9 pt-3">
+        <div class="col-9 pt-3 mb-3">
           <router-view
             :http="data.http"
             :js="data.js"

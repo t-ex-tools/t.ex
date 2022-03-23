@@ -3,7 +3,6 @@
     v-if="items.length > 0" 
     class="table-responsive"
   >
-    <!-- TODO: CSV Export of table -->
     <table class="table table-sm table-hover align-middle">
       <thead>
         <tr>

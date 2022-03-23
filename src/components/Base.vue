@@ -151,6 +151,7 @@ export default {
           .map((e) => e.label)
       );
     },
+    // TODO: watch this.data deep
     table() {
       let rows = Object
         .values(this.data)
