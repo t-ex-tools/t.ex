@@ -89,7 +89,7 @@
             type="button"
             class="btn btn-primary"
             data-bs-toggle="modal"
-            data-bs-target="#loading-modal"
+            :data-bs-target="'#loading-modal-' + suffix"
             @click="handleOk"
           >
             Load data
@@ -100,6 +100,7 @@
   </div>
   
   <loading-modal
+    :suffix="suffix"
     :loaded="chunks.loaded"
     :total="chunks.total"
   />
@@ -121,6 +122,7 @@ export default {
   emits: ["data", "set-tag"],
   data: () => {
     return {
+      suffix: "init-modal",
       options: [
         {
           label: "Select time range",

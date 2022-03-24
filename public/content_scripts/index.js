@@ -71,6 +71,7 @@ let injectIframe = (elem) => {
 
 let parseStack = (stack) => {
   // https://stackoverflow.com/a/3809435
+  // from Daveo's answer on Sep 28, 2010 at 3:15
   let re = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/ig;
   let match = stack.match(re);
   return (match) ? [...new Set(match

@@ -39,7 +39,7 @@
     >
       <div class="col">
         <button
-          class="btn btn-outline-light float-end"
+          class="btn btn-outline-primary float-end"
           type="button"
           @click="download"
         >
@@ -217,7 +217,7 @@ export default {
       let type = this.feature.split(".")[0];
 
       Statistics.query(
-        Object.values(this[type]),
+        this[type],
         type,
         this.queries.default[this.queries.selected],
         this.feature,

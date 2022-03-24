@@ -1,6 +1,6 @@
 <template>
   <div
-    id="loading-modal"
+    :id="'loading-modal-' + suffix"
     class="modal"
     tabindex="-1"
   >
@@ -71,6 +71,10 @@
 <script>
 export default {
   props: {
+    suffix: {
+      type: String,
+      default: () => ""
+    },
     loaded: {
       type: Number,
       default: () => 0

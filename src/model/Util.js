@@ -8,7 +8,7 @@ var Util = (() => {
       
       Labeler.postMessage({ 
         port: port, 
-        chunks: chunks, 
+        chunks: Object.values(chunks), 
         type: type 
       });
 
@@ -19,14 +19,14 @@ var Util = (() => {
       })
     },
 
-    // NOTE:  taken from SO -> https://stackoverflow.com/a/8084248
-    //        only used to give group members an id
-    //        no guaranteed uniqueness needed as number of group members
-    //        expected to be rather low (never more than 100+)
-    randomString: () => (Math.random()+1).toString(36).substring(2) + (Math.random()+1).toString(36).substring(2),
+    // https://stackoverflow.com/a/8084248
+    // from doubletap's answer on Nov 10, 2011 at 18:12
+    randomString: () => 
+      (Math.random()+1).toString(36).substring(2) + 
+      (Math.random()+1).toString(36).substring(2),
     
-    // NOTE:  https://gist.github.com/zensh/4975495
-    //        shall be only used temporarily for debugging purpose
+    // https://gist.github.com/zensh/4975495
+    // from zensh's gist created on 18 Feb 2013.
     memorySizeOf: function(obj) {
       var bytes = 0;
   
