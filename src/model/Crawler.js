@@ -61,17 +61,15 @@ var Crawler = (() => {
       });
     },
     end: function () {
-      // TODO: to be fixed in Chrome 99 sendMessage() to return Promise
       chrome.runtime
         .sendMessage(
-          { recording: false, flush: true },
-          (id) => {
-            log.doneAt = id;
-            this.saveLog({ ...log });
-            this.emit();
-            log = { ...empty };
-          }
-        );
+          { recording: false, flush: true }
+        ).then((id) => {
+          log.doneAt = id;
+          this.saveLog({ ...log });
+          this.emit();
+          log = { ...empty };
+        });
 
       chrome.tabs.onCreated.removeListener(onCreatedRef);
       chrome.tabs.onUpdated.removeListener(onUpdatedRef);
@@ -112,16 +110,14 @@ var Crawler = (() => {
       setTimeout(() => {
         chrome.tabs.sendMessage(
           tabId,
-          { "close": true },
-          {},
-          (msg) => {
-            chrome.tabs.get(tabId, () => {
-              if (!chrome.runtime.lastError) { 
-                chrome.tabs.remove(tabId);
-              }
-            });    
-          }
-        );
+          { "close": true }
+        ).then(() => {
+          chrome.tabs.get(tabId, () => {
+            if (!chrome.runtime.lastError) { 
+              chrome.tabs.remove(tabId);
+            }
+          });    
+        });
       }, delay * 1000);
     },
     url: function (domain) {

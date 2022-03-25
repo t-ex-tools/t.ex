@@ -83,7 +83,7 @@
       <div class="col">
         <data-table
           :headings="headings"
-          :items="table"
+          :items="table()"
         />
       </div>
     </div>
@@ -150,26 +150,7 @@ export default {
         .members
           .map((e) => e.label)
       );
-    },
-    // TODO: watch this.data deep
-    table() {
-      let rows = Object
-        .values(this.data)
-        .map((e) => Object.keys(e.data[this.feature]))
-        .reduce((acc, val) => [...new Set(acc.concat(val))], []);
-      
-      return rows
-        .map((e) => {
-          let v = Object
-            .values(this.data)
-            .map((el) => 
-              (el.data[this.feature][e])
-                ? el.data[this.feature][e]
-                : 0
-            );
-          return [e, ...v];
-        });
-    },
+    }
   },
   watch: {
     http: {
@@ -226,9 +207,27 @@ export default {
         }
       );
     },
+    table() {
+      let rows = Object
+        .values(this.data)
+        .map((e) => Object.keys(e.data[this.feature]))
+        .reduce((acc, val) => [...new Set(acc.concat(val))], []);
+      
+      return rows
+        .map((e) => {
+          let v = Object
+            .values(this.data)
+            .map((el) => 
+              (el.data[this.feature][e])
+                ? el.data[this.feature][e]
+                : 0
+            );
+          return [e, ...v];
+        });
+    },    
     download() {
       let csv = [this.headings]
-        .concat(this.table)
+        .concat(this.table())
         .map((row) => {
           return row
             .map((h) => '"' + h.toString().replace(/"/g, '\\\"') + '"')

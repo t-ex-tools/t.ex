@@ -5,28 +5,38 @@
     </div>
   </div>
 
-  <div
-    v-if="noData"
+  <div 
+    v-if="noData" 
     class="row"
   >
     <div class="col">
-      <div
+      <div 
         class="alert alert-warning alert-dismissible fade show"
         role="alert"
       >
         <strong>
-          No data loaded yet. Use the <b>Load data</b> 
+          No data loaded yet. Use the <b>Load data</b>
           button at the top right to load data.
-        </strong>  
+        </strong>
       </div>
     </div>
-  </div>  
+  </div>
 
   <div class="row">
     <div class="col">
-      <div class="accordion" id="types">
-        <div v-for="(type, index) in types" :key="index" class="accordion-item">
-          <h2 class="accordion-header" :id="'heading-' + index">
+      <div 
+        id="types"
+        class="accordion"
+      >
+        <div 
+          v-for="(type, index) in types" 
+          :key="index" 
+          class="accordion-item"
+        >
+          <h2 
+            :id="'heading-' + index"
+            class="accordion-header"
+          >
             <button
               class="accordion-button"
               type="button"
@@ -45,16 +55,13 @@
             data-bs-parent="#types"
           >
             <div class="accordion-body">
-
-              <div 
-                v-for="group, i in groups(type)"
-                :key="i" 
+              <div
+                v-for="(group, i) in groups(type)"
+                :key="i"
                 class="table-responsive mb-3"
               >
                 <b>{{ group.label }}</b>
-                <table
-                  class="table table-hover align-middle mt-1"
-                >
+                <table class="table table-hover align-middle mt-1">
                   <thead>
                     <th scope="col">
                       Feature
@@ -62,20 +69,27 @@
                     <th scope="col">
                       Description
                     </th>
-                    <th class="text-end" scope="col">
+                    <th 
+                      class="text-end"
+                      scope="col"
+                    >
                       Switch
                     </th>
                   </thead>
                   <tbody>
                     <tr 
-                      v-for="feature, j in group.featureGroup"
+                      v-for="(feature, j) in group.featureGroup" 
                       :key="j"
                     >
-                      <td style="width: 30%">{{ feature.name }}</td>
-                      <td style="width: 55%">{{ feature.subtitle }}</td>
+                      <td style="width: 30%">
+                        {{ feature.name }}
+                      </td>
+                      <td style="width: 55%">
+                        {{ feature.subtitle }}
+                      </td>
                       <td style="width: 15%">
                         <div class="form-check form-switch">
-                          <input 
+                          <input
                             class="form-check-input float-end"
                             :name="feature.path"
                             type="checkbox"
@@ -88,7 +102,6 @@
                   </tbody>
                 </table>
               </div>
-
             </div>
           </div>
         </div>
@@ -111,23 +124,27 @@
       </button>
 
       <button
-        v-for="type, index in types"
+        v-for="(type, index) in types"
         :key="index"
         class="btn btn-outline-primary float-end me-2"
         type="button"
         :disabled="noData"
         data-bs-toggle="modal"
         :data-bs-target="'#loading-modal-' + suffix"
-        @click="() => { selected = index; download(false); }"
+        @click="
+          () => {
+            selected = index;
+            download(false);
+          }
+        "
       >
         <i class="bi bi-download me-2" />
         <small>Export {{ labels.types[type] }}</small>
       </button>
-
     </div>
   </div>
 
-  <loading-modal
+  <loading-modal 
     :suffix="suffix"
     :loaded="view.loaded"
     :total="view.total"
@@ -141,21 +158,21 @@ import Util from "../../model/Util.js";
 
 export default {
   components: {
-    LoadingModal
-  },  
+    LoadingModal,
+  },
   props: {
     http: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     js: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     dataTag: {
       type: String,
       default: () => "",
-    },    
+    },
   },
   data: () => {
     return {
@@ -164,16 +181,16 @@ export default {
       labels: {
         types: {
           http: "HTTP/S requests & responses",
-          js: "JavaScript API accesses"
-        }
+          js: "JavaScript API accesses",
+        },
       },
       view: {
         loaded: 0,
-        total: -1
+        total: -1,
       },
       selected: 0,
       features: [],
-      memoryLimit: 256 * 1000000
+      memoryLimit: 256 * 1000000,
     };
   },
   computed: {
@@ -185,33 +202,36 @@ export default {
       ];
     },
     noData() {
-      return Object.values(this.http).length === 0 && 
-        Object.values(this.js).length === 0;
-    },    
+      return (
+        Object.values(this.http).length === 0 &&
+        Object.values(this.js).length === 0
+      );
+    },
   },
   mounted() {
     const self = this;
     let c = document.getElementById("types");
-    c.addEventListener("show.bs.collapse", function(e) {
+    c.addEventListener("show.bs.collapse", function (e) {
       let tmp = e.target.id.split("-").pop();
       if (self.selected !== tmp) {
         self.selected = tmp;
         self.features = [];
-        [...document.querySelectorAll(".form-check-input")]
-          .forEach((n) => n.checked = false);
+        [...document.querySelectorAll(".form-check-input")].forEach(
+          (n) => (n.checked = false)
+        );
       }
     });
   },
   methods: {
     nest(base, names) {
-      for( var i = 0; i < names.length; i++ ) {
-          base = base[ names[i] ] = base[ names[i] ] || {};
+      for (var i = 0; i < names.length; i++) {
+        base = base[names[i]] = base[names[i]] || {};
       }
     },
     groups(type) {
-      return FeatureExtractor
-        .navigation()
-        .filter((f) => f.featureGroup[0].path.split(".").shift() === type);
+      return FeatureExtractor.navigation().filter(
+        (f) => f.featureGroup[0].path.split(".").shift() === type
+      );
     },
     select(e) {
       if (e.target.checked) {
@@ -230,59 +250,45 @@ export default {
       Util.labeledStream(data, type, (chunk, loaded, total) => {
         this.view.loaded = loaded;
         this.view.total = total;
-        
+
         if (chunk === null) {
           return;
         }
 
         if (transformed) {
-          chunk = chunk
-            .map((d) => {
-              let output = this.features
-                .reduce((acc, f) => {
-                  let path = f.split(".").slice(1);
-                  let last = path.pop();
-                  
-                  // https://stackoverflow.com/a/39249367
-                  // from Laurens' answer on Aug 31, 2016 at 12:14
-                  let obj = path.reduce((o, key) => o[key] = o[key] || {}, acc); 
-                  obj[last] = this.FeatureExtractor.extract(f, d);
-                  acc.labels = d.labels;
+          chunk = chunk.map((d) => {
+            let output = this.features.reduce((acc, f) => {
+              let path = f.split(".").slice(1);
+              let last = path.pop();
 
-                  return acc;
-                }, {});
-              return output;
-            });
+              // https://stackoverflow.com/a/39249367
+              // from Laurens' answer on Aug 31, 2016 at 12:14
+              let obj = path.reduce((o, key) => (o[key] = o[key] || {}), acc);
+              obj[last] = this.FeatureExtractor.extract(f, d);
+              acc.labels = d.labels;
+
+              return acc;
+            }, {});
+            return output;
+          });
         }
-        
+
         batch = batch.concat(chunk);
-        if (this.memoryLimit <= Util.memorySizeOf(batch) ||
-            loaded === total) {
-              this.file(
-                this.dataTag + 
-                "-" + 
-                type + 
-                "." + 
-                n + 
-                ".json", 
-                batch
-              );
-              n++;
-              batch = [];
-            }
+        if (this.memoryLimit <= Util.memorySizeOf(batch) || loaded === total) {
+          this.file(this.dataTag + "-" + type + "." + n + ".json", batch);
+          n++;
+          batch = [];
+        }
       });
     },
-    file: function(filename, payload) {
+    file: function (filename, payload) {
       chrome.downloads.download({
         filename: filename,
         url: URL.createObjectURL(
-          new Blob(
-            [JSON.stringify(payload)], 
-            { type: "application/json" }
-          )
-        )
+          new Blob([JSON.stringify(payload)], { type: "application/json" })
+        ),
       });
     },
-  }
+  },
 };
 </script>

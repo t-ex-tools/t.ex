@@ -18,13 +18,12 @@ let emit = (callback) => {
   try {
     chrome.runtime.sendMessage(
       chrome.runtime.id, 
-      { js: [...events] },
-      () => {
-        if (callback) {
-          callback();
-        }
+      { js: [...events] }
+    ).then(() => {
+      if (callback) {
+        callback();
       }
-    );
+    });
     events = [];
   } catch (err) {
     console.log(err);
@@ -34,10 +33,10 @@ let emit = (callback) => {
 chrome.runtime
   .onMessage
   .addListener((msg, sender, response) => {
-    console.log(msg)
     if (msg.close) {
       emit(response);
     }
+    return true;
   });
 
 window.addEventListener("beforeunload", emit());
