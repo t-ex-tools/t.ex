@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     load: function() {
-      chrome.storage.local.get("crawls")
+      browser.storage.local.get("crawls")
       .then((res) => {
         this.crawls = (res.crawls) ? res.crawls : [];
       });

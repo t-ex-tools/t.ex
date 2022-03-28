@@ -25,7 +25,7 @@ var Crawler = (() => {
 
   return {
     getSettings: (callback) => {
-      chrome.storage.local.get("settings")
+      browser.storage.local.get("settings")
         .then((res) => {
           if (res.settings) {
             Object
@@ -41,7 +41,7 @@ var Crawler = (() => {
     },
     start: function (tag, list) {
       this.getSettings(() => {
-        chrome.runtime.sendMessage({ recording: true });
+        browser.runtime.sendMessage({ recording: true });
         
         urls = list.urls.split(/\r\n|\r|\n/g);
 
@@ -52,16 +52,16 @@ var Crawler = (() => {
         onCreatedRef = this.onCreate.bind(this);
         onUpdatedRef = this.onUpdated.bind(this);
         onRemovedRef = this.onRemoved.bind(this);
-        chrome.tabs.onCreated.addListener(onCreatedRef);
-        chrome.tabs.onUpdated.addListener(onUpdatedRef);
-        chrome.tabs.onRemoved.addListener(onRemovedRef);
+        browser.tabs.onCreated.addListener(onCreatedRef);
+        browser.tabs.onUpdated.addListener(onUpdatedRef);
+        browser.tabs.onRemoved.addListener(onRemovedRef);
         console.debug("Crawler: tab listeners added.")
 
-        chrome.tabs.create(this.openTab(), (tab) => this.closeTab(tab.id, settings.tabTtl));
+        browser.tabs.create(this.openTab(), (tab) => this.closeTab(tab.id, settings.tabTtl));
       });
     },
     end: function () {
-      chrome.runtime
+      browser.runtime
         .sendMessage(
           { recording: false, flush: true }
         ).then((id) => {
@@ -71,16 +71,16 @@ var Crawler = (() => {
           log = { ...empty };
         });
 
-      chrome.tabs.onCreated.removeListener(onCreatedRef);
-      chrome.tabs.onUpdated.removeListener(onUpdatedRef);
-      chrome.tabs.onRemoved.removeListener(onRemovedRef);
+      browser.tabs.onCreated.removeListener(onCreatedRef);
+      browser.tabs.onUpdated.removeListener(onUpdatedRef);
+      browser.tabs.onRemoved.removeListener(onRemovedRef);
       console.debug("Crawler: tab listeners removed.")
     },
     onCreate: function () {
       log.tabsOpen += 1;
       log.tabsOpened += 1;
       if (log.tabsOpen < settings.tabsAtOnce && urls.length > 0) {
-        chrome.tabs.create(this.openTab(), (tab) => this.closeTab(tab.id, settings.tabTtl));
+        browser.tabs.create(this.openTab(), (tab) => this.closeTab(tab.id, settings.tabTtl));
       }
     },
     onUpdated: function (tabId, changeInfo) {
@@ -93,7 +93,7 @@ var Crawler = (() => {
       log.tabsOpen -= 1;
       log.tabsCompleted++;
       if (log.tabsOpen < settings.tabsAtOnce && urls.length > 0) {
-        chrome.tabs.create(this.openTab())
+        browser.tabs.create(this.openTab())
       }
     },
     openTab: function () {
@@ -108,13 +108,13 @@ var Crawler = (() => {
     },
     closeTab: (tabId, delay) => {
       setTimeout(() => {
-        chrome.tabs.sendMessage(
+        browser.tabs.sendMessage(
           tabId,
           { "close": true }
         ).then(() => {
-          chrome.tabs.get(tabId, () => {
-            if (!chrome.runtime.lastError) { 
-              chrome.tabs.remove(tabId);
+          browser.tabs.get(tabId, () => {
+            if (!browser.runtime.lastError) { 
+              browser.tabs.remove(tabId);
             }
           });    
         });
@@ -127,11 +127,11 @@ var Crawler = (() => {
       window.dispatchEvent(new CustomEvent("crawler:log", { detail: { log: { ...log } } }));
     },
     saveLog: function (l) {
-      chrome.storage.local.get("crawls")
+      browser.storage.local.get("crawls")
         .then((res) => {
           let crawls = (res.crawls) ? res.crawls : [];
           crawls.push(l);
-          chrome.storage.local.set({ crawls: crawls });
+          browser.storage.local.set({ crawls: crawls });
         });
     },
   };

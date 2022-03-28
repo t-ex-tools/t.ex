@@ -282,7 +282,7 @@ export default {
       });
     },
     file: function (filename, payload) {
-      chrome.downloads.download({
+      browser.downloads.download({
         filename: filename,
         url: URL.createObjectURL(
           new Blob([JSON.stringify(payload)], { type: "application/json" })

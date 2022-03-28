@@ -1,9 +1,11 @@
 import Chunk from "./Chunk.js";
 import config from "../js/Settings.js";
 
+let x = await browser.runtime.getBrowserInfo();
+
 // TODO: seed local storage with free website lists
 // TODO: seed initial settings
-chrome.runtime.onInstalled.addListener((d) => {
+browser.runtime.onInstalled.addListener((d) => {
   console.log(d);
 });
 
@@ -12,14 +14,14 @@ var Background = (() => {
   let http = {};
   let httpBody = config.httpBody.default;
 
-  chrome.storage.local.get("settings")
+  browser.storage.local.get("settings")
     .then((res) => {
       httpBody = (res.settings && res.settings.httpBody)
         ? res.settings.httpBody
         : httpBody;
     });
 
-  chrome.runtime
+  browser.runtime
     .onMessage
     .addListener((msg) => {
       if (msg.hasOwnProperty("settings")) {
@@ -27,7 +29,7 @@ var Background = (() => {
       }
     });
 
-  chrome.webRequest
+  browser.webRequest
     .onBeforeRequest
     .addListener((d) => {
       if (d.tabId < 0) {
@@ -51,7 +53,7 @@ var Background = (() => {
       urlFilter,
       ["requestBody"]);
 
-  chrome.webRequest
+  browser.webRequest
     .onBeforeSendHeaders
     .addListener((d) => {
       Background.set(d.requestId, { requestHeaders: d.requestHeaders });
@@ -62,9 +64,12 @@ var Background = (() => {
       }
     },
       urlFilter,
-      ["requestHeaders", "extraHeaders"]);
+      (x.name === "Firefox") 
+        ? ["requestHeaders"]
+        : ["requestHeaders"].concat(["extraHeaders"])
+    );
 
-  chrome.webRequest
+  browser.webRequest
     .onResponseStarted
     .addListener((d) => {
       Background.set(d.requestId, { response: d });
@@ -75,14 +80,17 @@ var Background = (() => {
       }
     },
       urlFilter,
-      ["responseHeaders", "extraHeaders"]);
+      (x.name === "Firefox") 
+        ? ["responseHeaders"]
+        : ["responseHeaders"].concat(["extraHeaders"])
+    );
 
-  chrome.webRequest
+  browser.webRequest
     .onCompleted
     .addListener((d) => Background.set(d.requestId, { success: true }),
       urlFilter);
 
-  chrome.webRequest
+  browser.webRequest
     .onErrorOccurred
     .addListener((d) => Background.set(d.requestId, { success: false }),
       urlFilter);
@@ -102,8 +110,8 @@ var Background = (() => {
 
     tab: (tabId, callback) => {
       try {
-        chrome.tabs.get(tabId, function (tab) {
-          if (chrome.runtime.lastError || typeof tab === "undefined") {
+        browser.tabs.get(tabId, function (tab) {
+          if (browser.runtime.lastError || typeof tab === "undefined") {
             return;
           } else {
             callback(tab);

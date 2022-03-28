@@ -168,7 +168,7 @@ export default {
     }
   },
   mounted() {
-    chrome.storage.local.get("lists").then((res) => {
+    browser.storage.local.get("lists").then((res) => {
       this.lists.all = res.lists ? Object.values(res.lists) : [];
     });
   },
@@ -197,7 +197,7 @@ export default {
       }
     },
     store(msg) {
-      chrome.storage.local.set({ lists: this.lists.all }).then(() => {
+      browser.storage.local.set({ lists: this.lists.all }).then(() => {
         this.alert.message = msg;
         this.alert.visible = true;
         setTimeout(() => (this.alert.visible = false), 2500);

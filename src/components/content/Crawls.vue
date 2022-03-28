@@ -232,7 +232,7 @@ export default {
     }
   },
   mounted() {
-    chrome.storage.local.get(["crawls", "lists", "settings"])
+    browser.storage.local.get(["crawls", "lists", "settings"])
       .then((res) => {
         this.crawls = (res.crawls) ? res.crawls : [];
         this.lists = (res.lists) ? res.lists : [];

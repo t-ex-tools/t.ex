@@ -235,7 +235,7 @@ export default {
         })
         .join("\n");
 
-      chrome.downloads.download({
+      browser.downloads.download({
         filename: 
           this.dataTag
           + "-"

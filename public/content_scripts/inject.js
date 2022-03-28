@@ -1,6 +1,6 @@
 let mainScript = document.createElement("script");
 mainScript.setAttribute("type", "module");
-mainScript.setAttribute("src", chrome.runtime.getURL("content_scripts/index.js"));
+mainScript.setAttribute("src", browser.runtime.getURL("content_scripts/index.js"));
 
 let root = document.documentElement || document.head || document.body;
 root.insertBefore(mainScript, root.firstChild);
@@ -16,8 +16,8 @@ window.addEventListener("cs", (e) => {
 
 let emit = (callback) => {
   try {
-    chrome.runtime.sendMessage(
-      chrome.runtime.id, 
+    browser.runtime.sendMessage(
+      browser.runtime.id, 
       { js: [...events] }
     ).then(() => {
       if (callback) {
@@ -30,7 +30,7 @@ let emit = (callback) => {
   }
 }
 
-chrome.runtime
+browser.runtime
   .onMessage
   .addListener((msg, sender, response) => {
     if (msg.close) {

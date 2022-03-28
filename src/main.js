@@ -8,7 +8,7 @@ import { markRaw } from "vue";
 import config from "./model/Settings.js";
 import mitt from "mitt";
 
-chrome.storage.local.get("settings")
+browser.storage.local.get("settings")
   .then((res) => {
     if (res.settings && res.settings.hasOwnProperty("darkMode")) {
       config.darkMode.handler(res.settings.darkMode);

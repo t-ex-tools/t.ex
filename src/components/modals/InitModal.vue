@@ -146,7 +146,7 @@ export default {
     };
   },
   mounted() {    
-    chrome.storage.local.get(["indexes", "settings"])
+    browser.storage.local.get(["indexes", "settings"])
       .then((res) => {
         this.setIndexes(res.indexes);
 
@@ -160,7 +160,7 @@ export default {
     const self = this;
     let elem = document.getElementById("init-modal");
     elem.addEventListener("show.bs.modal", function() {
-      chrome.storage.local.get(["indexes"])
+      browser.storage.local.get(["indexes"])
         .then((res) => {
           self.setIndexes(res.indexes);
         });
@@ -170,7 +170,7 @@ export default {
     load: function (indexes) {
       this.chunks.total = indexes.length;
       for (let i = 0; i * this.chunks.chunksAtOnce < indexes.length; i++) {
-        chrome.storage.local
+        browser.storage.local
           .get(
             indexes.slice(
               i * this.chunks.chunksAtOnce,

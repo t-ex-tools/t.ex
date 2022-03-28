@@ -12,14 +12,14 @@ var Chunk = (() => {
   };
   let recording = false;
 
-  chrome.storage.local.get("settings")
+  browser.storage.local.get("settings")
     .then((res) => {
       if (res.settings) {
         Chunk.set(res.settings);
       }
     });
 
-  chrome.runtime
+  browser.runtime
     .onMessage
     .addListener((msg, sender, response) => {
 
@@ -72,18 +72,18 @@ var Chunk = (() => {
       }
     };
 
-    chrome.storage.local.set(chunk)
+    browser.storage.local.set(chunk)
       .then(() => {
         console.debug("Chunk saved.")
 
-        chrome.storage.local.get("indexes")
+        browser.storage.local.get("indexes")
           .then((res) => {
             if (res.hasOwnProperty("indexes")) {
               res.indexes.push(id);
             } else {
               res.indexes = [id];
             }
-            chrome.storage.local.set(res);
+            browser.storage.local.set(res);
           });
       });
   };

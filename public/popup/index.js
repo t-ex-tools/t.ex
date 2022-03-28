@@ -1,5 +1,5 @@
 document.getElementById("app-btn").onclick = () => 
-  chrome.tabs.create({url: chrome.runtime.getURL("index.html")});
+  browser.tabs.create({url: browser.runtime.getURL("index.html")});
 
 document.getElementById("flush-btn").onclick = () => 
-  chrome.runtime.sendMessage({ flush: true });
+  browser.runtime.sendMessage({ flush: true });

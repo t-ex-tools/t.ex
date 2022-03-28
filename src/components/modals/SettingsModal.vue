@@ -93,7 +93,7 @@ export default {
     };
   },
   mounted() {
-    chrome.storage.local.get("settings").then((res) => {
+    browser.storage.local.get("settings").then((res) => {
       this.values = (res.settings) ? res.settings : {};
     });
   },
@@ -107,8 +107,8 @@ export default {
       }
 
       const cfg = { settings: this.values };
-      chrome.storage.local.set(cfg).then(() => {
-        chrome.runtime.sendMessage(cfg);
+      browser.storage.local.set(cfg).then(() => {
+        browser.runtime.sendMessage(cfg);
       });
 
       this.emitter.emit("settings", cfg);
