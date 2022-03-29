@@ -1,7 +1,13 @@
+import "../js/browser-polyfill.min.js";
 import Chunk from "./Chunk.js";
 import config from "../js/Settings.js";
 
-let x = await browser.runtime.getBrowserInfo();
+let firefox = false;
+if (browser.runtime.hasOwnProperty("getBrowserInfo")) {
+  firefox = true;
+}
+
+console.log(browser.runtime);
 
 // TODO: seed local storage with free website lists
 // TODO: seed initial settings
@@ -64,7 +70,7 @@ var Background = (() => {
       }
     },
       urlFilter,
-      (x.name === "Firefox") 
+      (firefox) 
         ? ["requestHeaders"]
         : ["requestHeaders"].concat(["extraHeaders"])
     );
@@ -80,7 +86,7 @@ var Background = (() => {
       }
     },
       urlFilter,
-      (x.name === "Firefox") 
+      (firefox) 
         ? ["responseHeaders"]
         : ["responseHeaders"].concat(["extraHeaders"])
     );
