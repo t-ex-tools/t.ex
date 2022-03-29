@@ -1,10 +1,11 @@
-import LZString from "../js/lz-string.min.js";
-
-import EasyListParser from "../labeler-core/EasyListParser.js";
-import EasyListEvaluator from "../labeler-core/EasyListEvaluator.js";
-import DisconnectMeParser from "../labeler-core/DisconnectMeParser.js";
-import DisconnectMeEvaluator from "../labeler-core/DisconnectMeEvaluator.js";
-import BlockList from "../labeler-core/BlockList.js";
+self.importScripts(
+  "./lz-string.min.js",
+  "../labeler-core/EasyListParser.js",
+  "../labeler-core/EasyListEvaluator.js",
+  "../labeler-core/DisconnectMeParser.js",
+  "../labeler-core/DisconnectMeEvaluator.js",
+  "../labeler-core/BlockList.js"  
+);
 
 let cache = {};
 let blocklists = [];
