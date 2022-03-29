@@ -3,6 +3,7 @@ import Chunk from "./Chunk.js";
 import config from "../js/Settings.js";
 
 let firefox = false;
+// TODO: temporary check until better strategy identified
 if (browser.runtime.hasOwnProperty("getBrowserInfo")) {
   firefox = true;
 }
@@ -48,6 +49,7 @@ var Background = (() => {
 
       Background.set(d.requestId, d);
       Background.tab(d.tabId, (tab) => {
+        // TODO: tab can be null
         Background.set(d.requestId, { source: tab.url, complete: true });
 
         if (Background.get(d.requestId).requestHeaders &&
@@ -116,15 +118,17 @@ var Background = (() => {
 
     tab: (tabId, callback) => {
       try {
-        browser.tabs.get(tabId, function (tab) {
-          if (browser.runtime.lastError || typeof tab === "undefined") {
-            return;
-          } else {
-            callback(tab);
-          }
-        });
+        browser.tabs.get(tabId)
+          .then((tab) => {
+            if (browser.runtime.lastError || typeof tab === "undefined") {
+              return;
+            } else {
+              callback(tab);
+            }
+          });
       } catch (err) {
         if (err) {
+          console.debug(err);
           callback(null);
         }
       }
