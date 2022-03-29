@@ -84,6 +84,7 @@
 
 <script>
 import config from "../../model/Settings.js";
+import { toRaw } from "vue";
 
 export default {
   data: () => {
@@ -106,10 +107,9 @@ export default {
         config[evt.target.name].handler(this.values[evt.target.name]);
       }
 
-      const cfg = { settings: this.values };
-      browser.storage.local.set(cfg).then(() => {
-        browser.runtime.sendMessage(cfg);
-      });
+      const cfg = { settings: toRaw(this.values) };
+      browser.storage.local.set(cfg)
+        .then(() => browser.runtime.sendMessage(cfg));
 
       this.emitter.emit("settings", cfg);
     },

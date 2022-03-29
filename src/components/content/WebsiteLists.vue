@@ -127,6 +127,7 @@
 <script>
 import WebsiteListsModal from "../modals/WebsiteListsModal.vue";
 import ConfirmModal from "../modals/ConfirmModal.vue";
+import { toRaw } from "vue";
 
 export default {
   components: {
@@ -197,11 +198,12 @@ export default {
       }
     },
     store(msg) {
-      browser.storage.local.set({ lists: this.lists.all }).then(() => {
-        this.alert.message = msg;
-        this.alert.visible = true;
-        setTimeout(() => (this.alert.visible = false), 2500);
-      });
+      browser.storage.local.set({ lists: toRaw(this.lists.all) })
+        .then(() => {
+          this.alert.message = msg;
+          this.alert.visible = true;
+          setTimeout(() => (this.alert.visible = false), 2500);
+        });
     }
   },
 };
