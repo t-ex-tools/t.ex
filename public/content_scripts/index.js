@@ -1,14 +1,25 @@
 import API from "./interfaces.js";
 
 let inject = (w) => {
-  API.interfaces(w).forEach((api) => {
+  API.interfaces().forEach((api) => {
+    let x = null;
+    if (api.label === "window") {
+      x = w;
+    } else {
+      if (w.hasOwnProperty(api.label)) {
+        x = w[api.label].prototype;
+      } else {
+        return;
+      }
+    }
+
     api.properties.forEach((p) => {
-      let pd = Object.getOwnPropertyDescriptor(api.interface, p);
+      let pd = Object.getOwnPropertyDescriptor(x, p);
       if (!pd) {
         return;
       }
 
-      Object.defineProperty(api.interface, p, {
+      Object.defineProperty(x, p, {
         get: function () {
           let result = pd.get.apply(this);
           window.dispatchEvent(new CustomEvent("js", {
@@ -36,12 +47,12 @@ let inject = (w) => {
     });
 
     api.methods.forEach((m) => {
-      let om = api.interface[m];
+      let om = x[m];
       if (!om) {
         return;
       }
 
-      Object.defineProperty(api.interface, m, {
+      Object.defineProperty(x, m, {
         value: function () {
           let result = om.apply(this, arguments);
           window.dispatchEvent(new CustomEvent("js", {

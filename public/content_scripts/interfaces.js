@@ -1,11 +1,9 @@
 export default {
-  interfaces: (w) => [{
-    interface: w.Document.prototype, 
+  interfaces: () => [{
     label: "Document",
     properties: ["cookie", "referrer"],
     methods: [],
   }, {
-    interface: w/*indow*/, 
     label: "window",
     properties: [
       "name", 
@@ -26,7 +24,6 @@ export default {
     ],
     methods: [],  
   }, {
-    interface: w.Navigator.prototype,
     label: "Navigator",
     properties: [
       "appCodeName", 
@@ -52,7 +49,6 @@ export default {
     ],
     methods: ["javaEnabled"],
   }, {
-    interface: w.Geolocation.prototype,
     label: "Geolocation",
     properties: [],
     methods: [
@@ -61,7 +57,6 @@ export default {
       "clearWatch",
     ],
   }, {
-    interface: w.GeolocationCoordinates.prototype,
     label: "GeolocationCoordinates",
     properties: [
       "latitude",
@@ -74,7 +69,6 @@ export default {
     ],
     methods: [],
   }, {    
-    interface: w.Screen.prototype,
     label: "Screen",
     properties: [
       "availHeight", 
@@ -86,7 +80,6 @@ export default {
     ],
     methods: [],
   }, {  
-    interface: w.Storage.prototype,
     label: "Storage",
     properties: ["length"],
     methods: [
@@ -97,7 +90,6 @@ export default {
       "clear",
     ],
   }, {
-    interface: w.HTMLCanvasElement.prototype,
     label: "HTMLCanvasElement",
     properties: ["width", "height"],
     methods: [
@@ -106,7 +98,6 @@ export default {
       "toDataURL"
     ],
   }, {
-    interface: w.CanvasRenderingContext2D.prototype,
     label: "CanvasRenderingContext2D",
     properties: [],
     methods: [
@@ -115,7 +106,6 @@ export default {
       "putImageData",
     ],
   }, {
-    interface: w.AnalyserNode.prototype,
     label: "AnalyserNode",
     properties: [
       "fftSize",
@@ -127,7 +117,6 @@ export default {
     ],
     methods: [],
   }, {
-    interface: w.AudioContext.prototype,
     label: "AudioContext",
     properties: [
       "baseLatency",
@@ -135,7 +124,6 @@ export default {
     ],
     methods: [],
   }, {
-    interface: w.BaseAudioContext.prototype,
     label: "BaseAudioContext",
     properties: [
       "currentTime",
@@ -144,7 +132,6 @@ export default {
     ],
     methods: [],
   }, {
-    interface: w.OscillatorNode.prototype,
     label: "OscillatorNode",
     properties: [
       "frequency",
@@ -153,7 +140,6 @@ export default {
     ],
     methods: [],
   }, {
-    interface: w.AudioNode.prototype,
     label: "AudioNode",
     properties: [
       "context",
@@ -165,17 +151,14 @@ export default {
     ],
     methods: [],
   }, {
-    interface: w.WebGLRenderingContext.prototype,
     label: "WebGLRenderingContext",
     properties: [],
     methods: ["getExtension"],
   }, {
-    interface: w.Date.prototype,
     label: "Date",
     properties: [],
     methods: ["getTimezoneOffset"],
   }, {
-    interface: w.MediaDevices.prototype,
     label: "MediaDevices",
     properties: [],
     methods: [
@@ -185,7 +168,6 @@ export default {
       "getUserMedia",
     ],
   }, {
-    interface: w.BatteryManager.prototype,
     label: "BatteryManager",
     properties: [
       "charging",
@@ -195,8 +177,7 @@ export default {
     ],
     methods: [],
   }, {
-    interface: w.NetworkInformation .prototype,
-    label: "NetworkInformation ",
+    label: "NetworkInformation",
     properties: [
       "downlink",
       "downlinkMax",
