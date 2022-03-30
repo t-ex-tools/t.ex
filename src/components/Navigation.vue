@@ -3,21 +3,21 @@
   <div class="card card-body mt-3">
     <ul class="nav nav-pills flex-column">
       <li
-        v-for="route in staticRoutes"
-        :key="route.name"
+        v-for="route, index in staticRoutes"
+        :key="index"
         class="nav-item"
       >
         <router-link
           class="nav-link"
           :to="route.path"
         >
-          {{ route.name }}
+          {{ route.label }}
         </router-link>
       </li>
 
       <b class="mt-3">Features</b>
       <li
-        v-for="(g, index) in FeatureExtractor.navigation()"
+        v-for="g, index in FeatureExtractor.navigation()"
         :key="index"
         class="nav-item dropdown"
       >
@@ -48,74 +48,14 @@
 
 <script>
 import FeatureExtractor from "../model/FeatureExtractor.js";
-import Base from "./Base.vue";
-import WebsiteLists from "./content/WebsiteLists.vue";
-import Overview from "./content/Overview.vue";
-import Blocklists from "./content/Blocklists.vue";
-import Crawls from "./content/Crawls.vue";
-import Export from "./content/Export.vue";
-import { markRaw } from "vue";
+import StaticRoutes from "../model/StaticRoutes.js";
 
 export default {
-  props: {
-    dataTag: {
-      type: String,
-      default: () => ""
-    }
-  },
-  emits: ["routes-changed"],
   data: () => {
     return {
       FeatureExtractor: FeatureExtractor,
-      staticRoutes: [
-        {
-          path: "/",
-          name: "Start",
-          component: markRaw(Overview),
-        },
-        {
-          path: "/website-lists",
-          name: "Website Lists",
-          component: markRaw(WebsiteLists),
-        },
-        {
-          path: "/crawls",
-          name: "Crawls",
-          component: markRaw(Crawls),
-        },
-        {
-          path: "/labeling",
-          name: "Labeling",
-          component: markRaw(Blocklists),
-        },
-        {
-          path: "/export",
-          name: "Export",
-          component: markRaw(Export),
-        }                
-      ],
-      routes: [],
+      staticRoutes: StaticRoutes
     };
-  },
-  created() {
-    this.routes = this.staticRoutes.concat(
-      FeatureExtractor.features().map((f) => {
-        let featureInfo = FeatureExtractor.info(f);
-        return {
-          path: "/" + f,
-          name: featureInfo.title,
-          component: markRaw(Base),
-          props: () => {
-            return {
-              feature: f,
-              featureInfo: featureInfo,
-              dataTag: this.dataTag,
-            };
-          },
-        };
-      })
-    );
-    this.$emit("routes-changed", this.routes);
   },
 };
 </script>

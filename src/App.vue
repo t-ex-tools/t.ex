@@ -5,10 +5,7 @@
     <div class="container-fluid h-100">
       <div class="row h-100">
         <div class="col-3 pt-3">
-          <navigation
-            :data-tag="data.tag"
-            @routes-changed="updateRoutes"
-          />
+          <navigation />
         </div>
 
         <div class="col-9 pt-3 mb-3">
@@ -66,11 +63,6 @@ export default {
     appendData(chunk) {
       this.data.http.push(chunk.http);
       this.data.js.push(chunk.js);
-    },
-    updateRoutes: function (routes) {
-      routes.forEach((route) => {
-        this.$router.addRoute(route);
-      });
     }
   },
 };
