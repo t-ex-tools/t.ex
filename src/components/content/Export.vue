@@ -1,154 +1,156 @@
 <template>
-  <div class="row mb-3">
-    <div class="col">
-      <b>Export</b>
-    </div>
-  </div>
-
-  <div 
-    v-if="noData" 
-    class="row"
-  >
-    <div class="col">
-      <div 
-        class="alert alert-warning alert-dismissible fade show"
-        role="alert"
-      >
-        <strong>
-          No data loaded yet. Use the <b>Load data</b>
-          button at the top right to load data.
-        </strong>
+  <div>
+    <div class="row mb-3">
+      <div class="col">
+        <b>Export</b>
       </div>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="col">
-      <div 
-        id="types"
-        class="accordion"
-      >
+    <div 
+      v-if="noData" 
+      class="row"
+    >
+      <div class="col">
         <div 
-          v-for="(type, index) in types" 
-          :key="index" 
-          class="accordion-item"
+          class="alert alert-warning alert-dismissible fade show"
+          role="alert"
         >
-          <h2 
-            :id="'heading-' + index"
-            class="accordion-header"
+          <strong>
+            No data loaded yet. Use the <b>Load data</b>
+            button at the top right to load data.
+          </strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div 
+          id="types"
+          class="accordion"
+        >
+          <div 
+            v-for="(type, index) in types" 
+            :key="index" 
+            class="accordion-item"
           >
-            <button
-              class="accordion-button"
-              type="button"
-              data-bs-toggle="collapse"
-              :data-bs-target="'#collapse-' + index"
-              aria-expanded="true"
-              :aria-controls="'collapse-' + index"
+            <h2 
+              :id="'heading-' + index"
+              class="accordion-header"
             >
-              {{ labels.types[type] }}
-            </button>
-          </h2>
-          <div
-            :id="'collapse-' + index"
-            class="accordion-collapse collapse"
-            :aria-labelledby="'heading-' + index"
-            data-bs-parent="#types"
-          >
-            <div class="accordion-body">
-              <div
-                v-for="(group, i) in groups(type)"
-                :key="i"
-                class="table-responsive mb-3"
+              <button
+                class="accordion-button"
+                type="button"
+                data-bs-toggle="collapse"
+                :data-bs-target="'#collapse-' + index"
+                aria-expanded="true"
+                :aria-controls="'collapse-' + index"
               >
-                <b>{{ group.label }}</b>
-                <table class="table table-hover align-middle mt-1">
-                  <thead>
-                    <th scope="col">
-                      Feature
-                    </th>
-                    <th scope="col">
-                      Description
-                    </th>
-                    <th 
-                      class="text-end"
-                      scope="col"
-                    >
-                      Switch
-                    </th>
-                  </thead>
-                  <tbody>
-                    <tr 
-                      v-for="(feature, j) in group.featureGroup" 
-                      :key="j"
-                    >
-                      <td style="width: 30%">
-                        {{ feature.name }}
-                      </td>
-                      <td style="width: 55%">
-                        {{ feature.subtitle }}
-                      </td>
-                      <td style="width: 15%">
-                        <div class="form-check form-switch">
-                          <input
-                            class="form-check-input float-end"
-                            :name="feature.path"
-                            type="checkbox"
-                            role="switch"
-                            @change="select"
-                          >
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                {{ labels.types[type] }}
+              </button>
+            </h2>
+            <div
+              :id="'collapse-' + index"
+              class="accordion-collapse collapse"
+              :aria-labelledby="'heading-' + index"
+              data-bs-parent="#types"
+            >
+              <div class="accordion-body">
+                <div
+                  v-for="(group, i) in groups(type)"
+                  :key="i"
+                  class="table-responsive mb-3"
+                >
+                  <b>{{ group.label }}</b>
+                  <table class="table table-hover align-middle mt-1">
+                    <thead>
+                      <th scope="col">
+                        Feature
+                      </th>
+                      <th scope="col">
+                        Description
+                      </th>
+                      <th 
+                        class="text-end"
+                        scope="col"
+                      >
+                        Switch
+                      </th>
+                    </thead>
+                    <tbody>
+                      <tr 
+                        v-for="(feature, j) in group.featureGroup" 
+                        :key="j"
+                      >
+                        <td style="width: 30%">
+                          {{ feature.name }}
+                        </td>
+                        <td style="width: 55%">
+                          {{ feature.subtitle }}
+                        </td>
+                        <td style="width: 15%">
+                          <div class="form-check form-switch">
+                            <input
+                              class="form-check-input float-end"
+                              :name="feature.path"
+                              type="checkbox"
+                              role="switch"
+                              @change="select"
+                            >
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="row mt-3">
-    <div class="col">
-      <button
-        class="btn btn-outline-primary float-end"
-        type="button"
-        :disabled="features.length === 0 || noData"
-        data-bs-toggle="modal"
-        :data-bs-target="'#loading-modal-' + suffix"
-        @click="download(true)"
-      >
-        <i class="bi bi-download me-2" />
-        <small>Export {{ features.length }} features</small>
-      </button>
+    <div class="row mt-3">
+      <div class="col">
+        <button
+          class="btn btn-outline-primary float-end"
+          type="button"
+          :disabled="features.length === 0 || noData"
+          data-bs-toggle="modal"
+          :data-bs-target="'#loading-modal-' + suffix"
+          @click="download(true)"
+        >
+          <i class="bi bi-download me-2" />
+          <small>Export {{ features.length }} features</small>
+        </button>
 
-      <button
-        v-for="(type, index) in types"
-        :key="index"
-        class="btn btn-outline-primary float-end me-2"
-        type="button"
-        :disabled="noData"
-        data-bs-toggle="modal"
-        :data-bs-target="'#loading-modal-' + suffix"
-        @click="
-          () => {
-            selected = index;
-            download(false);
-          }
-        "
-      >
-        <i class="bi bi-download me-2" />
-        <small>Export {{ labels.types[type] }}</small>
-      </button>
+        <button
+          v-for="(type, index) in types"
+          :key="index"
+          class="btn btn-outline-primary float-end me-2"
+          type="button"
+          :disabled="noData"
+          data-bs-toggle="modal"
+          :data-bs-target="'#loading-modal-' + suffix"
+          @click="
+            () => {
+              selected = index;
+              download(false);
+            }
+          "
+        >
+          <i class="bi bi-download me-2" />
+          <small>Export {{ labels.types[type] }}</small>
+        </button>
+      </div>
     </div>
-  </div>
 
-  <loading-modal 
-    :suffix="suffix"
-    :loaded="view.loaded"
-    :total="view.total"
-  />
+    <loading-modal 
+      :suffix="suffix"
+      :loaded="view.loaded"
+      :total="view.total"
+    />
+  </div>
 </template>
 
 <script>
