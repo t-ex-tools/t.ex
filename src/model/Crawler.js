@@ -119,7 +119,9 @@ var Crawler = (() => {
             browser.tabs.sendMessage(
               tabId,
               { "close": true }
-            ).then(() => {
+            ).catch(() => {
+              console.debug("Tab " + tabId + " was not responsive.");  
+            }).finally(() => {
               browser.tabs.remove(tabId);
             });
           }).catch(() => {
