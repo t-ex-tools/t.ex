@@ -48,15 +48,12 @@ var Background = (() => {
       }
 
       Background.set(d.requestId, d);
-      Background.tab(d.tabId, (tab) => {
-        // TODO: tab can be null
-        Background.set(d.requestId, { source: tab.url, complete: true });
+      Background.set(d.requestId, { complete: true });
 
-        if (Background.get(d.requestId).requestHeaders &&
+      if (Background.get(d.requestId).requestHeaders &&
           Background.get(d.requestId).response) {
-          Background.push(d.requestId);
-        }
-      });
+            Background.push(d.requestId);
+      }
     },
       urlFilter,
       ["requestBody"]);
@@ -114,24 +111,6 @@ var Background = (() => {
     push: (requestId) => {
       Chunk.add("http", [Background.get(requestId)]);
       delete Background.get(requestId);
-    },
-
-    tab: (tabId, callback) => {
-      try {
-        browser.tabs.get(tabId)
-          .then((tab) => {
-            if (browser.runtime.lastError || typeof tab === "undefined") {
-              return;
-            } else {
-              callback(tab);
-            }
-          });
-      } catch (err) {
-        if (err) {
-          console.debug(err);
-          callback(null);
-        }
-      }
     }
   }
 })();
