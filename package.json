@@ -1,6 +1,6 @@
 {
   "name": "t.ex-mv3",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "scripts": {
     "serve:chrome": "concurrently \"vue-cli-service build --watch --no-clean\" \"npm run chrome:manifest\" \"npm run cp:files\"",
