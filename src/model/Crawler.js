@@ -114,17 +114,17 @@ var Crawler = (() => {
     },
     closeTab: (tabId, delay) => {
       setTimeout(() => {
-        browser.tabs.sendMessage(
-          tabId,
-          { "close": true }
-        ).then(() => {
-          browser.tabs.get(tabId)
-            .then(() => {
-              if (!browser.runtime.lastError) { 
-                browser.tabs.remove(tabId);
-              }
-            });    
-        });
+        browser.tabs.get(tabId)
+          .then(() => {
+            browser.tabs.sendMessage(
+              tabId,
+              { "close": true }
+            ).then(() => {
+              browser.tabs.remove(tabId);
+            });
+          }).catch(() => {
+            console.debug("Tab " + tabId + " already closed.");
+          });
       }, delay * 1000);
     },
     url: function (domain) {

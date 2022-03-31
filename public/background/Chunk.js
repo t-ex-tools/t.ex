@@ -24,14 +24,16 @@ var Chunk = (() => {
     .addListener((msg, sender, response) => {
 
       if (msg.hasOwnProperty("flush")) {
-        save([...queue.http], [...queue.js], response);
+        let id = Date.now();
+        save([...queue.http], [...queue.js], id);
         queue.http = [];
         queue.js = [];
+        return Promise.resolve(id);
       }
 
       if (msg.hasOwnProperty("js")) {
         Chunk.add("js", msg.js);
-        response();
+        return Promise.resolve();
       }
 
       if (msg.hasOwnProperty("settings")) {
@@ -54,17 +56,12 @@ var Chunk = (() => {
     console.debug("#HTTP: " + completed.length);
     console.debug("#JS: " + queue.js.length);
 
-    save(completed, [...queue.js]);
+    save(completed, [...queue.js], Date.now());
     queue.http = queue.http.filter((e) => !e.complete);
     queue.js = [];
   };
 
-  let save = (http, js, callback) => {
-    let id = Date.now();
-    if (callback) {
-      callback(id);
-    }
-
+  let save = (http, js, id) => {
     let chunk = {
       [id]: {
         http: LZString.compressToUTF16(JSON.stringify(http)),

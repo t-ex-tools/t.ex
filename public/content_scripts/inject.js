@@ -14,29 +14,21 @@ window.addEventListener("cs", (e) => {
   }
 });
 
-let emit = (callback) => {
-  try {
-    browser.runtime.sendMessage(
-      browser.runtime.id, 
-      { js: [...events] }
-    ).then(() => {
-      if (callback) {
-        callback();
-      }
-    });
-    events = [];
-  } catch (err) {
-    console.log(err);
-  }
+let emit = () => {
+  browser.runtime.sendMessage(
+    browser.runtime.id, 
+    { js: [...events] }
+  );
+  events = [];
 }
 
 browser.runtime
   .onMessage
   .addListener((msg, sender, response) => {
     if (msg.close) {
-      emit(response);
+      emit();
+      return Promise.resolve();
     }
-    return true;
   });
 
 window.addEventListener("beforeunload", emit());
