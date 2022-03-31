@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "T.EX - The Transparency EXtension",
   "description": "Visualize and record third-party communication with T.EX - The Transparency Extension to identify Web trackers and what they know about you.",
-  "version": "2.0",
+  "version": "3.0.0",
   "icons": {
     "32": "./icons/icon32.png",
     "48": "./icons/icon48.png",
