@@ -1,8 +1,8 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "T.EX - The Transparency EXtension",
   "description": "Visualize and record third-party communication with T.EX - The Transparency Extension to identify Web trackers and what they know about you.",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "icons": {
     "32": "./icons/icon32.png",
     "48": "./icons/icon48.png",
@@ -11,8 +11,7 @@
     "128": "./icons/icon128.png"
   },
   "background": {
-    "service_worker": "./background/Background.js",
-    "type": "module"
+    "page": "./background/index.html"
   },
   "content_scripts": [{
     "js": [
@@ -23,33 +22,23 @@
     "matches": [ "<all_urls>" ],
     "all_frames": true
   }],
-  "action": {
+  "browser_action": {
     "default_icon": "./icons/icon16.png",
     "default_title": "T.EX - Transparency EXtension",
     "default_popup": "./popup/index.html"
   },
   "web_accessible_resources": [
-    {
-      "resources": [
-        "content_scripts/index.js",
-        "content_scripts/interfaces.js"
-      ],
-      "matches": [ "<all_urls>" ]
-    }
+    "content_scripts/index.js",
+    "content_scripts/interfaces.js"
   ],
   "permissions": [
-    "background",
     "webRequest",
     "storage",
     "activeTab",
     "tabs",
     "downloads",
-    "unlimitedStorage"
-  ],
-  "host_permissions": [
+    "unlimitedStorage",
     "<all_urls>"
   ],
-  "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
-  }
+  "content_security_policy": "script-src 'self'; object-src 'self'"
 }
