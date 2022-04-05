@@ -8,6 +8,7 @@ const empty = {
   tabsOpened: 0,
   tabsCompleted: 0,
   tabsToFinish: 0,
+  tabsNotResponding: 0
 };
 
 var Crawler = (() => {
@@ -120,9 +121,14 @@ var Crawler = (() => {
               tabId,
               { "close": true }
             ).catch(() => {
-              console.debug("Tab " + tabId + " was not responsive.");  
+              console.debug("Tab " + tabId + " was not responsive.");
+              log.tabsNotResponding += 1;
             }).finally(() => {
-              browser.tabs.remove(tabId);
+              browser.tabs
+                .remove(tabId)
+                .catch(() => {
+                  console.debug("Tab " + tabId + " already closed.");
+                });
             });
           }).catch(() => {
             console.debug("Tab " + tabId + " already closed.");

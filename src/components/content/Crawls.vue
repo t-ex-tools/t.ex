@@ -130,6 +130,9 @@
             <th scope="col">
               Tabs completed
             </th>
+            <th scope="col">
+              Websites unavailable
+            </th>
           </thead>
           <tbody>
             <tr 
@@ -141,6 +144,7 @@
               <td>{{ new Date(c.doneAt).toLocaleString() }}</td>
               <td>{{ c.tabsOpened }}</td>
               <td>{{ c.tabsCompleted }}</td>
+              <td>{{ c.tabsNotResponding }}</td>
             </tr>
           </tbody>
         </table>
