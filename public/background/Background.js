@@ -48,12 +48,6 @@ var Background = (() => {
       }
 
       Background.set(d.requestId, d);
-      Background.set(d.requestId, { complete: true });
-
-      if (Background.get(d.requestId).requestHeaders &&
-          Background.get(d.requestId).response) {
-            Background.push(d.requestId);
-      }
     },
       urlFilter,
       ["requestBody"]);
@@ -62,11 +56,6 @@ var Background = (() => {
     .onBeforeSendHeaders
     .addListener((d) => {
       Background.set(d.requestId, { requestHeaders: d.requestHeaders });
-
-      if (Background.get(d.requestId).complete &&
-        Background.get(d.requestId).response) {
-        Background.push(d.requestId)
-      }
     },
       urlFilter,
       (firefox) 
@@ -78,11 +67,6 @@ var Background = (() => {
     .onResponseStarted
     .addListener((d) => {
       Background.set(d.requestId, { response: d });
-
-      if (Background.get(d.requestId).complete &&
-        Background.get(d.requestId).requestHeaders) {
-        Background.push(d.requestId);
-      }
     },
       urlFilter,
       (firefox) 
@@ -92,12 +76,18 @@ var Background = (() => {
 
   browser.webRequest
     .onCompleted
-    .addListener((d) => Background.set(d.requestId, { success: true }),
+    .addListener((d) => {
+      Background.set(d.requestId, { success: true });
+      Background.push(d.requestId);
+    },
       urlFilter);
 
   browser.webRequest
     .onErrorOccurred
-    .addListener((d) => Background.set(d.requestId, { success: false }),
+    .addListener((d) => {
+      Background.set(d.requestId, { success: false });
+      Background.push(d.requestId);
+    },
       urlFilter);
 
   return {

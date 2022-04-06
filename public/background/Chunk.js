@@ -48,25 +48,12 @@ var Chunk = (() => {
     });
 
   let check = () => {
-    let completed = queue.http.filter((e) => e.complete);
-
-    if (completed.length < settings.chunkSize) {
-      return;
-    }
-
-    console.debug("#HTTP: " + completed.length);
+    console.debug("#HTTP: " + queue.http.length);
     console.debug("#JS: " + queue.js.length);
 
-    let js = [];
-    if (queue.js.length <= settings.jsChunkSize) {
-      js = [...queue.js];
-    } else {
-      js = queue.js.slice(0, settings.jsChunkSize);
-    }
-
-    save(completed, js, Date.now());
-    queue.http = queue.http.filter((e) => !e.complete);
-    queue.js = [];
+    let http = queue.http.splice(0, settings.chunkSize);
+    let js = queue.js.splice(0, settings.jsChunkSize);
+    save(http, js, Date.now());
   };
 
   let save = (http, js, id) => {

@@ -180,7 +180,7 @@ export default {
           )
           .then((chunks) => {
             this.$emit("data", true);
-            this.chunks.loaded = i * this.chunks.chunksAtOnce + Object.keys(chunks).length;
+            this.chunks.loaded += Object.keys(chunks).length;
             Util.data(chunks);
           });
       }
