@@ -8,6 +8,7 @@ var Chunk = (() => {
   };
   let settings = {
     chunkSize: config.chunkSize.default,
+    jsChunkSize: config.jsChunkSize.default,
     backgroundRecording: config.backgroundRecording.default
   };
   let recording = false;
@@ -56,7 +57,14 @@ var Chunk = (() => {
     console.debug("#HTTP: " + completed.length);
     console.debug("#JS: " + queue.js.length);
 
-    save(completed, [...queue.js], Date.now());
+    let js = [];
+    if (queue.js.length <= settings.jsChunkSize) {
+      js = [...queue.js];
+    } else {
+      js = queue.js.slice(0, settings.jsChunkSize);
+    }
+
+    save(completed, js, Date.now());
     queue.http = queue.http.filter((e) => !e.complete);
     queue.js = [];
   };
@@ -64,8 +72,14 @@ var Chunk = (() => {
   let save = (http, js, id) => {
     let chunk = {
       [id]: {
-        http: LZString.compressToUTF16(JSON.stringify(http)),
-        js: LZString.compressToUTF16(JSON.stringify(js)),
+        http: {
+          data: LZString.compressToUTF16(JSON.stringify(http)),
+          size: http.length
+        },
+        js: {
+          data: LZString.compressToUTF16(JSON.stringify(js)),
+          size: js.length
+        }
       }
     };
 

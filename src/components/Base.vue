@@ -18,7 +18,7 @@
       </div>
     </div>
     <div
-      v-if="noData"
+      v-if="!dataLoaded"
       class="row mb-3"
     >
       <div class="col">
@@ -34,7 +34,7 @@
       </div>
     </div>    
     <div 
-      v-if="!noData"
+      v-if="dataLoaded"
       class="row"
     >
       <div class="col">
@@ -49,7 +49,7 @@
       </div>
     </div>
     <div 
-      v-if="!noData"
+      v-if="dataLoaded"
       class="row"
     >
       <div class="col">
@@ -103,15 +103,11 @@ export default {
     TabBar,
     DataTable
   },
-  props: {
-    http: {
-      type: Array,
-      default: () => [],
+  props: {  
+    dataLoaded: {
+      type: Boolean,
+      default: () => false
     },
-    js: {
-      type: Array,
-      default: () => [],
-    },   
     feature: {
       type: String,
       default: () => "",
@@ -136,10 +132,6 @@ export default {
     };
   },
   computed: {
-    noData() {
-      return Object.values(this.http).length === 0 && 
-        Object.values(this.js).length === 0;
-    },
     percent() {
       return Math.round((this.loading.loaded / this.loading.total) * 100);
     },
@@ -198,7 +190,6 @@ export default {
       let type = this.feature.split(".")[0];
 
       Statistics.query(
-        this[type],
         type,
         this.queries.default[this.queries.selected],
         this.feature,

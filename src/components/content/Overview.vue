@@ -129,16 +129,5 @@
 
 <script>
 export default {
-  props: {
-    http: {
-      type: Array,
-      default: () => [],
-    },
-  },
-  data: () => {
-    return {};
-  },
-  mounted() {},
-  methods: {},
 };
 </script>

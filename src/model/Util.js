@@ -1,23 +1,53 @@
+import { toRaw } from "vue";
+
 var Util = (() => {
-  let Labeler = new Worker("../workers/Labeler.js");
+  let cpus = navigator.hardwareConcurrency;
+  let labelers = [];
+  for (let i=0; i < cpus; i++) {
+    labelers[i] = new Worker("../workers/Labeler.js");
+  }
 
   return {
+
+    data: (chunks) => {
+      let data = Object.values(chunks);
+
+      labelers
+        .forEach((l, i) => {
+          l.postMessage({ 
+            method: "post",
+            chunks: data.filter((chunk, j) => j % labelers.length === i),
+          });
+        });
+    },
     
-    labeledStream: (chunks, type, handler) => {
+    stream: (type, handler) => {
       let port = Util.randomString();
       
-      Labeler.postMessage({ 
-        port: port, 
-        chunks: Object.values(chunks), 
-        type: type 
-      });
+      let loaded = new Array(cpus).fill(0);
+      let total = new Array(cpus).fill(0);
 
-      Labeler.addEventListener("message", (msg) => {
-        if (msg.data.port === port) {
-          handler(msg.data.chunk, msg.data.loaded, msg.data.total);
-        }
-      })
+      labelers
+        .forEach((l, i) => {
+          l.postMessage({
+            method: "get",
+            port: port,
+            type: type 
+          });
+
+          l.addEventListener("message", (msg) => {
+            if (msg.data.port === port) {
+              loaded[i] = msg.data.loaded;
+              total[i] = msg.data.total;
+              let x = loaded.reduce((a, b) => a + b, 0);
+              let y = total.reduce((a, b) => a + b, 0);
+              handler(msg.data.chunk, x, y);
+            }
+          })
+        });
     },
+
+    // TODO: close stream and remove listener from labelers
 
     // https://stackoverflow.com/a/8084248
     // from doubletap's answer on Nov 10, 2011 at 18:12

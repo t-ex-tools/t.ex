@@ -112,6 +112,7 @@ import CrawlLoader from "./init-modal/CrawlLoader.vue";
 import LoadingModal from "./LoadingModal.vue";
 import config from "../../model/Settings.js";
 import { markRaw } from "vue";
+import Util from "../../model/Util.js";
 
 export default {
   components: {
@@ -178,10 +179,9 @@ export default {
             )
           )
           .then((chunks) => {
-            Object.values(chunks).forEach((chunk, index) => {
-              this.$emit("data", chunk);
-              this.chunks.loaded = i * this.chunks.chunksAtOnce + (index + 1);
-            });
+            this.$emit("data", true);
+            this.chunks.loaded = i * this.chunks.chunksAtOnce + Object.keys(chunks).length;
+            Util.data(chunks);
           });
       }
     },

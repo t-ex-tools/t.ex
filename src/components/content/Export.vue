@@ -7,7 +7,7 @@
     </div>
 
     <div 
-      v-if="noData" 
+      v-if="!dataLoaded" 
       class="row"
     >
       <div class="col">
@@ -115,7 +115,7 @@
         <button
           class="btn btn-outline-primary float-end"
           type="button"
-          :disabled="features.length === 0 || noData"
+          :disabled="features.length === 0 || !dataLoaded"
           data-bs-toggle="modal"
           :data-bs-target="'#loading-modal-' + suffix"
           @click="download(true)"
@@ -129,7 +129,7 @@
           :key="index"
           class="btn btn-outline-primary float-end me-2"
           type="button"
-          :disabled="noData"
+          :disabled="!dataLoaded"
           data-bs-toggle="modal"
           :data-bs-target="'#loading-modal-' + suffix"
           @click="
@@ -163,14 +163,10 @@ export default {
     LoadingModal,
   },
   props: {
-    http: {
-      type: Array,
-      default: () => [],
-    },
-    js: {
-      type: Array,
-      default: () => [],
-    },
+    dataLoaded: {
+      type: Boolean,
+      default: () => false
+    },    
     dataTag: {
       type: String,
       default: () => "",
@@ -202,12 +198,6 @@ export default {
           FeatureExtractor.features().map((f) => f.split(".").shift())
         ),
       ];
-    },
-    noData() {
-      return (
-        Object.values(this.http).length === 0 &&
-        Object.values(this.js).length === 0
-      );
     },
   },
   mounted() {
@@ -244,12 +234,11 @@ export default {
     },
     download(transformed) {
       let type = this.types[this.selected];
-      let data = this[type];
 
       let batch = [];
       let n = 0;
 
-      Util.labeledStream(data, type, (chunk, loaded, total) => {
+      Util.stream(type, (chunk, loaded, total) => {
         this.view.loaded = loaded;
         this.view.total = total;
 

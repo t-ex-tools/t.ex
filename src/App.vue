@@ -10,8 +10,7 @@
 
         <div class="col-9 pt-3 mb-3">
           <router-view
-            :http="data.http"
-            :js="data.js"
+            :data-loaded="data.loaded"
             :data-tag="data.tag"
           />
         </div>
@@ -19,7 +18,7 @@
     </div>
 
     <init-modal 
-      @data="appendData"
+      @data="setLoaded"
       @set-tag="setTag"
     />
 
@@ -51,8 +50,7 @@ export default {
       data: {
         memoryLimit: 256 * 1000000,
         tag: Util.randomString(),
-        http: [],
-        js: [],
+        loaded: false
       }
     };
   },
@@ -60,9 +58,8 @@ export default {
     setTag(tag) {
       this.data.tag = tag;
     },
-    appendData(chunk) {
-      this.data.http.push(chunk.http);
-      this.data.js.push(chunk.js);
+    setLoaded(flag) {
+      this.data.loaded = flag;
     }
   },
 };

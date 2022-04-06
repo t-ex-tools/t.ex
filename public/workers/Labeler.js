@@ -4,10 +4,10 @@ self.importScripts(
   "../labeler-core/EasyListEvaluator.js",
   "../labeler-core/DisconnectMeParser.js",
   "../labeler-core/DisconnectMeEvaluator.js",
-  "../labeler-core/BlockList.js"  
+  "../labeler-core/BlockList.js",
+  "./ChunksHandler.js",
 );
 
-let cache = {};
 let blocklists = [];
 
 [{
@@ -30,58 +30,19 @@ let blocklists = [];
 
 self.addEventListener("message", (msg) => {
 
-  if (!msg.data.port || 
-      !msg.data.chunks ||
-      !msg.data.type) {
-        return;
+  if (!msg.data.hasOwnProperty("method")) {
+    return;
   }
 
-  let n = [];
-  msg.data.chunks
-    .forEach((chunk, index) => {
-
-      if (cache[msg.data.type] && 
-          cache[msg.data.type][index]) {
-      
-        self.postMessage({
-          port: msg.data.port, 
-          chunk: cache[msg.data.type][index],
-          loaded: cache[msg.data.type][index].length,
-          total: cache[msg.data.type][index].length,
-        });
-
-      } else {
-        let d = JSON.parse(LZString.decompressFromUTF16(chunk));
-
-        if (index === 0) {
-          n = new Array(msg.data.chunks.length).fill(d.length)
-        } else {
-          n[index] = d.length;
-        }
-        
-        d.forEach((r, i) => {
-          if (r === null) {
-            return;
-          }
-
-          r.labels = blocklists.map((e) => e.isLabeled(r));
-          
-          // TODO: caching can cause OutOfMemory
-          if (i === d.length-1) {
-            if (!cache[msg.data.type]) {
-              cache[msg.data.type] = [];
-            }
-            cache[msg.data.type][index] = d;
-          }
+  switch (msg.data.method) {
+    case "post":
+      ChunksHandler.pass(msg.data.chunks);
+      break;
+    case "get":
+      ChunksHandler.process(msg.data.type, msg.data.port, self);
+      break;
+    default:
+      console.debug("Unknown message type");
+  };
   
-          self.postMessage({
-            port: msg.data.port,
-            chunk: (i === d.length-1) ? d : null,
-            loaded: n.slice(0, index).reduce((acc, val) => acc + val, 0) + i+1,
-            total: n.reduce((acc, val) => acc + val, 0),
-          });
-        });
-
-      }
-    });
 });
