@@ -5,7 +5,10 @@
         <b>Labeling</b>
       </div>
     </div>
-    <div class="row">
+    <div
+      v-if="lists.length > 0"
+      class="row"
+    >
       <div class="col">
         <table class="table table-hover align-middle mt-3">
           <thead>
@@ -23,15 +26,11 @@
               :key="index"
               scope="row"
             >
-              <td>{{ list.name }}</td>
-              <td>{{ list.version }}</td>
-              <td>
-                <a 
-                  :href="list.url"
-                  target="_blank"
-                >
-                  {{ list.url }}
-                </a>
+              <td
+                v-for="v, i in Object.values(list)"
+                :key="i"
+              >
+                {{ v }}
               </td>
             </tr>
           </tbody>
@@ -42,23 +41,16 @@
 </template>
 
 <script>
+import Util from "../../model/Util.js";
+
 export default {
   data: () => {
     return {
-      lists: [{
-        name: "EasyList",
-        version: "latest",
-        url: "https://easylist.to/easylist/easylist.txt"
-      }, {
-        name: "EasyPrivacy",
-        version: "latest",
-        url: "https://easylist.to/easylist/easyprivacy.txt"
-      }, {
-        name: "Disconnect.me",
-        version: "latest",
-        url: "https://raw.githubusercontent.com/disconnectme/disconnect-tracking-protection/master/services.json"
-      }]
+      lists: []
     }
+  },
+  mounted() {
+    Util.blocklists((lists) => this.lists = lists);
   }
 }
 </script>

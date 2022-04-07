@@ -124,7 +124,7 @@ export default {
   data: () => {
     return {
       queries: {
-        default: DefaultQueries,
+        default: DefaultQueries.groups(),
         selected: 1,
       },
       loading: { ...empty },

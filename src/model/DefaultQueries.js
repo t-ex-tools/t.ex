@@ -1,27 +1,39 @@
 import Util from "./Util.js";
 
-let defaultGroups = 
-  [
-    "EasyList", 
-    "EasyPrivacy", 
-    "Disconnect.me"
-  ].map((e, i) => ({
-    id: Util.randomString(),
-    label: e,
-    members: [{
-      label: "Labeled by",
-      filter: (r) => r.labels[i].isLabeled
-    }, {
-      label: "Not labeled by",
-      filter: (r) => !r.labels[i].isLabeled
-    }]
-  }));
+var DefaultQueries = (() => {
 
-export default [{
-  id: Util.randomString(),
-  label: "All",
-  members: [{
-    label: "All http",
-    filter: () => true,
-  }]}, 
-].concat(defaultGroups);
+  let none = {
+    id: Util.randomString(),
+    label: "None",
+    members: [{
+      label: "None",
+      filter: () => true,
+    }]
+  };
+  
+  let defaultGroups = [];
+  Util.blocklists((lists) => {
+    defaultGroups = lists
+      .filter((l) => l.active)
+      .map((l, i) => ({
+        id: Util.randomString(),
+        label: l.name,
+        members: [{
+          label: "Labeled by",
+          filter: (r) => r.labels[i].isLabeled
+        }, {
+          label: "Not labeled by",
+          filter: (r) => !r.labels[i].isLabeled
+        }]
+      }));
+  });
+
+  return {
+    groups: () => {
+      return [none].concat(defaultGroups);
+    }
+  }
+
+})();
+
+export default DefaultQueries;

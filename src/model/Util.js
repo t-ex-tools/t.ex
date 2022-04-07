@@ -1,5 +1,3 @@
-import { toRaw } from "vue";
-
 var Util = (() => {
   let cpus = navigator.hardwareConcurrency;
   let labelers = [];
@@ -18,6 +16,20 @@ var Util = (() => {
             method: "post",
             chunks: data.filter((chunk, j) => j % labelers.length === i),
           });
+        });
+    },
+
+    blocklists: (handler) => {
+      let port = Util.randomString();
+
+      labelers[0]
+        .postMessage({ port: port, method: "lists" });
+
+      labelers[0]
+        .addEventListener("message", (msg) => {
+          if (msg.data.port === port) {
+            handler(msg.data.lists);
+          }
         });
     },
     

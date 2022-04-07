@@ -6,27 +6,22 @@ self.importScripts(
   "../labeler-core/DisconnectMeEvaluator.js",
   "../labeler-core/BlockList.js",
   "./ChunksHandler.js",
+  "./Blocklists.js",
 );
 
 let blocklists = [];
 
-[{
-  name: "EasyList",
-  url: "https://easylist.to/easylist/easylist.txt",
-  evaluator: EasyListEvaluator(EasyListParser)
-}, {
-  name: "EasyPrivacy",
-  url: "https://easylist.to/easylist/easyprivacy.txt",
-  evaluator: EasyListEvaluator(EasyListParser)
-}, {
-  name: "Disconnect.me",
-  url: "https://raw.githubusercontent.com/disconnectme/disconnect-tracking-protection/master/services.json",
-  evaluator: DisconnectMeEvaluator(DisconnectMeParser)
-}].forEach((e) => {
-  fetch(e.url)
-    .then((response) => response.text())
-    .then((rawList) => blocklists.push(new BlockList(e.name, rawList, e.evaluator)));
-});
+Blocklists
+  .filter((l) => l.active)
+  .forEach((e) => {
+    fetch(e.url)
+      .then((response) => response.text())
+      .then((rawList) => 
+        blocklists.push(
+          new BlockList(e.name, rawList, e.evaluator)
+        )
+      );
+  });
 
 self.addEventListener("message", (msg) => {
 
@@ -40,6 +35,17 @@ self.addEventListener("message", (msg) => {
       break;
     case "get":
       ChunksHandler.process(msg.data.type, msg.data.port, self);
+      break;
+    case "lists":
+      self.postMessage({
+        port: msg.data.port, 
+        lists: Blocklists
+          .map((l) => {
+            let x = { ...l };
+            delete x.evaluator;
+            return x;
+          })
+      });
       break;
     default:
       console.debug("Unknown message type");
