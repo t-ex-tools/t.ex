@@ -7,7 +7,7 @@
       >T.EX - The Transparency EXtension</a>
       <div class="d-flex">
         <button
-          class="btn btn-outline-light me-2"
+          class="btn btn-dark me-2"
           type="button"
           :disabled="!dataLoaded"
           @click="$emit('reset')"
@@ -17,18 +17,18 @@
         </button>
 
         <button
-          class="btn btn-outline-light me-2"
+          class="btn btn-dark me-2"
           type="button"
           :disabled="dataLoaded"
           data-bs-toggle="modal"
           data-bs-target="#init-modal"
         >
-          <i class="bi bi-gear me-2" />
+          <i class="bi bi-file-earmark-text me-2" />
           <small>Load data</small>
         </button>
 
         <button
-          class="btn btn-outline-light"
+          class="btn btn-dark"
           type="button"
           data-bs-toggle="modal"
           data-bs-target="#settings-modal"
@@ -55,3 +55,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.navbar {
+  background: rgb(0,0,0);
+  background: linear-gradient(45deg, rgba(0,0,0,1) 0%, rgba(30,9,121,1) 50%, rgba(0,134,255,1) 100%);
+}
+</style>
