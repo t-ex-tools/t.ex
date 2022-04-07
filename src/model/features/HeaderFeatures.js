@@ -33,6 +33,24 @@ var HeaderFeatures = (() => {
       lom: 1,
       cardinalityType: 1,
     },
+    "http.requestHeaders.referer": {
+      title: "HTTP Referrer",
+      subtitle: "The value of the HTTP-Referer field",
+      impl: (r) => header(r)
+        .filter((h) => h[0].toLowerCase() === "referer")
+        .reduce((acc, val) => acc + val[1], ""),
+      lom: 1,
+      cardinalityType: 1,
+    },    
+    "http.requestHeaders.origin": {
+      title: "HTTP Origin",
+      subtitle: "The value of the HTTP-Origin field",
+      impl: (r) => header(r)
+        .filter((h) => h[0].toLowerCase() === "origin")
+        .reduce((acc, val) => acc + val[1], ""),
+      lom: 1,
+      cardinalityType: 1,
+    },
     "http.requestHeaders.nkvp": {
       title: "Header fields",
       subtitle: "Number of key-value pairs in the request header",

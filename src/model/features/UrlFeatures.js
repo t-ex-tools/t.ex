@@ -10,12 +10,12 @@ var UrlFeatures = (() => {
   let vLengths = (r) => FeatureExtractor.lengths("url.query.valueLengths@" + r.url, params(r), 1);
 
   const features = {
-    "http.url.source": { 
-      title: "Source", 
-      subtitle: "The full URL of the source of the request",
+    "http.url.initiator": { 
+      title: "Initiator", 
+      subtitle: "The hostname of the initiator of the request",
       impl: (r) => {
         try {
-          let source = new URL(r.source);
+          let source = new URL(r.initiator);
           return source.hostname;
         } catch (err) {
           return undefined;
