@@ -1,6 +1,9 @@
 <template>
   <div>
-    <nav-bar />
+    <nav-bar 
+      :data-loaded="data.loaded"
+      @reset="reset"
+    />
 
     <div class="container-fluid h-100">
       <div class="row h-100">
@@ -60,6 +63,9 @@ export default {
     },
     setLoaded(flag) {
       this.data.loaded = flag;
+    },
+    reset() {
+      window.location.reload();
     }
   },
 };

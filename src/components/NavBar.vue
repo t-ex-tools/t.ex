@@ -9,6 +9,17 @@
         <button
           class="btn btn-outline-light me-2"
           type="button"
+          :disabled="!dataLoaded"
+          @click="$emit('reset')"
+        >
+          <i class="bi bi-arrow-clockwise me-2" />
+          <small>Reset</small>
+        </button>
+
+        <button
+          class="btn btn-outline-light me-2"
+          type="button"
+          :disabled="dataLoaded"
           data-bs-toggle="modal"
           data-bs-target="#init-modal"
         >
@@ -32,7 +43,13 @@
 
 <script>
 export default {
-  props: [],
+  props: {
+    dataLoaded: {
+      type: Boolean,
+      default: () => false
+    }
+  },
+  emits: ["reset"],
   data: () => {
     return {};
   },
