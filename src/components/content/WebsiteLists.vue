@@ -16,6 +16,7 @@
         </button>
       </div>
     </div>
+
     <div
       v-if="lists.all.length > 0"
       class="row"
@@ -52,9 +53,13 @@
               v-for="(list, index) in lists.all.slice(view.page * view.window, (view.page + 1) * view.window)"
               :key="index"
             >
-              <td>{{ list.name }}</td>
-              <td>{{ urlInfo[index] }}</td>
-              <td>
+              <td style="width: 20%">
+                {{ list.name }}
+              </td>
+              <td style="width: 60%">
+                {{ urlInfo[index] }}
+              </td>
+              <td style="width: 20%">
                 <button
                   class="btn btn-outline-secondary me-2"
                   data-bs-toggle="modal"

@@ -29,6 +29,7 @@
               <td
                 v-for="v, i in Object.values(list)"
                 :key="i"
+                :style="'width: ' + (100 / Object.values(list).length).toFixed(2) + '%'"
               >
                 {{ v }}
               </td>

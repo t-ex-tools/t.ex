@@ -51,7 +51,6 @@ export default {
   data: () => {
     return {
       data: {
-        memoryLimit: 256 * 1000000,
         tag: Util.randomString(),
         loaded: false
       }

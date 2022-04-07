@@ -43,7 +43,7 @@
           <div class="row g-0">
             <div class="col-md-1">
               <img
-                src="@/assets/icon-data-inspection.svg"
+                src="@/assets/icon-data-labeling.svg"
                 class="img-fluid"
                 alt=""
               >

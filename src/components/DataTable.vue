@@ -36,6 +36,7 @@
             data-bs-toggle="tooltip" 
             data-bs-placement="top" 
             :title="col"
+            :style="(idx === 0) ? 'width: 70%' : 'width: 15%'"
           >
             {{ 
               (idx === 0 && col.length >= view.max) 
