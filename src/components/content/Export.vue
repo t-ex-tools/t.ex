@@ -188,7 +188,7 @@ export default {
       },
       selected: 0,
       features: [],
-      memoryLimit: 384 * 1000000,
+      memoryLimit: 448 * 1000000,
     };
   },
   computed: {
