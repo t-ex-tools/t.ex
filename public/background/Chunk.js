@@ -96,8 +96,9 @@ var Chunk = (() => {
           queue.http.length > 0) {
         console.debug("Queue size: " + queue.http.length);
       }
-      if (settings.chunkSize <= queue.http.length) {
-        check();
+      if (settings.chunkSize <= queue.http.length ||
+          settings.jsChunkSize <= queue.js.length) {
+            check();
       }
     },
     set: (config) => {

@@ -21,7 +21,6 @@ var Crawler = (() => {
   }
 
   let onCreatedRef;
-  let onUpdatedRef;
   let onRemovedRef;
 
   return {
@@ -51,10 +50,8 @@ var Crawler = (() => {
         log.tabsToFinish = urls.length;
 
         onCreatedRef = this.onCreate.bind(this);
-        onUpdatedRef = this.onUpdated.bind(this);
         onRemovedRef = this.onRemoved.bind(this);
         browser.tabs.onCreated.addListener(onCreatedRef);
-        browser.tabs.onUpdated.addListener(onUpdatedRef);
         browser.tabs.onRemoved.addListener(onRemovedRef);
         console.debug("Crawler: tab listeners added.")
 
@@ -76,7 +73,6 @@ var Crawler = (() => {
         });
 
       browser.tabs.onCreated.removeListener(onCreatedRef);
-      browser.tabs.onUpdated.removeListener(onUpdatedRef);
       browser.tabs.onRemoved.removeListener(onRemovedRef);
       console.debug("Crawler: tab listeners removed.")
     },
@@ -90,17 +86,15 @@ var Crawler = (() => {
           );
       }
     },
-    onUpdated: function (tabId, changeInfo) {
-      if (changeInfo.status === "complete") {
-        this.closeTab(tabId, settings.waitAfterComplete);
-      }
-    },
     onRemoved: function () {
       this.emit();
       log.tabsOpen -= 1;
       log.tabsCompleted++;
       if (log.tabsOpen < settings.tabsAtOnce && urls.length > 0) {
         browser.tabs.create(this.openTab())
+          .then((tab) => 
+            this.closeTab(tab.id, settings.tabTtl)
+          );
       }
     },
     openTab: function () {
