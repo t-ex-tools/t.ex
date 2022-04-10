@@ -135,7 +135,7 @@ export default {
         },
       ],
       chunks: {
-        chunksAtOnce: config.chunksAtOnce.default,
+        chunksAtOnce: navigator.hardwareConcurrency,
         loaded: 0,
         total: -1,
       },
@@ -147,15 +147,9 @@ export default {
     };
   },
   mounted() {    
-    browser.storage.local.get(["indexes", "settings"])
+    browser.storage.local.get(["indexes"])
       .then((res) => {
         this.setIndexes(res.indexes);
-
-        if (res.settings) {
-          this.chunks.chunksAtOnce = res.settings.hasOwnProperty("chunksAtOnce")
-            ? res.settings.chunksAtOnce
-            : this.chunks.chunksAtOnce;
-        }
       });
 
     const self = this;

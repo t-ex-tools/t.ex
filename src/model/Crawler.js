@@ -16,8 +16,7 @@ var Crawler = (() => {
   let log = { ...empty };
   let settings = {
     tabsAtOnce: config.tabsAtOnce.default,
-    tabTtl: config.tabTtl.default,
-    waitAfterComplete: config.waitAfterComplete.default
+    tabTtl: config.tabTtl.default
   }
 
   let onCreatedRef;
@@ -100,7 +99,7 @@ var Crawler = (() => {
     openTab: function () {
       let url = this.url(urls.shift());
       if (urls.length === 0) {
-        setTimeout(this.end.bind(this), settings.tabTtl * 1000)
+        setTimeout(this.end.bind(this), ((settings.tabTtl * 2) * 1000))
       }
       return {
         active: false,

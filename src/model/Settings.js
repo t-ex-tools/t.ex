@@ -35,12 +35,6 @@ export default {
     type: "number",
     default: 60
   },
-  waitAfterComplete: {
-    label: "Wait after loading",
-    description: "Time to wait after tab is done loading during a crawl (in seconds)",
-    type: "number",
-    default: 15
-  },
   chunkSize: {
     label: "Chunk size",
     description: "Max. number of HTTP requests contained in a single chunk",
@@ -52,11 +46,5 @@ export default {
     description: "Max. number of JavaScript events contained in a single chunk",
     type: "number",
     default: 15000
-  },  
-  chunksAtOnce: {
-    label: "Chunk at once",
-    description: "Max. number of chunks loaded at once when loading the extension",
-    type: "number",
-    default: 8
   }
 }

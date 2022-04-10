@@ -99,8 +99,8 @@ var Background = (() => {
     },
 
     push: (requestId) => {
-      Chunk.add("http", [Background.get(requestId)]);
-      delete Background.get(requestId);
+      Chunk.add("http", [{ ...Background.get(requestId) }]);
+      delete http[requestId];
     }
   }
 })();

@@ -20,7 +20,10 @@ Blocklists
         blocklists.push(
           new BlockList(e.name, rawList, e.evaluator)
         )
-      );
+      ).catch(() => {
+        console.debug(e.name + " could not be loaded.");
+        e.active = false;
+      });
   });
 
 self.addEventListener("message", (msg) => {
