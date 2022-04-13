@@ -54,10 +54,14 @@ var Crawler = (() => {
         browser.tabs.onRemoved.addListener(onRemovedRef);
         console.debug("Crawler: tab listeners added.")
 
-        browser.tabs.create(this.openTab())
-          .then((tab) => 
-            this.closeTab(tab.id, settings.tabTtl)
-          );
+        for (let i=0; i < settings.tabsAtOnce; i++) {
+          if (urls.length > 0) {
+            browser.tabs.create(this.openTab())
+              .then((tab) => 
+                this.closeTab(tab.id, settings.tabTtl)
+              );
+          }
+        }
       });
     },
     end: function () {
@@ -78,12 +82,6 @@ var Crawler = (() => {
     onCreate: function () {
       log.tabsOpen += 1;
       log.tabsOpened += 1;
-      if (log.tabsOpen < settings.tabsAtOnce && urls.length > 0) {
-        browser.tabs.create(this.openTab())
-          .then((tab) => 
-            this.closeTab(tab.id, settings.tabTtl)
-          );
-      }
     },
     onRemoved: function () {
       this.emit();
