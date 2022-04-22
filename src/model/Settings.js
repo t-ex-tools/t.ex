@@ -46,5 +46,20 @@ export default {
     description: "Max. number of JavaScript events contained in a single chunk",
     type: "number",
     default: 15000
-  }
+  },
+  chunksAtOnce: {
+    label: "Chunk at once",
+    description: "Max. number of chunks loaded at once when loading data",
+    type: "number",
+    default: 8
+  },
+  numberOfWorkers: {
+    label: "Number of workers",
+    description: "Number of Labeler workers to be used for labeling data; default: navigator.hardwareConcurrency; Change will restart the extension",
+    type: "number",
+    default: navigator.hardwareConcurrency,
+    handler: (value) => {
+      window.location.reload();
+    }
+  },
 }

@@ -1,9 +1,21 @@
+import config from "./Settings.js";
+
 var Util = (() => {
-  let cpus = navigator.hardwareConcurrency;
-  let labelers = [];
-  for (let i=0; i < cpus; i++) {
-    labelers[i] = new Worker("../workers/Labeler.js");
-  }
+  let labelers = [new Worker("../workers/Labeler.js")];
+  let settings = {
+    numberOfWorkers: config.numberOfWorkers.default
+  };
+
+  browser.storage.local.get(["settings"])
+    .then((res) => {
+      if (res.settings) {
+        settings.numberOfWorkers = res.settings.numberOfWorkers;
+      }
+
+      for (let i=1; i < settings.numberOfWorkers; i++) {
+        labelers[i] = new Worker("../workers/Labeler.js");
+      }
+    });
 
   return {
 
@@ -14,7 +26,9 @@ var Util = (() => {
         .forEach((l, i) => {
           l.postMessage({ 
             method: "post",
-            chunks: data.filter((chunk, j) => j % labelers.length === i),
+            chunks: data.filter((chunk, j) => {
+              return j % labelers.length === i;
+            }),
           });
         });
     },
@@ -33,11 +47,14 @@ var Util = (() => {
         });
     },
     
+    // TODO: why not loading chunks here?
+    // TODO: only pass indexes and whenever stream called
+    // TODO: chunks loaded from fs
     stream: (type, handler) => {
       let port = Util.randomString();
       
-      let loaded = new Array(cpus).fill(0);
-      let total = new Array(cpus).fill(0);
+      let loaded = new Array(settings.numberOfWorkers).fill(0);
+      let total = new Array(settings.numberOfWorkers).fill(0);
 
       labelers
         .forEach((l, i) => {

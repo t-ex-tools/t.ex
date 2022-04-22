@@ -4,7 +4,7 @@
     class="modal"
     tabindex="-1"
   >
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">
@@ -100,11 +100,18 @@ export default {
   },
   methods: {
     set(evt) {
-      this.values[evt.target.name] =
+      let o = this.values[evt.target.name];
+      let n = 
         evt.target.type === "checkbox" ? evt.target.checked : evt.target.value;
 
+      if (o === n) {
+        return;
+      }
+      
+      this.values[evt.target.name] = n;
+
       if (config[evt.target.name].handler) {
-        config[evt.target.name].handler(this.values[evt.target.name]);
+        config[evt.target.name].handler(n);
       }
 
       const cfg = { settings: toRaw(this.values) };
