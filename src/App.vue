@@ -1,7 +1,7 @@
 <template>
   <div>
     <nav-bar 
-      :data-loaded="data.loaded"
+      :data-loaded="loaded"
       @reset="reset"
     />
 
@@ -13,8 +13,8 @@
 
         <div class="col-9 pt-3 mb-3">
           <router-view
-            :data-loaded="data.loaded"
-            :data-tag="data.tag"
+            :data-loaded="loaded"
+            :data-tag="tag"
           />
         </div>
       </div>
@@ -22,7 +22,6 @@
 
     <init-modal 
       @data="setLoaded"
-      @set-tag="setTag"
     />
 
     <settings-modal />
@@ -50,18 +49,19 @@ export default {
   },
   data: () => {
     return {
-      data: {
-        tag: Util.randomString(),
-        loaded: false
-      }
+      tag: Util.randomString(),
+      length: 0
     };
   },
+  computed: {
+    loaded() {
+      return this.length > 0;
+    }
+  },
   methods: {
-    setTag(tag) {
-      this.data.tag = tag;
-    },
-    setLoaded(flag) {
-      this.data.loaded = flag;
+    setLoaded(data) {
+      this.tag = data.tag;
+      this.length = data.length;
     },
     reset() {
       window.location.reload();

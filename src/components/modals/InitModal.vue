@@ -88,8 +88,7 @@
             v-if="indexes.length > 0"
             type="button"
             class="btn btn-primary"
-            data-bs-toggle="modal"
-            :data-bs-target="'#loading-modal-' + suffix"
+            data-bs-dismiss="modal"
             @click="handleOk"
           >
             Load data
@@ -98,63 +97,45 @@
       </div>
     </div>
   </div>
-  
-  <loading-modal
-    :suffix="suffix"
-    :loaded="chunks.loaded"
-    :total="chunks.total"
-  />
 </template>
 
 <script>
 import LimitSlider from "./init-modal/LimitSlider.vue";
 import CrawlLoader from "./init-modal/CrawlLoader.vue";
-import LoadingModal from "./LoadingModal.vue";
-import config from "../../model/Settings.js";
 import { markRaw } from "vue";
 import Util from "../../model/Util.js";
 
 export default {
   components: {
     LimitSlider,
-    CrawlLoader,
-    LoadingModal,
+    CrawlLoader
   },
-  emits: ["data", "set-tag"],
+  emits: ["data"],
   data: () => {
     return {
       suffix: "init-modal",
       options: [
         {
-          label: "Select time range",
-          component: markRaw(LimitSlider),
-        },
-        {
           label: "Load crawl",
           component: markRaw(CrawlLoader),
         },
+        {
+          label: "Select time range",
+          component: markRaw(LimitSlider),
+        },
       ],
-      chunks: {
-        chunksAtOnce: config.chunksAtOnce.default,
-        loaded: 0,
-        total: -1,
-      },
       boundaries: {
+        dataTag: "",
         lower: 0,
-        upper: 0,
+        upper: 0
       },
       indexes: [],
     };
   },
   mounted() {    
-    browser.storage.local.get(["indexes", "settings"])
+    browser.storage.local.get(["indexes"])
       .then((res) => {
         this.setIndexes(res.indexes);
-          if (res.settings) {
-            this.chunks.chunksAtOnce = res.settings.hasOwnProperty("chunksAtOnce")
-              ? res.settings.chunksAtOnce
-              : this.chunks.chunksAtOnce;
-          }
       });
 
     const self = this;
@@ -167,23 +148,6 @@ export default {
     });
   },
   methods: {
-    load: function (indexes) {
-      this.chunks.total = indexes.length;
-      for (let i = 0; i * this.chunks.chunksAtOnce < indexes.length; i++) {
-        browser.storage.local
-          .get(
-            indexes.slice(
-              i * this.chunks.chunksAtOnce,
-              (i + 1) * this.chunks.chunksAtOnce
-            )
-          )
-          .then((chunks) => {
-            this.$emit("data", true);
-            this.chunks.loaded += Object.keys(chunks).length;
-            Util.data(chunks);
-          });
-      }
-    },
     setIndexes(indexes) {
       this.indexes = indexes ? indexes.sort() : [];
       if (this.indexes.length > 0) {
@@ -192,8 +156,6 @@ export default {
       }
     },
     setBoundaries(boundaries) {
-      this.$emit("set-tag", boundaries.dataTag);
-      delete boundaries.dataTag;
       this.boundaries = boundaries;
       console.debug("Boundaries retrieved " + JSON.stringify(this.boundaries));
     },
@@ -201,7 +163,12 @@ export default {
       let i = this.indexes
         .filter((t) => t >= this.boundaries.lower && t <= this.boundaries.upper)
         .map((t) => t.toString());
-      this.load(i);
+      
+      this.$emit("data", {
+        tag: this.boundaries.dataTag,
+        length: i.length
+      });        
+      Util.setIndexes(i);
     },
   },
 };

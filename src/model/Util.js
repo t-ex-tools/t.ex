@@ -1,15 +1,26 @@
 import config from "./Settings.js";
 
 var Util = (() => {
+  let indexes = [];
   let labelers = [new Worker("../workers/Labeler.js")];
   let settings = {
-    numberOfWorkers: config.numberOfWorkers.default
+    numberOfWorkers: config.numberOfWorkers.default,
+    chunksAtOnce: config.chunksAtOnce.default,
+    chunkSize: config.chunkSize.default,
+    jsChunkSize: config.chunkSize.default
+  };
+  let approx = {
+    http: () => settings.chunkSize,
+    js: () => settings.jsChunkSize
   };
 
   browser.storage.local.get(["settings"])
     .then((res) => {
       if (res.settings) {
         settings.numberOfWorkers = res.settings.numberOfWorkers;
+        settings.chunksAtOnce = res.settings.chunksAtOnce;
+        settings.chunkSize = res.settings.chunkSize;
+        settings.jsChunkSize = res.settings.jsChunkSize;
       }
 
       for (let i=1; i < settings.numberOfWorkers; i++) {
@@ -19,18 +30,59 @@ var Util = (() => {
 
   return {
 
-    data: (chunks) => {
-      let data = Object.values(chunks);
+    setIndexes: function(idx) {
+      indexes = idx;
+    },
+
+    stream: (type, handler) => {
+      let port = Util.randomString();
+      let est = approx[type]() * indexes.length;
+
+      let loaded = new Array(settings.numberOfWorkers)
+        .fill(0);
+      
+      let total = new Array(settings.numberOfWorkers)
+        .fill(est / settings.numberOfWorkers);
 
       labelers
         .forEach((l, i) => {
-          l.postMessage({ 
-            method: "post",
-            chunks: data.filter((chunk, j) => {
-              return j % labelers.length === i;
-            }),
+          l.addEventListener("message", (msg) => {
+            if (msg.data.port === port) {
+              loaded[i] = msg.data.loaded;
+              total[i] = msg.data.total;
+              let x = loaded.reduce((a, b) => a + b, 0);
+              let y = total.reduce((a, b) => a + b, 0);
+              handler(msg.data.chunk, x, y);
+            }
+          })
+        });      
+
+      for (let i=0; i * settings.chunksAtOnce < indexes.length; i++) {
+        browser.storage.local
+          .get(
+            indexes.slice(
+              i * settings.chunksAtOnce,
+              (i + 1) * settings.chunksAtOnce
+            )
+          ).then((chunks) => {
+            Object
+              .keys(chunks)
+              .forEach((key, idx) => {
+                let index = i * settings.chunksAtOnce + idx;
+                let l = labelers[index % labelers.length];
+                
+                l.postMessage({
+                  method: "get",
+                  port: port,
+                  data: {
+                    index: key,
+                    chunk: chunks[key]
+                  },
+                  type: type 
+                });
+              });
           });
-        });
+      }
     },
 
     blocklists: (handler) => {
@@ -46,37 +98,6 @@ var Util = (() => {
           }
         });
     },
-    
-    // TODO: why not loading chunks here?
-    // TODO: only pass indexes and whenever stream called
-    // TODO: chunks loaded from fs
-    stream: (type, handler) => {
-      let port = Util.randomString();
-      
-      let loaded = new Array(settings.numberOfWorkers).fill(0);
-      let total = new Array(settings.numberOfWorkers).fill(0);
-
-      labelers
-        .forEach((l, i) => {
-          l.postMessage({
-            method: "get",
-            port: port,
-            type: type 
-          });
-
-          l.addEventListener("message", (msg) => {
-            if (msg.data.port === port) {
-              loaded[i] = msg.data.loaded;
-              total[i] = msg.data.total;
-              let x = loaded.reduce((a, b) => a + b, 0);
-              let y = total.reduce((a, b) => a + b, 0);
-              handler(msg.data.chunk, x, y);
-            }
-          })
-        });
-    },
-
-    // TODO: close stream and remove listener from labelers
 
     // https://stackoverflow.com/a/8084248
     // from doubletap's answer on Nov 10, 2011 at 18:12
@@ -113,13 +134,6 @@ var Util = (() => {
               }
           }
           return bytes;
-      };
-  
-      function formatByteSize(bytes) {
-          if (bytes < 1024) return bytes + " bytes";
-          else if (bytes < 1048576) return (bytes / 1024).toFixed(3) + " KiB";
-          else if (bytes < 1073741824) return (bytes / 1048576).toFixed(3) + " MiB";
-          else return (bytes / 1073741824).toFixed(3) + " GiB";
       };
   
       return sizeOf(obj);

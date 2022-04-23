@@ -33,11 +33,8 @@ self.addEventListener("message", (msg) => {
   }
 
   switch (msg.data.method) {
-    case "post":
-      ChunksHandler.pass(msg.data.chunks);
-      break;
     case "get":
-      ChunksHandler.process(msg.data.type, msg.data.port, self);
+      ChunksHandler.process(msg, self);
       break;
     case "lists":
       self.postMessage({

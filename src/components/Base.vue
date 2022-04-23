@@ -145,18 +145,6 @@ export default {
     }
   },
   watch: {
-    http: {
-      deep: true,
-      handler: function() {
-        this.reset();
-      }
-    },
-    js: {
-      deep: true,
-      handler: function() {
-        this.reset();
-      }
-    },        
     feature: {
       immediate: true,
       handler: function() {
