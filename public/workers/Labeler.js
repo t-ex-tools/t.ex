@@ -34,7 +34,16 @@ self.addEventListener("message", (msg) => {
 
   switch (msg.data.method) {
     case "get":
-      ChunksHandler.process(msg, self);
+      ChunksHandler.process(
+        msg, 
+        (chunk, index, loaded) => {
+          self.postMessage({
+            port: msg.data.port, 
+            chunk: chunk,
+            index: index,
+            loaded: loaded
+          });          
+        });
       break;
     case "lists":
       self.postMessage({

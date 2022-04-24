@@ -2,11 +2,9 @@ var ChunksHandler = (() => {
   let cache = {};
 
   return {
-    process: (msg, self) => {
+    process: (msg, handler) => {
       let data = msg.data.data;
       let type = msg.data.type;
-      let port = msg.data.port;
-      let total = data.chunk[type].size;
 
       let set = JSON.parse(
         LZString.decompressFromUTF16(
@@ -15,17 +13,17 @@ var ChunksHandler = (() => {
       );      
     
       if (cache[type] && cache[type][data.index]) {
-        self.postMessage({
-          port: port, 
-          chunk: set
-            .map((r, i) => {
-              r.labels = cache[type][data.index][i];
-              return r; 
-            }),
-          index: data.index,
-          loaded: cache[type][data.index].length,
-          total: cache[type][data.index].length,
-        });
+        let chunk = set
+          .map((r, i) => {
+            r.labels = cache[type][data.index][i];
+            return r; 
+          })
+        
+        handler(
+          chunk, 
+          data.index, 
+          cache[type][data.index].length
+        );
 
         return;
       }
@@ -42,17 +40,17 @@ var ChunksHandler = (() => {
             cache[type][data.index] = set.map((e) => e.labels);
           }
 
-          self.postMessage({
-            port: port,
-            chunk: (i === set.length-1) 
-              ? set 
-              : null,
-            index: data.index,
-            loaded: i + 1,
-            total: total
-          });
-        });
+          let chunk = (i === set.length-1) 
+            ? set 
+            : null;
 
+          handler(
+            chunk, 
+            data.index, 
+            i + 1
+          );
+
+        });
     }
   };
 })();
