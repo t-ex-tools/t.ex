@@ -1,3 +1,4 @@
+import Data from "./Data.js";
 import Util from "./Util.js";
 
 var DefaultQueries = (() => {
@@ -12,7 +13,7 @@ var DefaultQueries = (() => {
   };
   
   let defaultGroups = [];
-  Util.blocklists((lists) => {
+  Data.blocklists((lists) => {
     defaultGroups = lists
       .filter((l) => l.active)
       .map((l, i) => ({

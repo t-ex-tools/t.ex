@@ -1,5 +1,5 @@
 import FeatureExtractor from "./FeatureExtractor.js";
-import Util from "./Util.js";
+import Data from "./Data.js";
 
 var Statistics = (() => {
   let stats = {};
@@ -34,7 +34,7 @@ var Statistics = (() => {
 
       stats[query.id] = {};
 
-      Util.stream(type, (chunk, index, total) => {
+      Data.stream(type, (chunk, index, total) => {
         if (chunk) {
           query.members.forEach((g, i, arr) => {
             let c = chunk.filter(g.filter);

@@ -22,6 +22,7 @@ var ChunksHandler = (() => {
               r.labels = cache[type][data.index][i];
               return r; 
             }),
+          index: data.index,
           loaded: cache[type][data.index].length,
           total: cache[type][data.index].length,
         });
@@ -46,6 +47,7 @@ var ChunksHandler = (() => {
             chunk: (i === set.length-1) 
               ? set 
               : null,
+            index: data.index,
             loaded: i + 1,
             total: total
           });

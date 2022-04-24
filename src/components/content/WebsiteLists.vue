@@ -126,6 +126,8 @@
       text="Are you sure that you want to delete this website list?"
       @ok="rm"
     />
+
+  <!-- TODO: add Alexa.com, Tranco, Majestic Million links -->  
   </div>
 </template>
 

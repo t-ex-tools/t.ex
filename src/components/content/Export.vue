@@ -156,6 +156,7 @@
 <script>
 import FeatureExtractor from "../../model/FeatureExtractor.js";
 import LoadingModal from "../modals/LoadingModal.vue";
+import Data from "../../model/Data.js";
 import Util from "../../model/Util.js";
 
 export default {
@@ -188,7 +189,7 @@ export default {
       },
       selected: 0,
       features: [],
-      memoryLimit: 448 * 1000000,
+      memoryLimit: 500 * 1000000,
     };
   },
   computed: {
@@ -238,7 +239,7 @@ export default {
       let batch = [];
       let n = 0;
 
-      Util.stream(type, (chunk, loaded, total) => {
+      Data.stream(type, (chunk, loaded, total) => {
         this.view.loaded = loaded;
         this.view.total = total;
 

@@ -38,11 +38,13 @@
         </table>
       </div>
     </div>
+
+    <!-- TODO: EasyList & EasyPrivacy -->
   </div>
 </template>
 
 <script>
-import Util from "../../model/Util.js";
+import Data from "../../model/Data.js";
 
 export default {
   data: () => {
@@ -51,7 +53,7 @@ export default {
     }
   },
   mounted() {
-    Util.blocklists((lists) => this.lists = lists);
+    Data.blocklists((lists) => this.lists = lists);
   }
 }
 </script>
