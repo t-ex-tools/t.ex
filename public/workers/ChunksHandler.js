@@ -1,5 +1,6 @@
 var ChunksHandler = (() => {
   let cache = {};
+  const interval = 250; 
 
   return {
     process: (msg, handler) => {
@@ -44,13 +45,16 @@ var ChunksHandler = (() => {
             ? set 
             : null;
 
-          handler(
-            chunk, 
-            data.index, 
-            i + 1
-          );
-
+          if (i % interval === 0 ||
+              i === set.length-1) {
+                handler(
+                  chunk, 
+                  data.index, 
+                  i + 1
+                );
+              }
         });
+
     }
   };
 })();

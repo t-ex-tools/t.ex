@@ -5,11 +5,13 @@ self.importScripts(
   "../labeler-core/DisconnectMeParser.js",
   "../labeler-core/DisconnectMeEvaluator.js",
   "../labeler-core/BlockList.js",
+  "./ChunksTmpStorage.js",
   "./ChunksHandler.js",
   "./Blocklists.js",
 );
 
 let blocklists = [];
+let queue = [];
 
 Blocklists
   .filter((l) => l.active)
@@ -32,18 +34,29 @@ self.addEventListener("message", (msg) => {
     return;
   }
 
+  let handler = (chunk, index, loaded) => {
+    self.postMessage({
+      port: msg.data.port, 
+      chunk: chunk,
+      index: index,
+      loaded: loaded
+    });
+
+    if (chunk) {
+      if (queue.length > 0) {
+        let msg = queue.unshift().get();
+        ChunksHandler.process(msg, handler);
+      }
+    }
+  };
+
   switch (msg.data.method) {
     case "get":
-      ChunksHandler.process(
-        msg, 
-        (chunk, index, loaded) => {
-          self.postMessage({
-            port: msg.data.port, 
-            chunk: chunk,
-            index: index,
-            loaded: loaded
-          });          
-        });
+      if (queue.length > 0) {
+        queue.push(msg);
+      } else {
+        ChunksHandler.process(msg, handler);
+      }
       break;
     case "lists":
       self.postMessage({
