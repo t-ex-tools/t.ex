@@ -114,6 +114,13 @@ export default {
         );
     }
   },
+  watch: {
+    items() {
+      this.view.page = 0;
+      this.view.sort.by = 0;
+      this.view.sort.asc = true;
+    }
+  },
   methods: {
     sort(e) {
       this.view.page = 0;
