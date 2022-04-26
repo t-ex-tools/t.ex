@@ -6,7 +6,7 @@
         href="#"
       >
         T.EX - The Transparency EXtension
-        <span style="font-size: 8pt">
+        <span class="small">
           v{{ browser.runtime.getManifest().version }}
         </span>
       </a>
@@ -29,7 +29,15 @@
           data-bs-target="#init-modal"
         >
           <i class="bi bi-file-earmark-text me-2" />
-          <small>Load data</small>
+          <small v-if="!dataLoaded">Load data</small>
+          <small v-else>
+            {{ 
+              (dataTag.length > max) 
+                ? dataTag.slice(0, 32) + " ..." 
+                : dataTag
+            }} 
+            ({{ dataLength }} chunks)
+          </small>
         </button>
 
         <button
@@ -49,6 +57,14 @@
 <script>
 export default {
   props: {
+    dataTag: {
+      type: String,
+      default: () => ""
+    },
+    dataLength: {
+      type: Number,
+      default: () => 0
+    },
     dataLoaded: {
       type: Boolean,
       default: () => false
@@ -57,7 +73,8 @@ export default {
   emits: ["reset"],
   data: () => {
     return {
-      browser
+      browser,
+      max: 32 
     };
   },
 };
@@ -67,5 +84,9 @@ export default {
 .navbar {
   background: rgb(0,0,0);
   background: linear-gradient(45deg, rgba(0,0,0,1) 0%, rgba(30,9,121,1) 50%, rgba(0,134,255,1) 100%);
+}
+
+.small {
+  font-size: 8pt;
 }
 </style>

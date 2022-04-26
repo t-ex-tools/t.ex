@@ -1,6 +1,8 @@
 <template>
   <div>
     <nav-bar 
+      :data-tag="tag"
+      :data-length="length"
       :data-loaded="loaded"
       @reset="reset"
     />
