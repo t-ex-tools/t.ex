@@ -66,7 +66,8 @@ var Chunk = (() => {
         js: {
           data: LZString.compressToUTF16(JSON.stringify(js)),
           size: js.length
-        }
+        },
+        version: browser.runtime.getManifest().version
       }
     };
 

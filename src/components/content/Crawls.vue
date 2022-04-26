@@ -115,23 +115,20 @@
       <div class="col">
         <table class="table table-hover align-middle mt-3">
           <thead>
-            <th scope="col">
-              Tag
-            </th>
-            <th scope="col">
-              Started
-            </th>
-            <th scope="col">
-              Finished
-            </th>
-            <th scope="col">
-              Tabs opened
-            </th>
-            <th scope="col">
-              Tabs completed
-            </th>
-            <th scope="col">
-              Websites unavailable
+            <th
+              v-for="h, i in [
+                'Tag',
+                'Started',
+                'Finished',
+                'Tabs opened',
+                'Tabs completed',
+                'Websites unavailable',
+                'Version'
+              ]"
+              :key="i"
+              scope="col"
+            >
+              {{ h }}
             </th>
           </thead>
           <tbody>
@@ -145,6 +142,7 @@
               <td>{{ c.tabsOpened }}</td>
               <td>{{ c.tabsCompleted }}</td>
               <td>{{ c.tabsNotResponding }}</td>
+              <td>{{ c.version }}</td>
             </tr>
           </tbody>
         </table>

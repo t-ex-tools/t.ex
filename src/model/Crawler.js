@@ -8,7 +8,8 @@ const empty = {
   tabsOpened: 0,
   tabsCompleted: 0,
   tabsToFinish: 0,
-  tabsNotResponding: 0
+  tabsNotResponding: 0,
+  version: browser.runtime.getManifest().version,
 };
 
 var Crawler = (() => {
