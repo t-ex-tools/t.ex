@@ -18,10 +18,13 @@ var Data = (() => {
   browser.storage.local.get(["settings"])
     .then((res) => {
       if (res.settings) {
-        settings.numberOfWorkers = res.settings.numberOfWorkers;
-        settings.chunksAtOnce = res.settings.chunksAtOnce;
-        settings.chunkSize = res.settings.chunkSize;
-        settings.jsChunkSize = res.settings.jsChunkSize;
+        Object
+          .keys(settings)
+          .forEach((k) => 
+            settings[k] = (res.settings.hasOwnProperty(k)) 
+            ? res.settings[k] 
+            : settings[k]
+          );
       }
 
       for (let i=1; i < settings.numberOfWorkers; i++) {
