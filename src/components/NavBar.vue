@@ -4,7 +4,12 @@
       <a
         class="navbar-brand"
         href="#"
-      >T.EX - The Transparency EXtension</a>
+      >
+        T.EX - The Transparency EXtension
+        <span style="font-size: 8pt">
+          v{{ browser.runtime.getManifest().version }}
+        </span>
+      </a>
       <div class="d-flex">
         <button
           class="btn btn-dark me-2"
@@ -51,7 +56,9 @@ export default {
   },
   emits: ["reset"],
   data: () => {
-    return {};
+    return {
+      browser
+    };
   },
 };
 </script>
