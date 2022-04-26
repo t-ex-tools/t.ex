@@ -116,13 +116,13 @@ export default {
       suffix: "init-modal",
       options: [
         {
-          label: "Load crawl",
-          component: markRaw(CrawlLoader),
-        },
-        {
           label: "Select time range",
           component: markRaw(LimitSlider),
-        },
+        },        
+        {
+          label: "Load crawl",
+          component: markRaw(CrawlLoader),
+        }
       ],
       boundaries: {
         dataTag: "",
