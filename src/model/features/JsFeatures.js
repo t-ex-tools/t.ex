@@ -1,14 +1,4 @@
-import FeatureExtractor from "../FeatureExtractor.js";
-
 var JsFeatures = (() => {
-
-  let script = (url) => {
-    try {   
-      return FeatureExtractor.cache(url, () => new URL(url)).pathname;
-    } catch (err) {
-      return "";
-    }
-  };
 
   const features = {
     "js.interface": { 
@@ -21,7 +11,7 @@ var JsFeatures = (() => {
     "js.property": { 
       title: "Property", 
       subtitle: "The property accessed or modified",
-      impl: (js) => js.property || "", 
+      impl: (js) => js.property,
       lom: 1,
       cardinalityType: 0,
     },
@@ -35,28 +25,32 @@ var JsFeatures = (() => {
     "js.arguments": { 
       title: "Arguments", 
       subtitle: "Arguments passed to method, which was called",
-      impl: (js) => (js.arguments) ? [...Object.entries(js.arguments)] : "", 
+      impl: (js) => (js.arguments) 
+        ? [...Object.entries(js.arguments)] 
+        : undefined,
       lom: 1,
       cardinalityType: 0,
     },
     "js.result": { 
       title: "Result", 
       subtitle: "The result the method returned",
-      impl: (js) => (js.result) ? js.result.toString() : "", 
+      impl: (js) => (js.result) 
+        ? js.result.toString() 
+        : undefined, 
       lom: 1,
       cardinalityType: 0,
     },
     "js.script.url": { 
       title: "Script URL", 
       subtitle: "The script that initiated the operation",
-      impl: (js) => (js.url) ? script(js.url) : "", 
+      impl: (js) => js.url,
       lom: 1,
       cardinalityType: 0,
     },
     "js.url.hostname": { 
       title: "Source URL", 
       subtitle: "Hostname of the URL the operation occurred on",
-      impl: (js) => new URL(js.url).hostname, 
+      impl: (js) => js.source,
       lom: 1,
       cardinalityType: 0,
     },

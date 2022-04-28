@@ -3,29 +3,33 @@ import Statistics from "../Statistics.js";
 
 var UrlFeatures = (() => {
 
-  let url = (r) => FeatureExtractor.cache(r.url, () => new URL(r.url));
-  let params = (r) => [...url(r).searchParams.entries()];
+  let url = (r) => 
+    FeatureExtractor.cache(
+      r.url, 
+      () => {
+        let url;
+        try {
+          url = new URL(r.url);
+        } catch(err) {
+          url = {}
+        }
+        return url;
+      }
+    );
   
-  let kLengths = (r) => FeatureExtractor.lengths("url.query.keyLengths@" + r.url, params(r), 0);
-  let vLengths = (r) => FeatureExtractor.lengths("url.query.valueLengths@" + r.url, params(r), 1);
+  let params = (r) => {
+    let u = url(r);
+    return (u.searchParams)
+      ? [...u.searchParams.entries()]
+      : []
+  };
+
+  let lengths = (r, i) => 
+    FeatureExtractor.lengths(r.url + i, params(r), i);
 
   const features = {
-    "http.url.initiator": { 
-      title: "Initiator", 
-      subtitle: "The hostname of the initiator of the request",
-      impl: (r) => {
-        try {
-          let source = new URL(r.initiator);
-          return source.hostname;
-        } catch (err) {
-          return undefined;
-        }
-      },
-      lom: 1,
-      cardinalityType: 0,
-    },
     "http.url.hostname": { 
-      title: "Hostname", 
+      title: "Host name", 
       subtitle: "The hostname of the target URL",
       impl: (r) => url(r).hostname,
       lom: 1,
@@ -41,32 +45,14 @@ var UrlFeatures = (() => {
     "http.url.filetype": { 
       title: "File type", 
       subtitle: "The file type extension of the target URL's path",
-      impl: (r) => {
-        let path = url(r).pathname.split(".");
-        return path[path.length-1];
-      },
+      impl: (r) => url(r).pathname.split(".").pop(),
       lom: 1,
       cardinalityType: 0,
     },
-    "http.url.jsurls": { 
-      title: "JavaScript URLs", 
-      subtitle: "Explicit JavaScript URLs",
-      impl: (r) => {
-        let path = url(r).pathname.split("/");
-        let filename = path[path.length-1];
-        return (filename.endsWith(".js")) ? r.url : undefined;
-      },
-      lom: 1,
-      cardinalityType: 0,
-    },
-    "http.url.jsfiles": { 
-      title: "JavaScript files", 
-      subtitle: "Explicitly requested JavaScript files",
-      impl: (r) => {
-        let path = url(r).pathname.split("/");
-        let filename = path[path.length-1];
-        return (filename.endsWith(".js")) ? filename : undefined;
-      },
+    "http.url.filename": { 
+      title: "File name", 
+      subtitle: "The name of the requested file",
+      impl: (r) => url(r).pathname.split("/").pop(),
       lom: 1,
       cardinalityType: 0,
     },
@@ -108,21 +94,21 @@ var UrlFeatures = (() => {
     "http.url.query.keyLength.total": { 
       title: "Key length", 
       subtitle: "Total length of query parameter keys",
-      impl: (r) => Statistics.total(kLengths(r)),
+      impl: (r) => Statistics.total(lengths(r, 0)),
       lom: 4,
       cardinalityType: 2,
     },
     "http.url.query.valueLength.total": { 
       title: "Value length", 
       subtitle: "Total length of query parameter values",
-      impl: (r) => Statistics.total(vLengths(r)),
+      impl: (r) => Statistics.total(lengths(r, 1)),
       lom: 4,
       cardinalityType: 2,
     }, 
   };
 
   return {
-    features: () => features,
+    features: () => features
   };
 
 })();

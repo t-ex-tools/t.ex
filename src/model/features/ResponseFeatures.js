@@ -2,27 +2,34 @@ import FeatureExtractor from "../FeatureExtractor.js";
 import Statistics from "../Statistics.js";
 
 var ResponseFeatures = (() => {
+  
+  let response = (r) => (r.response)
+      ? r.response
+      : {};
 
-  let header = (r) => (r.response.responseHeaders) ?
-    FeatureExtractor.cache(JSON.stringify(r.response.responseHeaders),
-      () => [...r.response.responseHeaders.map((e) => Object.values(e))])
+  let header = (r) => (response(r).responseHeaders) 
+    ? [...r.response.responseHeaders.map((e) => Object.values(e))]
     : [];
     
-  let kLengths = (r) => FeatureExtractor.lengths("responseHeaders.keyLengths@" + JSON.stringify(r.response.responseHeaders), header(r), 0);
-  let vLengths = (r) => FeatureExtractor.lengths("responseHeaders.valueLengths@" + JSON.stringify(r.response.responseHeaders), header(r), 1);
-
+  let lengths = (r, i) => 
+    FeatureExtractor.lengths(
+      JSON.stringify(r.response.responseHeaders), 
+      header(r), 
+      i
+    );
+  
   const features = {
     "http.response.statusCode": {
       title: "Status Code",
       subtitle: "Status Code of the HTTP/S Response.",
-      impl: (r) => r.response.statusCode,
+      impl: (r) => response(r).statusCode,
       lom: 1,
       cardinalityType: 1,
     },
     "http.response.fromCache": {
       title: "Cache",
       subtitle: "Whether HTTP/S Response was served from cache",
-      impl: (r) => r.response.fromCache,
+      impl: (r) => response(r).fromCache,
       lom: 1,
       cardinalityType: 1,
     },    
@@ -57,14 +64,14 @@ var ResponseFeatures = (() => {
     "http.responseHeaders.keyLength.total": {
       title: "Key length",
       subtitle: "Total length of the header field keys",
-      impl: (r) => Statistics.total(kLengths(r)),
+      impl: (r) => Statistics.total(lengths(r, 0)),
       lom: 4,
       cardinalityType: 2,
     },
     "http.responseHeaders.valueLength.total": {
       title: "Value length",
       subtitle: "Total length of the header field values",
-      impl: (r) => Statistics.total(vLengths(r)),
+      impl: (r) => Statistics.total(lengths(r, 1)),
       lom: 4,
       cardinalityType: 2,
     },

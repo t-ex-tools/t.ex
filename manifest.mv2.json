@@ -16,7 +16,7 @@
   "content_scripts": [{
     "js": [
       "./js/browser-polyfill.min.js",
-      "./content_scripts/inject.js"
+      "./content_scripts/content_script.js"
     ],
     "run_at": "document_start",
     "matches": [ "<all_urls>" ],
@@ -29,7 +29,8 @@
   },
   "web_accessible_resources": [
     "content_scripts/index.js",
-    "content_scripts/interfaces.js"
+    "content_scripts/Injector.js",
+    "content_scripts/Interfaces.js"
   ],
   "permissions": [
     "webRequest",

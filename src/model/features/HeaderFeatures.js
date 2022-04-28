@@ -3,13 +3,29 @@ import Statistics from "../Statistics.js";
 
 var HeaderFeatures = (() => {
 
-  let header = (r) => (r.requestHeaders) ?
-    FeatureExtractor.cache(JSON.stringify(r.requestHeaders),
-      () => [...r.requestHeaders.map((e) => Object.values(e))])
+  let header = (r) => (r.requestHeaders) 
+    ? FeatureExtractor.cache(
+        JSON.stringify(r.requestHeaders),
+        () => [...r.requestHeaders.map((e) => Object.values(e))]
+      )
     : [];
-    
-  let kLengths = (r) => FeatureExtractor.lengths("requestHeaders.keyLengths@" + JSON.stringify(r.requestHeaders), header(r), 0);
-  let vLengths = (r) => FeatureExtractor.lengths("requestHeaders.valueLengths@" + JSON.stringify(r.requestHeaders), header(r), 1);
+  
+  let get = (header, field) => {
+    let value = header
+      .filter((h) => h[0].toLowerCase() === field);
+    if (value.length > 0) {
+      return value[0][1];
+    } else {
+      return undefined;
+    }
+  }
+
+  let lengths = (r, i) => 
+    FeatureExtractor.lengths(
+      JSON.stringify(r.requestHeaders) + i,
+      header(r), 
+      i
+    );
 
   const features = {
     "http.requestHeaders": {
@@ -36,18 +52,14 @@ var HeaderFeatures = (() => {
     "http.requestHeaders.referer": {
       title: "HTTP Referrer",
       subtitle: "The value of the HTTP-Referer field",
-      impl: (r) => header(r)
-        .filter((h) => h[0].toLowerCase() === "referer")
-        .reduce((acc, val) => acc + val[1], ""),
+      impl: (r) => get(header(r), "referer"),
       lom: 1,
       cardinalityType: 1,
     },    
     "http.requestHeaders.origin": {
       title: "HTTP Origin",
       subtitle: "The value of the HTTP-Origin field",
-      impl: (r) => header(r)
-        .filter((h) => h[0].toLowerCase() === "origin")
-        .reduce((acc, val) => acc + val[1], ""),
+      impl: (r) => get(header(r), "origin"),
       lom: 1,
       cardinalityType: 1,
     },
@@ -61,14 +73,14 @@ var HeaderFeatures = (() => {
     "http.requestHeaders.keyLength.total": {
       title: "Key length",
       subtitle: "Total length of the header keys",
-      impl: (r) => Statistics.total(kLengths(r)),
+      impl: (r) => Statistics.total(lengths(r, 0)),
       lom: 4,
       cardinalityType: 2,
     },
     "http.requestHeaders.valueLength.total": {
       title: "Value length",
       subtitle: "Total length of the header values",
-      impl: (r) => Statistics.total(vLengths(r)),
+      impl: (r) => Statistics.total(lengths(r, 1)),
       lom: 4,
       cardinalityType: 2,
     },
@@ -76,7 +88,8 @@ var HeaderFeatures = (() => {
 
   return {
     features: () => features,
-    extractHeader: header,
+    header: header,
+    get: get
   }
 
 })();

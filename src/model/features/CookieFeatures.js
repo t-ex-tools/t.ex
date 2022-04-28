@@ -4,15 +4,26 @@ import Statistics from "../Statistics.js";
 
 var CookieFeatures = (() => {
 
-  let cookie = (r) => (r.requestHeaders) ?
-    FeatureExtractor.cache(JSON.stringify(r.requestHeaders),
-      () => {
-        let f = HeaderFeatures.extractHeader(r).find((e) => e[0].toLowerCase() === "cookie");
-        return ((f) ? f[1].split(";").map((el) => el.split("=")) : []);
-      })
-    : [];
-  let kLengths = (r) => FeatureExtractor.lengths("cookie.keyLengths@" + JSON.stringify(r.requestHeaders), cookie(r), 0);
-  let vLengths = (r) => FeatureExtractor.lengths("cookie.valueLengths@" + JSON.stringify(r.requestHeaders), cookie(r), 1);
+  let cookie = (r) =>  {
+    let header = HeaderFeatures.header(r);
+    let cookie = HeaderFeatures.get(header, "cookie");
+    
+    return (cookie) 
+      ? FeatureExtractor.cache(
+          cookie,
+          () => cookie.split(";").map((el) => el.trim().split("="))
+        )
+      : [];
+  };
+  
+  let lengths = (r, i) => {
+    let cookie = cookie(r);
+    FeatureExtractor.lengths(
+      JSON.stringify(cookie) + i, 
+      cookie,
+      i
+    );
+  };
 
   const features = {
     "http.requestHeaders.cookies.present": {
@@ -53,14 +64,14 @@ var CookieFeatures = (() => {
     "http.requestHeaders.cookies.keyLength.total": {
       title: "Key length",
       subtitle: "Total length of cookie keys",
-      impl: (r) => Statistics.total(kLengths(r)),
+      impl: (r) => Statistics.total(lengths(r, 0)),
       lom: 4,
       cardinalityType: 2,
     },
     "http.requestHeaders.cookies.valueLength.total": {
       title: "Value length",
       subtitle: "Total length of cookie values",
-      impl: (r) => Statistics.total(vLengths(r)),
+      impl: (r) => Statistics.total(lengths(r, 1)),
       lom: 4,
       cardinalityType: 2,
     },
