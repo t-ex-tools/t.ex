@@ -15,8 +15,9 @@
 
         <div class="col-9 pt-3 mb-3">
           <router-view
-            :data-loaded="loaded"
             :data-tag="tag"
+            :data-length="length"
+            :data-loaded="loaded"
           />
         </div>
       </div>
@@ -31,8 +32,6 @@
 </template>
 
 <script>
-import Util from "./model/Util.js";
-
 import InitModal from "./components/modals/InitModal.vue";
 import SettingsModal from "./components/modals/SettingsModal.vue";
 
@@ -51,7 +50,7 @@ export default {
   },
   data: () => {
     return {
-      tag: Util.randomString(),
+      tag: "",
       length: 0
     };
   },

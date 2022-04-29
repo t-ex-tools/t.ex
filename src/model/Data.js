@@ -37,6 +37,25 @@ var Data = (() => {
     setIndexes: function(idx) {
       indexes = idx;
     },
+    
+    chunks: (handler) => {
+      let loaded = 0;
+      let total = indexes.length;
+
+      for (let i=0; i * settings.chunksAtOnce < indexes.length; i++) {
+        browser.storage.local
+        .get(
+          indexes.slice(
+            i * settings.chunksAtOnce,
+            (i + 1) * settings.chunksAtOnce
+          )
+        ).then((chunks) => {
+          let c = Object.values(chunks)
+          loaded += c.length;
+          handler(c, loaded, total);
+        });
+      }
+    },
 
     stream: (type, handler) => {
       let port = Util.randomString();

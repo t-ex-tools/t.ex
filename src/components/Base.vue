@@ -5,6 +5,7 @@
         <b>Features</b>
       </div>
     </div>
+
     <div class="row">
       <div class="col">
         <div class="card card-body mb-3">
@@ -17,6 +18,7 @@
         </div>
       </div>
     </div>
+
     <div
       v-if="!dataLoaded"
       class="row mb-3"
@@ -33,6 +35,7 @@
         </div>
       </div>
     </div>    
+
     <div 
       v-if="dataLoaded"
       class="row"
@@ -48,6 +51,7 @@
         </button>        
       </div>
     </div>
+
     <div 
       v-if="dataLoaded"
       class="row"
@@ -60,6 +64,7 @@
         />
       </div>
     </div>
+
     <div class="row mb-3">
       <div class="col">
         <div 
@@ -79,6 +84,7 @@
         </div>
       </div>
     </div>
+
     <div class="row">
       <div class="col">
         <data-table
@@ -145,6 +151,9 @@ export default {
     }
   },
   watch: {
+    dataLoaded() {
+      this.reset();
+    },
     feature: {
       immediate: true,
       handler: function() {
