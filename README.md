@@ -1,6 +1,6 @@
 # T.EX - The Transparency EXtension
 
-T.EX is a Web extension for Chrome and Chromium-based browsers to enable data collection, inspection, analysis, and visualization to be used in research.
+T.EX is a Web extension for Firefox and Chromium-based browsers to enable data collection, inspection, analysis, and visualization to be used in research.
 
 ## Installation
 
