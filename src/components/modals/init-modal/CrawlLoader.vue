@@ -63,6 +63,7 @@ export default {
       });
     },
     updateLimit: function () {
+      // TODO: this.crawls[this.selected] might be undefined
       this.$emit("update-limit", {
         lower: this.crawls[this.selected].startedAt,
         upper: this.crawls[this.selected].doneAt,

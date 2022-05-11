@@ -47,7 +47,7 @@ var Background = (() => {
         delete d.requestBody;
       }
 
-      Background.set(d.requestId, d);
+      http[d.requestId] = Object.assign({}, d);
     },
       urlFilter,
       ["requestBody"]);
@@ -55,7 +55,7 @@ var Background = (() => {
   browser.webRequest
     .onBeforeSendHeaders
     .addListener((d) => {
-      Background.set(d.requestId, { requestHeaders: d.requestHeaders });
+      Object.assign(http[d.requestId], { requestHeaders: d.requestHeaders });
     },
       urlFilter,
       (firefox) 
@@ -66,7 +66,7 @@ var Background = (() => {
   browser.webRequest
     .onResponseStarted
     .addListener((d) => {
-      Background.set(d.requestId, { response: d });
+      Object.assign(http[d.requestId], { response: d });
     },
       urlFilter,
       (firefox) 
@@ -77,7 +77,7 @@ var Background = (() => {
   browser.webRequest
     .onCompleted
     .addListener((d) => {
-      Background.set(d.requestId, { success: true });
+      Object.assign(http[d.requestId], { success: true });
       Background.push(d.requestId);
     },
       urlFilter);
@@ -85,18 +85,13 @@ var Background = (() => {
   browser.webRequest
     .onErrorOccurred
     .addListener((d) => {
-      Background.set(d.requestId, { success: false });
+      Object.assign(http[d.requestId], { success: false });
       Background.push(d.requestId);
     },
       urlFilter);
 
   return {
     get: (requestId) => http[requestId],
-
-    set: (requestId, obj) => {
-      let tmp = (http[requestId]) ? http[requestId] : {};
-      http[requestId] = Object.assign(tmp, obj);
-    },
 
     push: (requestId) => {
       Chunk.add("http", [{ ...Background.get(requestId) }]);

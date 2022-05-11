@@ -30,7 +30,6 @@ var ChunksHandler = (() => {
       }
 
       set
-        .filter((r) => r)
         .forEach((r, i) => {
           r.labels = blocklists.map((e) => e.isLabeled(r));
         

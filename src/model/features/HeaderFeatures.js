@@ -84,6 +84,13 @@ var HeaderFeatures = (() => {
       lom: 4,
       cardinalityType: 2,
     },
+    "http.requestHeaders.debug.noHeaders": { 
+      title: "DEBUG: No headers recorded", 
+      subtitle: "No request headers recorded",
+      impl: (r) => r.requestHeaders === undefined, 
+      lom: 1,
+      cardinalityType: 0,
+    },
   };
 
   return {

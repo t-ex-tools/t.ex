@@ -75,6 +75,13 @@ var ResponseFeatures = (() => {
       lom: 4,
       cardinalityType: 2,
     },
+    "http.response.debug.noResponse": { 
+      title: "DEBUG: No response recorded", 
+      subtitle: "No response details recorded",
+      impl: (r) => r.response === undefined, 
+      lom: 1,
+      cardinalityType: 0,
+    },
   };
 
   return {

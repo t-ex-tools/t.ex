@@ -112,7 +112,10 @@ export default {
     dataLoaded() {
       this.init();
     }
-  },  
+  },
+  mounted() {
+    this.init();
+  },
   methods: {
     init() {
       Data.chunks((chunks, loaded, total) => {
