@@ -1,3 +1,4 @@
+import BlocklistsFeatures from "./features/BlocklistsFeatures.js";
 import BodyFeatures from "./features/BodyFeatures.js";
 import CookieFeatures from "./features/CookieFeatures.js";
 import HeaderFeatures from "./features/HeaderFeatures.js";
@@ -16,6 +17,7 @@ var FeatureExtractor = (() => {
     { label: "HTTP Body", obj: BodyFeatures },
     { label: "JavaScript APIs", obj: JsFeatures },
     { label: "Response Details", obj: ResponseFeatures },
+    { label: "Blocklists Details", obj: BlocklistsFeatures },
   ];
 
   let extractLengths = (array, keyOrValue) => 

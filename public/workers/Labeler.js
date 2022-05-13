@@ -11,9 +11,17 @@ self.importScripts(
   "./config/Blocklists.js",
 );
 
+// TODO: temporary solution
+let tmpMap = [
+  EasyListEvaluator(EasyListParser),
+  EasyListEvaluator(EasyListParser),
+  DisconnectMeEvaluator(DisconnectMeParser)
+];
+
 let blocklists = [];
 Blocklists
   .filter((l) => l.active)
+  .map((l, i) => (l.evaluator = tmpMap[i], l))
   .forEach((e) => {
     fetch(e.url)
       .then((response) => response.text())
