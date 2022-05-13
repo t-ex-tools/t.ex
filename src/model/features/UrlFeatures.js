@@ -3,19 +3,22 @@ import Statistics from "../Statistics.js";
 
 var UrlFeatures = (() => {
 
-  let url = (r) => 
-    FeatureExtractor.cache(
-      r.url, 
-      () => {
-        let url;
-        try {
-          url = new URL(r.url);
-        } catch(err) {
-          url = {}
-        }
-        return url;
+  let url = (r) => {
+    let url;
+    try {
+      if (r.url) {
+        url = new URL(r.url);
+      } else if (r.response) {
+        url = new URL (r.response.url);
+      } else {
+        url = {};
       }
-    );
+    } catch(err) {
+      url = {}
+    }
+
+    return url;
+  };
   
   let params = (r) => {
     let u = url(r);
@@ -25,7 +28,7 @@ var UrlFeatures = (() => {
   };
 
   let lengths = (r, i) => 
-    FeatureExtractor.lengths(r.url + i, params(r), i);
+    FeatureExtractor.lengths(params(r), i);
 
   const features = {
     "http.url.hostname": { 

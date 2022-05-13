@@ -75,6 +75,7 @@ var Data = (() => {
             }
 
             loaded[msg.data.index] = msg.data.loaded;
+            total[msg.data.index] = msg.data.total;
             let x = Object.values(loaded).reduce((a, b) => a + b, 0);
             let y = Object.values(total).reduce((a, b) => a + b, 0);
             handler(msg.data.chunk, x, y);

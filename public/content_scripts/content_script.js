@@ -10,14 +10,15 @@ window.addEventListener("cs", (e) => {
   if (e.detail === null) {
     return;
   } else {
-    events.push(e.detail)
+    events.push(e.detail);
   }
 });
 
 let emit = () => {
+  console.log(events.length);
   browser.runtime.sendMessage(
     browser.runtime.id, 
-    { js: [...events] }
+    { js: JSON.stringify([...events]) }
   );
   events = [];
 }
@@ -31,4 +32,4 @@ browser.runtime
     }
   });
 
-window.addEventListener("beforeunload", emit());
+window.addEventListener("beforeunload", emit);

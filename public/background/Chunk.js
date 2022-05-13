@@ -33,7 +33,7 @@ var Chunk = (() => {
       }
 
       if (msg.hasOwnProperty("js")) {
-        Chunk.add("js", msg.js);
+        Chunk.add("js", JSON.parse(msg.js));
         return Promise.resolve();
       }
 

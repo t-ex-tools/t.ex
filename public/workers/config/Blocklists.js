@@ -17,6 +17,6 @@ var Blocklists = [{
   version: "latest",
   url: "https://raw.githubusercontent.com/disconnectme/disconnect-tracking-protection/master/services.json",
   type: "disconnect",
-  active: true,
+  active: false,
   evaluator: DisconnectMeEvaluator(DisconnectMeParser)
 }];

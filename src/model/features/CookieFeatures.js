@@ -6,23 +6,16 @@ var CookieFeatures = (() => {
 
   let cookie = (r) =>  {
     let header = HeaderFeatures.header(r);
-    let cookie = HeaderFeatures.get(header, "cookie");
+    let c = HeaderFeatures.get(header, "cookie");
     
-    return (cookie) 
-      ? FeatureExtractor.cache(
-          cookie,
-          () => cookie.split(";").map((el) => el.trim().split("="))
-        )
+    return (c) 
+      ? c.split(";").map((el) => el.trim().split("="))
       : [];
   };
   
   let lengths = (r, i) => {
-    let cookie = cookie(r);
-    FeatureExtractor.lengths(
-      JSON.stringify(cookie) + i, 
-      cookie,
-      i
-    );
+    let c = cookie(r);
+    FeatureExtractor.lengths(c, i);
   };
 
   const features = {

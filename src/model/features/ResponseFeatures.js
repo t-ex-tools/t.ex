@@ -12,11 +12,7 @@ var ResponseFeatures = (() => {
     : [];
     
   let lengths = (r, i) => 
-    FeatureExtractor.lengths(
-      JSON.stringify(r.response.responseHeaders), 
-      header(r), 
-      i
-    );
+    FeatureExtractor.lengths(header(r), i);
   
   const features = {
     "http.response.statusCode": {
@@ -74,13 +70,6 @@ var ResponseFeatures = (() => {
       impl: (r) => Statistics.total(lengths(r, 1)),
       lom: 4,
       cardinalityType: 2,
-    },
-    "http.response.debug.noResponse": { 
-      title: "DEBUG: No response recorded", 
-      subtitle: "No response details recorded",
-      impl: (r) => r.response === undefined, 
-      lom: 1,
-      cardinalityType: 0,
     },
   };
 

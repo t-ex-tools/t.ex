@@ -8,27 +8,18 @@ var BodyFeatures = (() => {
     if (!r.requestBody) {
       return [];
     }
-    
-    return FeatureExtractor.cache(
-      JSON.stringify(r.requestBody),
-      () => {
-        if (r.requestBody.raw) {
-          return [["raw", new TextDecoder("utf-8").decode(r.requestBody.raw.bytes)]];
-        } else if (r.requestBody.formData) {
-          return [...Object.entries(r.requestBody.formData)];
-        } else {
-          return [...Object.entries(r.requestBody)];
-        }
-      }
-    );
+
+    if (r.requestBody.raw) {
+      return [["raw", new TextDecoder("utf-8").decode(r.requestBody.raw.bytes)]];
+    } else if (r.requestBody.formData) {
+      return [...Object.entries(r.requestBody.formData)];
+    } else {
+      return [...Object.entries(r.requestBody)];
+    }      
   };
 
   let lengths = (r, i) => 
-    FeatureExtractor.lengths(
-      JSON.stringify(r.requestBody) + i,
-      body(r), 
-      i
-    );
+    FeatureExtractor.lengths(body(r), i);
 
   const features = {
     "http.requestBody": {

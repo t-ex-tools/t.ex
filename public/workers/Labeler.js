@@ -1,13 +1,14 @@
 self.importScripts(
-  "./lz-string.min.js",
+  "./lib/lz-string.min.js",
   "../labeler-core/EasyListParser.js",
   "../labeler-core/EasyListEvaluator.js",
   "../labeler-core/DisconnectMeParser.js",
   "../labeler-core/DisconnectMeEvaluator.js",
   "../labeler-core/BlockList.js",
-  "./ChunksTmpStorage.js",
-  "./ChunksHandler.js",
-  "./Blocklists.js",
+  "./chunks/ChunksTmpStorage.js",
+  "./chunks/ChunksHandler.js",
+  "./chunks/ChunksPreprocessor.js",
+  "./config/Blocklists.js",
 );
 
 let blocklists = [];
@@ -27,12 +28,13 @@ Blocklists
   });
 
 let queue = [];
-let h = function(chunk, index, loaded) {
+let h = function(chunk, index, loaded, total) {
   self.postMessage({
     port: this.msg.data.port, 
     chunk: chunk,
     index: index,
-    loaded: loaded
+    loaded: loaded,
+    total: total
   });
 
   if (chunk) {

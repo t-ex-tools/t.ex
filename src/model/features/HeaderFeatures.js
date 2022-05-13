@@ -4,10 +4,7 @@ import Statistics from "../Statistics.js";
 var HeaderFeatures = (() => {
 
   let header = (r) => (r.requestHeaders) 
-    ? FeatureExtractor.cache(
-        JSON.stringify(r.requestHeaders),
-        () => [...r.requestHeaders.map((e) => Object.values(e))]
-      )
+    ? [...r.requestHeaders.map((e) => Object.values(e))]
     : [];
   
   let get = (header, field) => {
@@ -21,11 +18,7 @@ var HeaderFeatures = (() => {
   }
 
   let lengths = (r, i) => 
-    FeatureExtractor.lengths(
-      JSON.stringify(r.requestHeaders) + i,
-      header(r), 
-      i
-    );
+    FeatureExtractor.lengths(header(r), i);
 
   const features = {
     "http.requestHeaders": {
@@ -83,13 +76,6 @@ var HeaderFeatures = (() => {
       impl: (r) => Statistics.total(lengths(r, 1)),
       lom: 4,
       cardinalityType: 2,
-    },
-    "http.requestHeaders.debug.noHeaders": { 
-      title: "DEBUG: No headers recorded", 
-      subtitle: "No request headers recorded",
-      impl: (r) => r.requestHeaders === undefined, 
-      lom: 1,
-      cardinalityType: 0,
     },
   };
 

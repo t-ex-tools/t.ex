@@ -8,38 +8,18 @@ import ResponseFeatures from "./features/ResponseFeatures.js";
 
 var FeatureExtractor = (() => {
 
-  let cache = {};
   let subClasses = [
-    { label: "Request features", obj: RequestFeatures },
-    { label: "URL features", obj: UrlFeatures },
+    { label: "Request Details", obj: RequestFeatures },
+    { label: "URL Features", obj: UrlFeatures },
     { label: "HTTP Header", obj: HeaderFeatures },
     { label: "HTTP Cookies", obj: CookieFeatures },
     { label: "HTTP Body", obj: BodyFeatures },
-    { label: "JavaScript features", obj: JsFeatures },
-    { label: "Response features", obj: ResponseFeatures },
+    { label: "JavaScript APIs", obj: JsFeatures },
+    { label: "Response Details", obj: ResponseFeatures },
   ];
 
-  // https://stackoverflow.com/a/8831937
-  // from Mingwei Samuel's comment on Jul 13, 2020 at 8:58
-  let hash = (str) => Array
-    .from(str)
-    .reduce((hash, char) => 
-      0 | (31 * hash + char.charCodeAt(0)), 
-      0
-    );
-
-  let fromCache = (key, f) => (key = hash(key),
-    (cache[key]) 
-      ? cache[key] 
-      : (cache[key] = f(key), cache[key])
-  );
-
-  let extractLengths = (cacheKey, array, keyOrValue) => [
-    ...fromCache(
-      cacheKey, 
-      () => array.map((e) => e[keyOrValue].length)
-    )
-  ];
+  let extractLengths = (array, keyOrValue) => 
+    array.map((e) => e[keyOrValue].length);
 
   const features = subClasses
     .map((e) => e.obj)
@@ -50,7 +30,6 @@ var FeatureExtractor = (() => {
 
   return {
     features: () => Object.keys(features),
-
 
     extract: (f, d) => features[f].impl(d),
 
@@ -82,11 +61,8 @@ var FeatureExtractor = (() => {
       (typeof e === "object") 
       ? e[0] + ": " + e[1] 
       : e,
-    cache: fromCache,
 
     lengths: extractLengths,
-
-    hash: hash
 
   };
 })();

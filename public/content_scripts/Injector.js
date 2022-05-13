@@ -71,34 +71,13 @@ export default (() => {
       });
     });
   };
-  
-  let injectIframe = (elem) => {
-    try {
-      (elem && elem.tagName.toUpperCase() === "IFRAME" && elem.contentWindow) ?
-        inject(elem.contentWindow) :
-        null;
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   let injectMethods = () => {
     API.elementMethods.forEach((m) => {
       let om = Document.prototype[m];
       Object.defineProperty(Document.prototype, m, {
         value: function () {
-          let elem = om.apply(this, arguments);
-          let elemType = Object.prototype.toString.call(elem);
-    
-          if (elemType === "[object HTMLCollection]" || elemType === "[object NodeList]") {
-            for (let e of elem) {
-              injectIframe(e)
-            }
-          } else {
-            injectIframe(elem);
-          }
-    
-          return elem;
+          return om.apply(this, arguments);
         }
       });
     });    

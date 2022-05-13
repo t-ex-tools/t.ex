@@ -29,17 +29,10 @@ var RequestFeatures = (() => {
       lom: 1,
       cardinalityType: 0,
     },
-    "http.debug.noDetails": { 
-      title: "DEBUG: No details recorded", 
-      subtitle: "No request details recorded",
-      impl: (r) => r.url === undefined, 
-      lom: 1,
-      cardinalityType: 0,
-    },
-    "http.debug.success": { 
-      title: "DEBUG: Successful request", 
-      subtitle: "Whether the request was successful or not",
-      impl: (r) => r.success, 
+    "http.tracker": { 
+      title: "Tracking request", 
+      subtitle: "True if request matches one of the blocklists",
+      impl: (r) => r.labels.reduce((acc, val) => acc || val.isLabeled, false),
       lom: 1,
       cardinalityType: 0,
     },    
