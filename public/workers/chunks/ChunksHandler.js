@@ -1,6 +1,6 @@
 var ChunksHandler = (() => {
   let cache = {};
-  const interval = 250; 
+  const interval = 100; 
 
   return {
     process: (msg, handler) => {
@@ -31,10 +31,9 @@ var ChunksHandler = (() => {
       }
       
       set
-        .map(ChunksPreprocessor.transform[type])
         .forEach((r, i) => {
-          r.labels = blocklists.map((e) => e.isLabeled(r));
-          delete r.params;
+          let params = ChunksPreprocessor.transform[type](r);
+          r.labels = blocklists.map((e) => e.isLabeled(params));
         
           if (i === set.length-1) {
             if (!cache[type]) {

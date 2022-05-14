@@ -1,21 +1,19 @@
 self.importScripts(
   "./lib/lz-string.min.js",
-  "../labeler-core/EasyListParser.js",
-  "../labeler-core/EasyListEvaluator.js",
-  "../labeler-core/DisconnectMeParser.js",
-  "../labeler-core/DisconnectMeEvaluator.js",
-  "../labeler-core/BlockList.js",
+  "../labeler-core/dist/main.js",
   "./chunks/ChunksTmpStorage.js",
   "./chunks/ChunksHandler.js",
   "./chunks/ChunksPreprocessor.js",
   "./config/Blocklists.js",
 );
 
+const L = Labeler.default;
+
 // TODO: temporary solution
 let tmpMap = [
-  EasyListEvaluator(EasyListParser),
-  EasyListEvaluator(EasyListParser),
-  DisconnectMeEvaluator(DisconnectMeParser)
+  L.EasyListEvaluator(L.EasyListParser),
+  L.EasyListEvaluator(L.EasyListParser),
+  L.DisconnectMeEvaluator(L.DisconnectMeParser)
 ];
 
 let blocklists = [];
@@ -27,7 +25,7 @@ Blocklists
       .then((response) => response.text())
       .then((rawList) => 
         blocklists.push(
-          new BlockList(e.name, rawList, e.evaluator)
+          new L.BlockList(e.name, rawList, e.evaluator)
         )
       ).catch(() => {
         console.debug(e.name + " could not be loaded.");

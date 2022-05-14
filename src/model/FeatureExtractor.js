@@ -6,6 +6,7 @@ import RequestFeatures from "./features/RequestFeatures.js";
 import UrlFeatures from "./features/UrlFeatures.js";
 import JsFeatures from "./features/JsFeatures.js";
 import ResponseFeatures from "./features/ResponseFeatures.js";
+import ValidationFeatures from "./features/ValidationFeatures.js";
 
 var FeatureExtractor = (() => {
 
@@ -18,6 +19,7 @@ var FeatureExtractor = (() => {
     { label: "JavaScript APIs", obj: JsFeatures },
     { label: "Response Details", obj: ResponseFeatures },
     { label: "Blocklists Details", obj: BlocklistsFeatures },
+    { label: "Validation", obj: ValidationFeatures },
   ];
 
   let extractLengths = (array, keyOrValue) => 

@@ -23,6 +23,8 @@
     "bootstrap-icons": "^1.8.1",
     "core-js": "^3.6.5",
     "mitt": "^3.0.0",
+    "psl": "^1.8.0",
+    "validator": "^13.7.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.12"
   },

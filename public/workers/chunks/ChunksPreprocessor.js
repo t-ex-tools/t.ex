@@ -1,17 +1,17 @@
 var ChunksPreprocessor = (() => {
   let transform = {
     http: (r) => {
-      r.params = {};
+      let params = {};
           
-      r.params.target = (!r.url && r.response) 
+      params.url = (!r.url && r.response) 
         ? r.response.url 
         : r.url;
 
-      r.params.source = undefined;
+      params.domain = undefined;
       if (r.initiator) {
-        r.params.source = r.initiator;
+        params.domain = r.initiator;
       } else if (r.response && r.response.initiator) {
-        r.params.source = r.response.initiator
+        params.domain = r.response.initiator
       } else if (r.requestHeaders) {
         let referer = r.requestHeaders
           .find((h) => 
@@ -24,20 +24,23 @@ var ChunksPreprocessor = (() => {
           );
 
         if (referer) {
-          r.params.source = referer.value;
+          params.domain = referer.value;
         } else if (origin) {
-          r.params.source = origin.value
+          params.domain = origin.value
         }
       }
 
-      return r;
+      params.type = (r.type)
+        ? r.type
+        : r.response.type;
+
+      return params;
     },
-    js: (r) => {
-      r.params = {};
-      r.params.target = r.url;
-      r.params.source = r.source;
-      return r;
-    }
+    js: (r) => ({
+      url: r.url,
+      domain: r.source,
+      type: "script"
+    })
   };
 
   let filter = {

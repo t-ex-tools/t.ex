@@ -31,7 +31,7 @@ var RequestFeatures = (() => {
     },
     "http.tracker": { 
       title: "Tracking request", 
-      subtitle: "True if request matches one of the blocklists",
+      subtitle: "True, if request matches one of the blocklists' rule",
       impl: (r) => r.labels.reduce((acc, val) => acc || val.isLabeled, false),
       lom: 1,
       cardinalityType: 0,
