@@ -10,12 +10,13 @@
     "lint": "vue-cli-service lint",
     "mv3:manifest": "ncp ./manifest.mv3.json dist/manifest.json",
     "mv2:manifest": "ncp ./manifest.mv2.json dist/manifest.json",
-    "cp:files": "concurrently \"npm run cp:webext\" \"npm run cp:css:dark\" \"npm run cp:css:light\" \"npm run cp:cfg\" \"npm run cp:lz\"",
+    "cp:files": "concurrently \"npm run cp:webext\" \"npm run cp:css:dark\" \"npm run cp:css:light\" \"npm run cp:cfg\" \"npm run cp:lz\" \"npm run cp:lblcr\"",
     "cp:webext": "ncp node_modules/webextension-polyfill/dist/browser-polyfill.min.js dist/js/browser-polyfill.min.js",
     "cp:css:dark": "ncp node_modules/bootstrap-dark-5/dist/css/bootstrap-night.css dist/css/bootstrap-night.css",
     "cp:css:light": "ncp node_modules/bootstrap/dist/css/bootstrap.min.css dist/css/bootstrap.min.css",
     "cp:cfg": "ncp src/model/Settings.js dist/js/Settings.js",
-    "cp:lz": "ncp src/libs/lz-string.min.js dist/js/lz-string.min.js"
+    "cp:lz": "ncp src/libs/lz-string.min.js dist/js/lz-string.min.js",
+    "cp:lblcr": "ncp ./labeler-core/dist/labeler-core.var.js dist/js/labeler-core.var.js"
   },
   "dependencies": {
     "bootstrap": "^5.1.3",
