@@ -1,6 +1,6 @@
 self.importScripts(
   "./lib/lz-string.min.js",
-  "../labeler-core/dist/main.js",
+  "../labeler-core/dist/labeler-core.var.js",
   "./chunks/ChunksTmpStorage.js",
   "./chunks/ChunksHandler.js",
   "./chunks/ChunksPreprocessor.js",
@@ -20,13 +20,11 @@ let blocklists = [];
 Blocklists
   .filter((l) => l.active)
   .map((l, i) => (l.evaluator = tmpMap[i], l))
-  .forEach((e) => {
+  .forEach((e, i) => {
     fetch(e.url)
       .then((response) => response.text())
       .then((rawList) => 
-        blocklists.push(
-          new L.BlockList(e.name, rawList, e.evaluator)
-        )
+        blocklists[i] = new L.BlockList(e.name, rawList, e.evaluator)
       ).catch(() => {
         console.debug(e.name + " could not be loaded.");
         e.active = false;
