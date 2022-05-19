@@ -41,6 +41,22 @@
       class="row"
     >
       <div class="col">
+        <select
+          v-model="values.selected"
+          class="form-select" 
+          aria-label="Values"
+        >
+          <option
+            v-for="option, index in values.options"
+            :key="index"
+            :value="index"
+            :selected="index === values.selected"
+          >
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+      <div class="col">
         <button
           class="btn btn-outline-primary float-end"
           type="button"
@@ -54,7 +70,7 @@
 
     <div 
       v-if="dataLoaded"
-      class="row"
+      class="row my-3"
     >
       <div class="col">
         <tab-bar
@@ -73,13 +89,13 @@
         >
           <div
             class="progress-bar bg-primary"
-            :style="'width: ' + percent + '%'"
+            :style="'width: ' + progress + '%'"
             role="progressbar"
             :aria-valuenow="loading.loaded"
             aria-valuemin="0"
             :aria-valuemax="loading.total"
           >
-            {{ percent }}%
+            {{ progress }}%
           </div>
         </div>
       </div>
@@ -104,15 +120,18 @@ import DataTable from "./DataTable.vue";
 
 const empty = { isLoading: false, loaded: 0, total: 0 };
 
+let percent = (dividend, divisor) => 
+  ((dividend / divisor) * 100).toFixed(2);
+
 export default {
   components: {
     TabBar,
-    DataTable
+    DataTable,
   },
-  props: {  
+  props: {
     dataLoaded: {
       type: Boolean,
-      default: () => false
+      default: () => false,
     },
     feature: {
       type: String,
@@ -134,21 +153,53 @@ export default {
         selected: 0,
       },
       loading: { ...empty },
-      data: {}
+      data: {},
+      values: {
+        selected: 0,
+        options: [{
+          label: "Display counts",
+          impl: (row, idx, rows) => row 
+        }, {
+          label: "Display % of rows",
+          impl: (row, idx, rows) => 
+            row
+              .map((cell, i) => (i === 0)
+                ? cell
+                : percent(cell, row[row.length-1])
+              )
+        }, {
+          label: "Display % of columns",
+          impl: (row, idx, rows) => 
+            row
+              .map((cell, i) => (i === 0)
+                ? cell
+                : percent(cell, rows[rows.length-1][i])
+              )
+        }, {
+          label: "Display % of total",
+          impl: (row, idx, rows) => 
+            row
+              .map((cell, i) => (i === 0)
+                ? cell
+                : percent(cell, rows[rows.length-1][row.length-1])
+              )
+        }]
+      },
     };
   },
   computed: {
-    percent() {
+    progress() {
       return Math.round((this.loading.loaded / this.loading.total) * 100);
     },
     headings() {
-      return ["Value"].concat(
-        this.queries
-        .default[this.queries.selected]
-        .members
-          .map((e) => e.label)
-      );
-    }
+      return ["Value"]
+        .concat(
+          this.queries.default[this.queries.selected].members.map(
+            (e) => e.label
+          )
+        )
+        .concat(["#"]);
+    },
   },
   watch: {
     dataLoaded() {
@@ -156,16 +207,16 @@ export default {
     },
     feature: {
       immediate: true,
-      handler: function() {
+      handler: function () {
         this.reset();
-      }
+      },
     },
     queries: {
       deep: true,
-      handler: function() {
+      handler: function () {
         this.reset();
-      }
-    }
+      },
+    },
   },
   mounted() {
     window.addEventListener("statistics:loading:update", (e) => {
@@ -181,7 +232,7 @@ export default {
   methods: {
     reset() {
       this.data = {};
-      this.query();      
+      this.query();
     },
     query() {
       let type = this.feature.split(".")[0];
@@ -200,47 +251,51 @@ export default {
         return;
       }
 
-      let rows = Object
-        .values(this.data)
+      let rows = Object.values(this.data)
         .map((e) => Object.keys(e.data[this.feature]))
         .reduce((acc, val) => [...new Set(acc.concat(val))], [])
         .map((e) => {
-          let v = Object
-            .values(this.data)
-            .map((el) => 
-              (el.data[this.feature][e])
-                ? el.data[this.feature][e]
-                : 0
-            );
+          let v = Object.values(this.data).map((el) =>
+            el.data[this.feature][e] ? el.data[this.feature][e] : 0
+          );
           return [e, ...v];
         });
-      
+
+      rows.forEach((row) => row.push(Statistics.sum(row.slice(1))));
+
+      rows.push(
+        this.headings.map((col, idx) =>
+          idx === 0 ? "#" : Statistics.sum(rows.map((e) => e[idx]))
+        )
+      );
+
+      rows = rows.map(this.values.options[this.values.selected].impl);
+
       return rows;
-    },    
+    },
     download() {
       let csv = [this.headings]
         .concat(this.table())
         .map((row) => {
           return row
-            .map((h) => '"' + h.toString().replace(/"/g, '\\\"') + '"')
+            .map((h) => '"' + h.toString().replace(/"/g, '\\"') + '"')
             .join(",");
         })
         .join("\n");
 
       browser.downloads.download({
-        filename: 
-          this.dataTag
-          + "-"
-          + this.feature
-          + "-" 
-          + this.queries.default[this.queries.selected].label 
-          + ".csv",
+        filename:
+          this.dataTag +
+          "-" +
+          this.feature +
+          "-" +
+          this.queries.default[this.queries.selected].label +
+          ".csv",
         url: URL.createObjectURL(
-            new Blob([csv], { type: "data:application/csv;charset=utf-8" })
-          )
+          new Blob([csv], { type: "data:application/csv;charset=utf-8" })
+        ),
       });
-
-    }
+    },
   },
 };
 </script>

@@ -7,7 +7,7 @@
       <thead>
         <tr>
           <th
-            v-for="(heading, index) in headings.concat(['#'])"
+            v-for="(heading, index) in headings"
             :key="index"
             scope="col"
             @click="sort"
@@ -26,8 +26,8 @@
       </thead>
       <tbody>
         <tr 
-          v-for="(row, index) in page" 
-          :key="index" 
+          v-for="(row, index) in page"
+          :key="index"
           scope="row"
         >
           <td
@@ -44,33 +44,18 @@
                 : col
             }}
           </td>
-          <td
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            :title="Statistics.sum(row.slice(1))"
-          >
-            {{ Statistics.sum(row.slice(1)) }}
-          </td>
         </tr>
       </tbody>
       <tfoot>
         <tr scope="row">
-          <td>#</td>
           <td
-            v-for="sum, index in sums"
+            v-for="sum, index in items[items.length-1]"
             :key="index"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             :title="sum"            
           >
             {{ sum }}
-          </td>
-          <td
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            :title="Statistics.sum(sums)"            
-          >
-            {{ Statistics.sum(sums) }}
           </td>
         </tr>
       </tfoot>
@@ -133,7 +118,7 @@ export default {
       return this.items.length <= (this.view.page + 1) * this.view.window;
     },
     page() {
-      return [...this.items]
+      return [...this.items.slice(0, -1)]
         .sort((a, b) =>
           this.view.sort.by === 0
             ? this.sortString(a, b)
@@ -143,17 +128,6 @@ export default {
           this.view.page * this.view.window,
           (this.view.page + 1) * this.view.window
         );
-    },
-    sums() {
-      let sums = [];
-      for (let i=1; i < this.headings.length; i++) {
-        sums[i-1] = Statistics
-          .sum(
-            this.items
-              .map((e) => e[i])
-            );
-      }
-      return sums;
     }
   },
   watch: {
