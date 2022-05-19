@@ -32,14 +32,14 @@ var BodyFeatures = (() => {
     "http.requestBody.keyLength.total": {
       title: "Key length",
       subtitle: "Total length of keys in the request body",
-      impl: (r) => Statistics.total(lengths(r, 0)),
+      impl: (r) => Statistics.sum(lengths(r, 0)),
       lom: 4,
       cardinalityType: 2,
     },
     "http.requestBody.valueLength.total": {
       title: "Value length",
       subtitle: "Total length of values in the request body",
-      impl: (r) => Statistics.total(lengths(r, 1)),
+      impl: (r) => Statistics.sum(lengths(r, 1)),
       lom: 4,
       cardinalityType: 2,
     },

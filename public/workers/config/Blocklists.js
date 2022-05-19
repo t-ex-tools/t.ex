@@ -3,7 +3,7 @@ var Blocklists = [{
   version: "latest",
   url: "https://easylist.to/easylist/easylist.txt",
   type: "easylist",
-  active: true,
+  active: false,
 }, {
   name: "EasyPrivacy",
   version: "latest",

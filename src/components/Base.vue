@@ -196,12 +196,14 @@ export default {
       );
     },
     table() {
+      if (Object.keys(this.data).length === 0) {
+        return;
+      }
+
       let rows = Object
         .values(this.data)
         .map((e) => Object.keys(e.data[this.feature]))
-        .reduce((acc, val) => [...new Set(acc.concat(val))], []);
-      
-      return rows
+        .reduce((acc, val) => [...new Set(acc.concat(val))], [])
         .map((e) => {
           let v = Object
             .values(this.data)
@@ -212,6 +214,8 @@ export default {
             );
           return [e, ...v];
         });
+      
+      return rows;
     },    
     download() {
       let csv = [this.headings]

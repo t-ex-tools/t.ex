@@ -54,7 +54,7 @@ var Statistics = (() => {
         }));
       });
     },
-    total: function(data) {
+    sum: function(data) {
       return data.reduce((acc, val) => acc += val, 0);
     }
   };
