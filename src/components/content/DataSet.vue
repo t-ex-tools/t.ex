@@ -21,6 +21,22 @@
           </strong>  
         </div>
       </div>
+    </div>
+    
+    <div 
+      v-if="dataLoaded"
+      class="row"
+    >
+      <div class="col">
+        <button
+          class="btn btn-outline-primary float-end"
+          type="button"
+          @click="download"
+        >
+          <i class="bi bi-table me-2" />
+          <small>Export CSV</small>
+        </button>        
+      </div>
     </div>    
 
     <div class="row">
@@ -44,17 +60,12 @@
         <table class="table align-middle mt-3">
           <thead>
             <tr>
-              <th scope="col">
-                Data set name
-              </th>
-              <th scope="col">
-                No. chunks
-              </th>
-              <th scope="col">
-                No. HTTP/S requests & responses
-              </th>
-              <th scope="col">
-                No. JavaScript API access events
+              <th
+                v-for="heading, index in headings"
+                :key="index" 
+                scope="col"
+              >
+                {{ heading }}
               </th>
             </tr>
           </thead>
@@ -97,6 +108,12 @@ export default {
         loaded: 0, 
         total: 0 
       },
+      headings: [
+        "Data set name",
+        "# chunks",
+        "# HTTP/S requests & responses",
+        "# JavaScript API access events"
+      ],
       sizes: {
         http: 0,
         js: 0
@@ -134,7 +151,32 @@ export default {
           this.loading.total = -1;
         }
       });      
-    }
+    },
+    download() {
+      let csv = [this.headings]
+        .concat([[
+          this.dataTag,
+          this.dataLength,
+          this.sizes.http,
+          this.sizes.js
+        ]])
+        .map((row) => {
+          return row
+            .map((h) => '"' + h.toString().replace(/"/g, '\\"') + '"')
+            .join(",");
+        })
+        .join("\n");
+
+      browser.downloads.download({
+        filename:
+          this.dataTag +
+          "/" +
+          "stats.csv",
+        url: URL.createObjectURL(
+          new Blob([csv], { type: "data:application/csv;charset=utf-8" })
+        ),
+      });
+    },    
   }
 };
 </script>

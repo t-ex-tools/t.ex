@@ -58,6 +58,7 @@ var Data = (() => {
     },
 
     stream: (type, handler) => {
+      let start = Date.now();
       let port = Util.randomString();
       let est = (approx[type]() * indexes.length) / settings.numberOfWorkers;
 
@@ -78,6 +79,9 @@ var Data = (() => {
             total[msg.data.index] = msg.data.total;
             let x = Object.values(loaded).reduce((a, b) => a + b, 0);
             let y = Object.values(total).reduce((a, b) => a + b, 0);
+            if (x === y) {
+              console.debug("Labeling took: " + (Date.now() - start) + " ms");
+            }
             handler(msg.data.chunk, x, y);
           })
         });      

@@ -276,7 +276,6 @@ export default {
             n + 
             ".json";
 
-          console.log(filename);
           this.file(filename, batch);
           n++;
           batch = [];
