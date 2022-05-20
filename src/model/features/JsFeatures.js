@@ -54,6 +54,13 @@ var JsFeatures = (() => {
       lom: 1,
       cardinalityType: 0,
     },
+    "js.tracker": { 
+      title: "Tracker events", 
+      subtitle: "True, if event matches one of the blocklists' rule",
+      impl: (js) => js.labels.reduce((acc, val) => acc || val.isLabeled, false),
+      lom: 1,
+      cardinalityType: 0,
+    },
   };
 
   return {

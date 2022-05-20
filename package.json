@@ -1,6 +1,6 @@
 {
   "name": "t.ex-mv3",
-  "version": "3.1.7",
+  "version": "3.1.8",
   "private": true,
   "scripts": {
     "preserve:mv3": "make-dir dist/js dist/css && npm run mv3:manifest && npm run cp:files",

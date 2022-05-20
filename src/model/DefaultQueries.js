@@ -30,6 +30,12 @@ var DefaultQueries = (() => {
     return url !== domain;
   };
 
+  let isTracker = (r) => r.labels
+    .reduce((acc, val) => 
+      acc || val.isLabeled, 
+      false
+    );
+
   let fptp = {
     id: Util.randomString(),
     label: "FP v. TP",
@@ -41,6 +47,18 @@ var DefaultQueries = (() => {
       filter: (r) => isTP(r),
     }]
   };
+
+  let tracker = {
+    id: Util.randomString(),
+    label: "Ad & Tracking",
+    members: [{
+      label: "Benign",
+      filter: (r) => !isTracker(r)
+    }, {
+      label: "Ad & Tracking",
+      filter: (r) => isTracker(r),
+    }]    
+  }
   
   let defaultGroups = [];
   Data.blocklists((lists) => {
@@ -61,7 +79,7 @@ var DefaultQueries = (() => {
 
   return {
     groups: () => {
-      return [none, fptp].concat(defaultGroups);
+      return [none, fptp, tracker].concat(defaultGroups);
     }
   }
 
