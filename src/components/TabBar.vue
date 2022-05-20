@@ -17,6 +17,12 @@
           @click="$emit('tabs-changed', i)"
         >
           {{ q.label }}
+
+          <div 
+            v-if="isLoading && i === selectedIndex" 
+            class="spinner-border spinner-border-sm" 
+            role="status"
+          />
         </button>
       </li>
     </ul>
@@ -33,7 +39,11 @@ export default {
     selectedIndex: {
       type: Number,
       default: () => 0
-    }
+    },
+    isLoading: {
+      type: Boolean,
+      default: () => false
+    }    
   },
   emits: ["tabs-changed"]
 };

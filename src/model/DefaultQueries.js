@@ -1,5 +1,7 @@
 import Data from "./Data.js";
 import Util from "./Util.js";
+import validator from "validator";
+import psl from "psl";
 
 var DefaultQueries = (() => {
 
@@ -9,6 +11,34 @@ var DefaultQueries = (() => {
     members: [{
       label: "None",
       filter: () => true,
+    }]
+  };
+
+  let isTP = (r) => {
+    let transformed = (r.interface)
+      ? ChunksPreprocessor.transform.js(r)
+      : ChunksPreprocessor.transform.http(r);
+
+    let url = psl.get(new URL(transformed.url).hostname);
+    let domain = undefined;
+    if (transformed.domain) {
+      domain = (validator.isURL(transformed.domain)) 
+        ? psl.get(new URL(transformed.domain).hostname)
+        : transformed.domain;
+    }
+    
+    return url !== domain;
+  };
+
+  let fptp = {
+    id: Util.randomString(),
+    label: "FP v. TP",
+    members: [{
+      label: "First-party",
+      filter: (r) => !isTP(r),
+    }, {
+      label: "Third-party",
+      filter: (r) => isTP(r),
     }]
   };
   
@@ -31,7 +61,7 @@ var DefaultQueries = (() => {
 
   return {
     groups: () => {
-      return [none].concat(defaultGroups);
+      return [none, fptp].concat(defaultGroups);
     }
   }
 

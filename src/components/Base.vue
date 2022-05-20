@@ -76,7 +76,11 @@
         <tab-bar
           :queries="queries.default"
           :selected-index="queries.selected"
-          @tabs-changed="(i) => queries.selected = i"
+          :is-loading="loading.processing"
+          @tabs-changed="(i) => {
+            queries.selected = i;
+            loading.processing = true;
+          }"
         />
       </div>
     </div>
@@ -118,7 +122,7 @@ import DefaultQueries from "../model/DefaultQueries.js";
 import TabBar from "./TabBar.vue";
 import DataTable from "./DataTable.vue";
 
-const empty = { isLoading: false, loaded: 0, total: 0 };
+const empty = { isLoading: false, processing: false, loaded: 0, total: 0 };
 
 let percent = (dividend, divisor) => 
   ((dividend / divisor) * 100).toFixed(2);
@@ -223,6 +227,7 @@ export default {
       if (e.detail.loaded === e.detail.total) {
         this.loading = { ...empty };
       } else {
+        this.loading.processing = true;
         this.loading.isLoading = true;
         this.loading.loaded = e.detail.loaded;
         this.loading.total = e.detail.total;
@@ -242,6 +247,7 @@ export default {
         this.queries.default[this.queries.selected],
         this.feature,
         (data) => {
+          this.loading.processing = false;
           this.data = data;
         }
       );

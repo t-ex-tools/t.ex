@@ -12,6 +12,10 @@ var ChunksHandler = (() => {
           data.chunk[type].data
         )
       ).filter(ChunksPreprocessor.filter[type]);
+
+      if (set.length === 0) {
+        handler([], data.index, 0, 0);
+      }
     
       if (cache[type] && cache[type][data.index]) {
         let chunk = set
