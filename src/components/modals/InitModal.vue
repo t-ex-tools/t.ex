@@ -125,7 +125,7 @@ export default {
         }
       ],
       boundaries: {
-        dataTag: "",
+        dataTag: "last",
         lower: 0,
         upper: 0
       },

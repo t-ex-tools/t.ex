@@ -162,9 +162,11 @@ export default {
         selected: 0,
         options: [{
           label: "Display counts",
+          slug: "counts",
           impl: (row, idx, rows) => row 
         }, {
           label: "Display % of rows",
+          slug: "percentage-of-rows",
           impl: (row, idx, rows) => 
             row
               .map((cell, i) => (i === 0)
@@ -173,6 +175,7 @@ export default {
               )
         }, {
           label: "Display % of columns",
+          slug: "percentage-of-columns",
           impl: (row, idx, rows) => 
             row
               .map((cell, i) => (i === 0)
@@ -181,6 +184,7 @@ export default {
               )
         }, {
           label: "Display % of total",
+          slug: "percentage-of-total",
           impl: (row, idx, rows) => 
             row
               .map((cell, i) => (i === 0)
@@ -292,8 +296,12 @@ export default {
       browser.downloads.download({
         filename:
           this.dataTag +
-          "-" +
+          "/" +
           this.feature +
+          "/" +
+          this.feature +
+          "." +
+          this.values.options[this.values.selected].slug +
           "-" +
           this.queries.default[this.queries.selected].label +
           ".csv",

@@ -267,7 +267,17 @@ export default {
 
         batch = batch.concat(chunk);
         if (this.memoryLimit <= Util.memorySizeOf(batch) || loaded === total) {
-          this.file(this.dataTag + "-" + type + "." + n + ".json", batch);
+          let filename = this.dataTag + 
+            "/" + 
+            type + 
+            "/" +
+            type + 
+            "." + 
+            n + 
+            ".json";
+
+          console.log(filename);
+          this.file(filename, batch);
           n++;
           batch = [];
         }

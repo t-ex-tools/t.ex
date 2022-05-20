@@ -15,7 +15,7 @@ var CookieFeatures = (() => {
   
   let lengths = (r, i) => {
     let c = cookie(r);
-    FeatureExtractor.lengths(c, i);
+    return FeatureExtractor.lengths(c, i);
   };
 
   const features = {
