@@ -50,7 +50,10 @@ var ChunksPreprocessor = (() => {
         r.success;
     },
     js: (r) => {
-      return true;
+      return r &&
+        r.url &&
+        r.source &&
+        r.type;
     }
   };
 

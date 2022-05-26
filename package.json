@@ -1,6 +1,6 @@
 {
   "name": "t.ex-mv3",
-  "version": "3.1.8",
+  "version": "3.1.9",
   "private": true,
   "scripts": {
     "preserve:mv3": "make-dir dist/js dist/css && npm run mv3:manifest && npm run cp:files",
@@ -28,7 +28,7 @@
     "bootstrap-icons": "^1.8.1",
     "core-js": "^3.6.5",
     "mitt": "^3.0.0",
-    "psl": "^1.8.0",
+    "tldjs": "^2.3.1",
     "validator": "^13.7.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.12"

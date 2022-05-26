@@ -1,7 +1,7 @@
 import Data from "./Data.js";
 import Util from "./Util.js";
 import validator from "validator";
-import psl from "psl";
+import { getDomain } from "tldjs";
 
 var DefaultQueries = (() => {
 
@@ -19,11 +19,11 @@ var DefaultQueries = (() => {
       ? ChunksPreprocessor.transform.js(r)
       : ChunksPreprocessor.transform.http(r);
 
-    let url = psl.get(new URL(transformed.url).hostname);
+    let url = getDomain(new URL(transformed.url).hostname);
     let domain = undefined;
     if (transformed.domain) {
       domain = (validator.isURL(transformed.domain)) 
-        ? psl.get(new URL(transformed.domain).hostname)
+        ? getDomain(new URL(transformed.domain).hostname)
         : transformed.domain;
     }
     

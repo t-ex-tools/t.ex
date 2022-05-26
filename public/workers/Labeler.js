@@ -1,34 +1,17 @@
 self.importScripts(
-  "./lib/lz-string.min.js",
   "../js/labeler-core.var.js",
+  "./lib/lz-string.min.js",
   "./chunks/ChunksTmpStorage.js",
   "./chunks/ChunksHandler.js",
   "./chunks/ChunksPreprocessor.js",
   "./config/Blocklists.js",
 );
 
-const L = Labeler.default;
-
-// TODO: temporary solution
-let tmpMap = [
-  L.EasyListEvaluator(L.EasyListParser),
-  L.EasyListEvaluator(L.EasyListParser),
-  L.DisconnectMeEvaluator(L.DisconnectMeParser)
-];
-
 let blocklists = [];
 Blocklists
   .filter((l) => l.active)
-  .map((l, i) => (l.evaluator = tmpMap[i], l))
   .forEach((e, i) => {
-    fetch(e.url)
-      .then((response) => response.text())
-      .then((rawList) => 
-        blocklists[i] = new L.BlockList(e.name, rawList, e.evaluator)
-      ).catch(() => {
-        console.debug(e.name + " could not be loaded.");
-        e.active = false;
-      });
+    blocklists[i] = new L.BlockList(e.name, e.url, e.evaluator)
   });
 
 let queue = [];
