@@ -189,7 +189,7 @@ export default {
       },
       selected: 0,
       features: [],
-      memoryLimit: 500 * 1000000,
+      memoryLimit: 250 * 1000000,
     };
   },
   computed: {
@@ -276,7 +276,7 @@ export default {
             n + 
             ".json";
 
-          this.file(filename, batch);
+          this.file(filename, [ ...batch ]);
           n++;
           batch = [];
         }

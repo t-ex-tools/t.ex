@@ -22,7 +22,7 @@ var BodyFeatures = (() => {
     FeatureExtractor.lengths(body(r), i);
 
   const features = {
-    "http.requestBody": {
+    "http.requestBody.fields": {
       title: "Request body",
       subtitle: "Content of the request body",
       impl: (r) => body(r),

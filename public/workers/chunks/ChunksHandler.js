@@ -1,6 +1,6 @@
 var ChunksHandler = (() => {
   let cache = {};
-  const interval = 100; 
+  const interval = 1250; 
 
   return {
     process: (msg, handler) => {

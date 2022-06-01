@@ -9,7 +9,7 @@ var HeaderFeatures = (() => {
   
   let get = (header, field) => {
     let value = header
-      .filter((h) => h[0].toLowerCase() === field);
+      .filter((h) => h[0].toLowerCase && h[0].toLowerCase() === field);
     if (value.length > 0) {
       return value[0][1];
     } else {
@@ -21,7 +21,7 @@ var HeaderFeatures = (() => {
     FeatureExtractor.lengths(header(r), i);
 
   const features = {
-    "http.requestHeaders": {
+    "http.requestHeaders.fields": {
       title: "Request headers",
       subtitle: "Header fields of the HTTP/S request",
       impl: (r) => header(r),

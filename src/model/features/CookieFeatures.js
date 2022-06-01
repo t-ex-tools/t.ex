@@ -1,5 +1,6 @@
 import FeatureExtractor from "../FeatureExtractor.js";
 import HeaderFeatures from "./HeaderFeatures.js"
+import ResponseFeatures from "./ResponseFeatures.js";
 import Statistics from "../Statistics.js";
 
 var CookieFeatures = (() => {
@@ -26,7 +27,14 @@ var CookieFeatures = (() => {
       lom: 1,
       cardinalityType: 1,
     },
-    "http.requestHeaders.cookies": {
+    "http.requestHeaders.cookies.set": {
+      title: "Set-Cookie present in response",
+      subtitle: "Whether response contained a set-cookie field",
+      impl: (r) => HeaderFeatures.get(ResponseFeatures.header(r), "set-cookie") !== undefined,
+      lom: 1,
+      cardinalityType: 1,
+    },
+    "http.requestHeaders.cookies.fields": {
       title: "Cookie",
       subtitle: "Key-value pairs contained in the cookie",
       impl: (r) => cookie(r),

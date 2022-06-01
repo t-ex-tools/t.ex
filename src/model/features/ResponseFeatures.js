@@ -28,8 +28,8 @@ var ResponseFeatures = (() => {
       impl: (r) => response(r).fromCache,
       lom: 1,
       cardinalityType: 1,
-    },    
-    "http.responseHeaders": {
+    },
+    "http.responseHeaders.fields": {
       title: "Response headers",
       subtitle: "Header fields of the response",
       impl: (r) => header(r),
@@ -75,7 +75,7 @@ var ResponseFeatures = (() => {
 
   return {
     features: () => features,
-    extractHeader: header,
+    header: header,
   }
 
 })();

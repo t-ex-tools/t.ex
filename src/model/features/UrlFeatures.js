@@ -66,7 +66,7 @@ var UrlFeatures = (() => {
       lom: 1,
       cardinalityType: 0,
     },
-    "http.url.query": { 
+    "http.url.query.fields": { 
       title: "Query parameters", 
       subtitle: "Key-value pairs in search string",
       impl: (r) => params(r),
