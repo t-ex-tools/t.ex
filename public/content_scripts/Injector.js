@@ -40,7 +40,7 @@ export default (() => {
                 interface: api.label,
                 property: p,
                 method: "set",
-                arguments: arguments
+                arguments: Array.from(arguments)
               })
             }));
             pd.set.apply(this, arguments);
@@ -61,7 +61,7 @@ export default (() => {
               detail: evt({ 
                 interface: api.label,
                 method: m,
-                arguments: arguments,
+                arguments: Array.from(arguments),
                 result: result
               })
             }));

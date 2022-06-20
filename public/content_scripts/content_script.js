@@ -15,7 +15,6 @@ window.addEventListener("cs", (e) => {
 });
 
 let emit = () => {
-  console.log(events.length);
   browser.runtime.sendMessage(
     browser.runtime.id, 
     { js: JSON.stringify([...events]) }
@@ -31,5 +30,3 @@ browser.runtime
       return Promise.resolve();
     }
   });
-
-window.addEventListener("beforeunload", emit);
