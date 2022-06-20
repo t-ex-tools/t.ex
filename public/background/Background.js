@@ -18,7 +18,11 @@ browser.runtime.onInstalled.addListener((d) => {
 
 var Background = (() => {
   const urlFilter = { urls: ["http://*/*", "https://*/*"] };
-  let http = {};
+  let http = {
+    request: {},
+    requestHeaders: {},
+    response: {}
+  };
   let httpBody = config.httpBody.default;
 
   browser.storage.local.get("settings")
@@ -47,7 +51,7 @@ var Background = (() => {
         delete d.requestBody;
       }
 
-      http[d.requestId] = Object.assign({}, d);
+      http.request[d.requestId] = d
     },
       urlFilter,
       ["requestBody"]);
@@ -55,7 +59,7 @@ var Background = (() => {
   browser.webRequest
     .onBeforeSendHeaders
     .addListener((d) => {
-      Object.assign(http[d.requestId], { requestHeaders: d.requestHeaders });
+      http.requestHeaders[d.requestId] = d.requestHeaders;
     },
       urlFilter,
       (firefox) 
@@ -66,7 +70,7 @@ var Background = (() => {
   browser.webRequest
     .onResponseStarted
     .addListener((d) => {
-      Object.assign(http[d.requestId], { response: d });
+      http.response[d.requestId] = d
     },
       urlFilter,
       (firefox) 
@@ -77,25 +81,31 @@ var Background = (() => {
   browser.webRequest
     .onCompleted
     .addListener((d) => {
-      Object.assign(http[d.requestId], { success: true });
-      Background.push(d.requestId);
+      Background.push(d.requestId, true);
     },
       urlFilter);
 
   browser.webRequest
     .onErrorOccurred
     .addListener((d) => {
-      Object.assign(http[d.requestId], { success: false });
-      Background.push(d.requestId);
+      Background.push(d.requestId, false);
     },
       urlFilter);
 
   return {
-    get: (requestId) => http[requestId],
+    get: (requestId, success) =>
+      Object.assign(
+        http.request[requestId] || {},
+        { requestHeaders: http.requestHeaders[requestId] || {} },
+        { response: http.response[requestId] || {} },
+        { success: success }
+      ),
 
-    push: (requestId) => {
-      Chunk.add("http", [{ ...Background.get(requestId) }]);
-      delete http[requestId];
+    push: (requestId, success) => {
+      Chunk.add("http", [ Background.get(requestId, success) ]);
+      delete http.request[requestId];
+      delete http.requestHeaders[requestId];
+      delete http.response[requestId];
     }
   }
 })();
