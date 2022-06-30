@@ -3,26 +3,13 @@ import Chunk from "./Chunk.js";
 import config from "../js/Settings.js";
 
 let firefox = false;
-// TODO: temporary check until better strategy identified
 if (browser.runtime.hasOwnProperty("getBrowserInfo")) {
   firefox = true;
 }
 
-console.log(browser.runtime);
-
-// TODO: seed local storage with free website lists
-// TODO: seed initial settings
-browser.runtime.onInstalled.addListener((d) => {
-  console.log(d);
-});
-
 var Background = (() => {
   const urlFilter = { urls: ["http://*/*", "https://*/*"] };
-  let http = {
-    request: {},
-    requestHeaders: {},
-    response: {}
-  };
+  let http = {};
   let httpBody = config.httpBody.default;
 
   browser.storage.local.get("settings")
@@ -43,15 +30,11 @@ var Background = (() => {
   browser.webRequest
     .onBeforeRequest
     .addListener((d) => {
-      if (d.tabId < 0) {
-        return;
-      }
-
       if (!httpBody && d.hasOwnProperty("requestBody")) {
         delete d.requestBody;
       }
 
-      http.request[d.requestId] = d
+      http[d.requestId] = d
     },
       urlFilter,
       ["requestBody"]);
@@ -59,7 +42,7 @@ var Background = (() => {
   browser.webRequest
     .onBeforeSendHeaders
     .addListener((d) => {
-      http.requestHeaders[d.requestId] = d.requestHeaders;
+      http[d.requestId].requestHeaders = d.requestHeaders;
     },
       urlFilter,
       (firefox) 
@@ -70,7 +53,7 @@ var Background = (() => {
   browser.webRequest
     .onResponseStarted
     .addListener((d) => {
-      http.response[d.requestId] = d
+      http[d.requestId].response = d
     },
       urlFilter,
       (firefox) 
@@ -93,19 +76,16 @@ var Background = (() => {
       urlFilter);
 
   return {
-    get: (requestId, success) =>
-      Object.assign(
-        http.request[requestId] || {},
-        { requestHeaders: http.requestHeaders[requestId] || {} },
-        { response: http.response[requestId] || {} },
-        { success: success }
-      ),
-
     push: (requestId, success) => {
-      Chunk.add("http", [ Background.get(requestId, success) ]);
-      delete http.request[requestId];
-      delete http.requestHeaders[requestId];
-      delete http.response[requestId];
+      Chunk.add("http", 
+        [ 
+          Object.assign(
+            { ...http[requestId] },
+            { success: success }
+          )
+        ]
+      );
+      delete http[requestId];
     }
   }
 })();
