@@ -14,24 +14,26 @@ export default (() => {
           return;
         }
       }
-  
+
       api.properties.forEach((p) => {
         let pd = Object.getOwnPropertyDescriptor(x, p);
         if (!pd) {
           return;
         }
-  
+
         Object.defineProperty(x, p, {
           get: function () {
             let result = pd.get.apply(this);
+
             window.dispatchEvent(new CustomEvent("js", {
               detail: evt({
                 interface: api.label,
                 property: p,
                 method: "get",
-                result: result
+                result: srlzRslt(result)
               })
             }));
+
             return result;
           },
           set: function () {
@@ -43,28 +45,31 @@ export default (() => {
                 arguments: Array.from(arguments)
               })
             }));
+
             pd.set.apply(this, arguments);
           }
         });
       });
-  
+
       api.methods.forEach((m) => {
         let om = x[m];
         if (!om) {
           return;
         }
-  
+
         Object.defineProperty(x, m, {
           value: function () {
             let result = om.apply(this, arguments);
+
             window.dispatchEvent(new CustomEvent("js", {
-              detail: evt({ 
+              detail: evt({
                 interface: api.label,
                 method: m,
                 arguments: Array.from(arguments),
-                result: result
+                result: srlzRslt(result)
               })
             }));
+
             return result;
           }
         });
@@ -80,25 +85,25 @@ export default (() => {
           return om.apply(this, arguments);
         }
       });
-    });    
+    });
   };
-  
+
   let parseStack = (stack) => {
     // https://stackoverflow.com/a/3809435
     // from Daveo's answer on Sep 28, 2010 at 3:15
     let re = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/ig;
     let match = stack.match(re);
-  
-    return (match) 
+
+    return (match)
       ? [...new Set(
-          match.map((s) => {
-            let url = s.split(":");
-            return url[0] + ":" + url[1];
-          })
-        )][0] 
+        match.map((s) => {
+          let url = s.split(":");
+          return url[0] + ":" + url[1];
+        })
+      )][0]
       : null;
   };
-  
+
   let evt = (e) => {
     let url = parseStack((new Error()).stack);
     return Object.assign({
@@ -108,6 +113,16 @@ export default (() => {
       timeStamp: Date.now()
     }, e);
   };
+
+  let srlzRslt = (result) => {
+    if (result &&
+      typeof result === "object" &&
+      result.toString) {
+      result = result.toString();
+    }
+
+    return result;
+  }
 
   return {
     inject: (w) => {
