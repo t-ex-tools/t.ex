@@ -127,7 +127,43 @@
       @ok="rm"
     />
 
-  <!-- TODO: add Alexa.com, Tranco, Majestic Million links -->  
+    <div class="row mt-3">
+      <div class="col">
+        <b>Popular Lists</b>
+      </div>
+    </div>    
+
+    <div class="row mt-3">
+      <div
+        v-for="list, index in lists.popular"
+        :key="index" 
+        class="col d-flex"
+      >
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">
+              {{ list.name }}
+            </h5>
+            <p class="card-text">
+              Learn more about {{ list.name }} at:
+              <a 
+                :href="list.homepage" 
+                :title="list.homepage" 
+                target="_blank"
+              >
+                {{ list.homepage }}
+              </a>
+            </p>
+            <a 
+              :href="list.url" 
+              class="btn btn-primary"
+            >
+              Download list
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -135,6 +171,7 @@
 import WebsiteListsModal from "../modals/WebsiteListsModal.vue";
 import ConfirmModal from "../modals/ConfirmModal.vue";
 import { toRaw } from "vue";
+import websiteLists from "../../assets/website-lists.json";
 
 export default {
   components: {
@@ -146,16 +183,17 @@ export default {
       view: {
         page: 0,
         window: 5,
-        preview: 5
+        preview: 5,
       },
       lists: {
         all: [],
         selected: null,
+        popular: websiteLists,
       },
       alert: {
         visible: false,
         message: "",
-      }
+      },
     };
   },
   computed: {
@@ -163,17 +201,19 @@ export default {
       return this.view.page === 0;
     },
     last() {
-      return this.lists.all.length <= ((this.view.page + 1) * this.view.window)
+      return this.lists.all.length <= (this.view.page + 1) * this.view.window;
     },
     urlInfo() {
-      return this.lists.all
-        .map((l) => {
-          let urls = l.urls.split(/\r\n|\r|\n/g);
-          return (urls.length <= this.view.preview) ?
-            urls.join(", ")
-            : urls.slice(0, this.view.preview).join(", ") + " and " + (urls.length - this.view.preview) + " more.";
-        });
-    }
+      return this.lists.all.map((l) => {
+        let urls = l.urls.split(/\r\n|\r|\n/g);
+        return urls.length <= this.view.preview
+          ? urls.join(", ")
+          : urls.slice(0, this.view.preview).join(", ") +
+              " and " +
+              (urls.length - this.view.preview) +
+              " more.";
+      });
+    },
   },
   mounted() {
     browser.storage.local.get("lists").then((res) => {
@@ -205,13 +245,12 @@ export default {
       }
     },
     store(msg) {
-      browser.storage.local.set({ lists: toRaw(this.lists.all) })
-        .then(() => {
-          this.alert.message = msg;
-          this.alert.visible = true;
-          setTimeout(() => (this.alert.visible = false), 2500);
-        });
-    }
+      browser.storage.local.set({ lists: toRaw(this.lists.all) }).then(() => {
+        this.alert.message = msg;
+        this.alert.visible = true;
+        setTimeout(() => (this.alert.visible = false), 2500);
+      });
+    },
   },
 };
 </script>

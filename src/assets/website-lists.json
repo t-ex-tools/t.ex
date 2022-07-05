@@ -1,0 +1,19 @@
+[{
+  "name": "Alexa.com global top 1-million",
+  "homepage": "https://alexa.com/",
+  "url": "https://alexa-static.s3.amazonaws.com/top-1m.csv.zip",
+  "type": "csv",
+  "compressed": true
+}, {
+  "name": "Tranco global top 1-million",
+  "homepage": "https://tranco-list.eu/",
+  "url": "https://tranco-list.eu/top-1m.csv.zip",
+  "type": "csv",
+  "compressed": true
+}, {
+  "name": "Majestic Million global top 1-million",
+  "homepage": "https://majestic.com/reports/majestic-million",
+  "url": "https://downloads.majestic.com/majestic_million.csv",
+  "type": "csv",
+  "compressed": false
+}]
