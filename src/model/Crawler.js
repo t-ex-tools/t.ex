@@ -2,6 +2,7 @@ import config from "../model/Settings.js";
 
 const empty = {
   tag: "",
+  list: "",
   startedAt: 0,
   doneAt: 0,
   tabsOpen: 0,
@@ -46,6 +47,7 @@ var Crawler = (() => {
         urls = list.urls.split(/\r\n|\r|\n/g);
 
         log.tag = tag;
+        log.list = list.name;
         log.startedAt = Date.now();
         log.tabsToFinish = urls.length;
 

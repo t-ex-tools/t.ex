@@ -118,11 +118,10 @@
             <th
               v-for="h, i in [
                 'Tag',
+                'Website List',
                 'Started',
                 'Finished',
-                'Tabs opened',
-                'Tabs completed',
-                'Websites unavailable',
+                'Closed-in-Catch*',
                 'Version'
               ]"
               :key="i"
@@ -137,10 +136,9 @@
               :key="index"
             >
               <td>{{ c.tag }}</td>
+              <td>{{ c.list }}</td>
               <td>{{ new Date(c.startedAt).toLocaleString() }}</td>
               <td>{{ new Date(c.doneAt).toLocaleString() }}</td>
-              <td>{{ c.tabsOpened }}</td>
-              <td>{{ c.tabsCompleted }}</td>
               <td>{{ c.tabsNotResponding }}</td>
               <td>{{ c.version }}</td>
             </tr>
@@ -181,6 +179,16 @@
         <i class="bi bi-arrow-right-circle" />
       </button>
     </div>
+
+    <div class="row mt-3">
+      <div class="col">
+        <small>
+          * Unresponsive tabs, which did not respond to the close message of the crawler.
+          There are many reasons for such behavior.
+          Data might or might not have been recorded for this website.
+        </small>
+      </div>
+    </div>    
   </div>
 </template>
 
@@ -204,7 +212,7 @@ export default {
       log: {},
       view: {
         page: 0,
-        window: 5,
+        window: 10,
       },
       settings: {}
     }
@@ -236,7 +244,7 @@ export default {
   mounted() {
     browser.storage.local.get(["crawls", "lists", "settings"])
       .then((res) => {
-        this.crawls = (res.crawls) ? res.crawls : [];
+        this.crawls = (res.crawls) ? res.crawls.reverse() : [];
         this.lists = (res.lists) ? res.lists : [];
         this.settings = (res.settings) ? res.settings : {};
       });
@@ -249,7 +257,7 @@ export default {
     window.addEventListener("crawler:log", function(e) {
       self.log = e.detail.log;
       if (e.detail.log.doneAt > 0) {
-        self.crawls.push(e.detail.log);
+        self.crawls.unshift(e.detail.log);
         self.log = {};
       }
     });
