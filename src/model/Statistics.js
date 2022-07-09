@@ -6,74 +6,117 @@ var Statistics = (() => {
   let stats = {};
 
   return {
-    /*
-     * @param {Array} c - Filtered chunk.
-     * @param {String} feature - The identifier of the feature.
-     * @param {String} id - The identifier of the query.
-     * @param {Number} gi - The index of the group in the members array.
-     * @param {Function} fn - The callback of the consuming component.
-     */
-    count: (c, feature, id, gi, fn) => {
-      c.forEach((d, i, array) => {
-        let x = FeatureExtractor.extract(feature, d);
+    count: (chunk, handler, info) => {
+      if (chunk.length === 0) {
+        handler(info)
+      }
+
+      chunk.forEach((d, i, array) => {
+        let x = FeatureExtractor.extract(info.feature, d);
         if (typeof x === "object") {
           x.forEach((e, j, arr) => {
             let kv = FeatureExtractor.encode(e);
-            stats[id][gi].data[feature].put(kv);
+            stats[info.query][info.group][info.feature].put(kv);
 
-            if (j === arr.length - 1) {
-              fn(stats[id]);
-            }
+            if (i === array.length - 1 &&
+                j === arr.length - 1) {
+                  handler(info);
+              }
           });
         } else {
-          stats[id][gi].data[feature].put(x);
+          stats[info.query][info.group][info.feature].put(x);
 
           if (i === array.length - 1) {
-            fn(stats[id]);
+            handler(info);
           }
         }
       });
     },
-    // TODO: or queries, features -> callback with id
-    query: function (type, query, feature, callback) {
+    // NOTE: all features must be of same type
+    query: function (type, queries, handler) {
+      [...new Set(Object
+        .values(queries)
+        .flat()
+      )].forEach((query) => {
+        if (!stats[query.id]) {
+          stats[query.id] = {};
+          query.members
+            .forEach((group, index) => {
+              stats[query.id][index] = {};
+            });
+        }
+      });
 
-      if (!stats[query.id]) {
-        stats[query.id] = {};
-      }
+      let toCompute = { ...queries };
+      Object
+        .keys(queries)
+        .forEach((feature) => {
+          toCompute[feature] = queries[feature]
+            .filter((query) => {
+              if (stats[query.id][0][feature]) {
+                Object.keys(stats[query.id])
+                  .forEach((gi) => {
+                    handler({
+                      feature: feature,
+                      query: query.id,
+                      group: gi,
+                      data: stats[query.id][gi][feature],
+                      loaded: 1,
+                      total: 1
+                    })
+                  });
+                return false;
+              }
+              return true;
+            });
 
-      // NOTE: In current implementation sufficient to check
-      //       if feature was computed for 0-th group member.
-      if (stats[query.id][0] &&
-        stats[query.id][0].data &&
-        stats[query.id][0].data[feature]) {
-        callback(stats[query.id]);
+          if (toCompute[feature].length === 0) {
+            delete toCompute[feature];
+          }
+        });
+
+      if (Object.keys(toCompute).length === 0) {
         return;
       }
 
       Data.stream(type, (chunk, index, total) => {
-        if (chunk) {
-          query.members.forEach((g, i) => {
-            let c = chunk.filter(g.filter);
-
-            stats[query.id][i] = {
-              data: {
-                [feature]: new StatisticsTmpStorage()
-              }
-
-            }
-            this.count(c, feature, query.id, i, callback);
-          });
-        }
-
         window.dispatchEvent(new CustomEvent("statistics:loading:update", {
           detail: {
             loaded: index,
             total: total
           }
         }));
+
+        if (!chunk) {
+          return;
+        }
+
+        Object
+          .keys(toCompute)
+          .forEach((feature) => {
+            toCompute[feature]
+              .forEach((query) => {
+                query.members.forEach((g, i) => {
+
+                  stats[query.id][i][feature] = new StatisticsTmpStorage();
+
+                  let c = chunk.filter(g.filter);
+                  let info = {
+                    feature: feature,
+                    query: query.id,
+                    group: i,
+                    data: stats[query.id][i][feature],
+                    loaded: index,
+                    total: total,
+                  };
+                  
+                  this.count(c, handler, info);
+                });
+              })
+          })
       });
+      
     },
-    // TODO: queryAll maybe?
     sum: function (data) {
       return data.reduce((acc, val) => acc += val, 0);
     }

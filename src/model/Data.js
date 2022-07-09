@@ -20,40 +20,40 @@ var Data = (() => {
       if (res.settings) {
         Object
           .keys(settings)
-          .forEach((k) => 
-            settings[k] = (res.settings.hasOwnProperty(k)) 
-            ? res.settings[k] 
-            : settings[k]
+          .forEach((k) =>
+            settings[k] = (res.settings.hasOwnProperty(k))
+              ? res.settings[k]
+              : settings[k]
           );
       }
 
-      for (let i=1; i < settings.numberOfWorkers; i++) {
+      for (let i = 1; i < settings.numberOfWorkers; i++) {
         labelers[i] = new Worker("../workers/Labeler.js");
       }
     });
 
   return {
 
-    setIndexes: function(idx) {
+    setIndexes: function (idx) {
       indexes = idx;
     },
-    
+
     chunks: (handler) => {
       let loaded = 0;
       let total = indexes.length;
 
-      for (let i=0; i * settings.chunksAtOnce < indexes.length; i++) {
+      for (let i = 0; i * settings.chunksAtOnce < indexes.length; i++) {
         browser.storage.local
-        .get(
-          indexes.slice(
-            i * settings.chunksAtOnce,
-            (i + 1) * settings.chunksAtOnce
-          )
-        ).then((chunks) => {
-          let c = Object.values(chunks)
-          loaded += c.length;
-          handler(c, loaded, total);
-        });
+          .get(
+            indexes.slice(
+              i * settings.chunksAtOnce,
+              (i + 1) * settings.chunksAtOnce
+            )
+          ).then((chunks) => {
+            let c = Object.values(chunks)
+            loaded += c.length;
+            handler(c, loaded, total);
+          });
       }
     },
 
@@ -84,9 +84,9 @@ var Data = (() => {
             }
             handler(msg.data.chunk, x, y);
           })
-        });      
+        });
 
-      for (let i=0; i * settings.chunksAtOnce < indexes.length; i++) {
+      for (let i = 0; i * settings.chunksAtOnce < indexes.length; i++) {
         browser.storage.local
           .get(
             indexes.slice(
@@ -108,7 +108,7 @@ var Data = (() => {
                     index: key,
                     chunk: chunks[key]
                   },
-                  type: type 
+                  type: type
                 });
               });
           });

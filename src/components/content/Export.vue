@@ -70,11 +70,19 @@
                       <th scope="col">
                         Description
                       </th>
+                      <th
+                        v-for="q, j in DefaultQueries.groups()"
+                        :key="j"
+                        scope="col"
+                        class="text-center"
+                      >
+                        {{ q.label }}
+                      </th>
                       <th 
                         class="text-end"
                         scope="col"
                       >
-                        Switch
+                        Data
                       </th>
                     </thead>
                     <tbody>
@@ -82,13 +90,27 @@
                         v-for="(feature, j) in group.featureGroup" 
                         :key="j"
                       >
-                        <td style="width: 30%">
+                        <td style="width: 15%">
                           {{ feature.name }}
                         </td>
-                        <td style="width: 55%">
+                        <td style="width: 30%">
                           {{ feature.subtitle }}
                         </td>
-                        <td style="width: 15%">
+                        <td
+                          v-for="q, k in DefaultQueries.groups()"
+                          :key="k"
+                        >
+                          <div class="form-check form-switch">
+                            <input
+                              class="form-check-input mx-auto"
+                              :name="k"
+                              type="checkbox"
+                              role="switch"
+                              @change="query(feature.path, q, $event)"
+                            >
+                          </div>                          
+                        </td>
+                        <td>
                           <div class="form-check form-switch">
                             <input
                               class="form-check-input float-end"
@@ -114,6 +136,20 @@
       <div class="col">
         <button
           class="btn btn-outline-primary float-end"
+          type="button"
+          :disabled="Object.keys(queries).length === 0 || !dataLoaded"
+          data-bs-toggle="modal"
+          :data-bs-target="'#loading-modal-' + suffix"
+          @click="statistics"
+        >
+          <i class="bi bi-download me-2" />
+          <small>
+            Export statistics
+          </small>
+        </button>
+
+        <button
+          class="btn btn-outline-primary float-end me-2"
           type="button"
           :disabled="features.length === 0 || !dataLoaded"
           data-bs-toggle="modal"
@@ -158,6 +194,9 @@ import FeatureExtractor from "../../model/FeatureExtractor.js";
 import LoadingModal from "../modals/LoadingModal.vue";
 import Data from "../../model/Data.js";
 import Util from "../../model/Util.js";
+import DefaultQueries from "../../model/DefaultQueries.js";
+import { toRaw } from "vue";
+import Statistics from "../../model/Statistics.js";
 
 export default {
   components: {
@@ -177,6 +216,7 @@ export default {
     return {
       suffix: "export",
       FeatureExtractor,
+      DefaultQueries,
       labels: {
         types: {
           http: "HTTP/S requests & responses",
@@ -189,6 +229,8 @@ export default {
       },
       selected: 0,
       features: [],
+      queries: {},
+      data: {},
       memoryLimit: 250 * 1000000,
     };
   },
@@ -209,10 +251,16 @@ export default {
       if (self.selected !== tmp) {
         self.selected = tmp;
         self.features = [];
+        self.queries = {};
         [...document.querySelectorAll(".form-check-input")].forEach(
           (n) => (n.checked = false)
         );
       }
+    });
+
+    window.addEventListener("statistics:loading:update", (e) => {
+      this.view.loaded = e.detail.loaded;
+      this.view.total = e.detail.total;
     });
   },
   methods: {
@@ -232,6 +280,72 @@ export default {
       } else {
         this.features.splice(this.features.indexOf(e.target.name), 1);
       }
+    },
+    query(feature, query, e) {
+      if (!this.queries[feature]) {
+        this.queries[feature] = [];
+      }
+      
+      if (e.target.checked) {
+        this.queries[feature].push(query);
+      } else {
+        let index = this.queries[feature].findIndex((q) => q.id === query.id);
+        this.queries[feature].splice(index, 1);
+      }
+    },
+    statistics() {
+      Statistics.query(
+        this.types[this.selected],
+        toRaw(this.queries),
+        (info) => {
+          let query = DefaultQueries.groups().find((q) => q.id === info.query);
+          
+          if (info.loaded !== info.total) {
+            return
+          }
+
+          if (!this.data[info.query]) {
+            this.data[info.query] = { [info.group]: { [info.feature]: info.data } };
+          } else {
+            this.data[info.query][info.group] = { [info.feature]: info.data };
+          }
+          
+          
+          if (info.group !== query.members.length - 1) {
+            return;
+          }
+
+          let headings = Util.headings(query); 
+          
+          Util
+            .options()
+            .forEach((option) => {
+              Util.download(
+                Util.csv(
+                  headings,
+                  Util.table(
+                    headings,
+                    this.data[info.query],
+                    info.feature,
+                    option.impl
+                  )
+                ),
+                'csv',
+                this.dataTag,
+                info.feature,
+                option.slug,
+                query.label
+              )
+            });
+
+          /*
+          * TODO:
+          * 1. Data to Table
+          * 2. Table different representations (e.g. % of total)
+          * 3. Download each table
+          */
+        }
+      )
     },
     download(transformed) {
       let type = this.types[this.selected];

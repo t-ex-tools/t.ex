@@ -60,7 +60,22 @@
         <button
           class="btn btn-outline-primary float-end"
           type="button"
-          @click="download"
+          @click="Util.download(
+            Util.csv(
+              headings,
+              Util.table(
+                headings,
+                data,
+                feature,
+                values.options[values.selected].impl
+              )
+            ),
+            'csv',
+            dataTag,
+            feature,
+            values.options[values.selected].slug,
+            queries.default[queries.selected].label
+          )"
         >
           <i class="bi bi-table me-2" />
           <small>Export CSV</small>
@@ -78,8 +93,10 @@
           :selected-index="queries.selected"
           :is-loading="loading.processing"
           @tabs-changed="(i) => {
-            queries.selected = i;
-            loading.processing = true;
+            if (queries.selected !== i) {
+              queries.selected = i;
+              loading.processing = true;
+            }
           }"
         />
       </div>
@@ -109,7 +126,12 @@
       <div class="col">
         <data-table
           :headings="headings"
-          :items="table()"
+          :items="Util.table(
+            headings,
+            data,
+            feature,
+            values.options[values.selected].impl
+          )"
         />
       </div>
     </div>
@@ -121,11 +143,10 @@ import Statistics from "../model/Statistics.js";
 import DefaultQueries from "../model/DefaultQueries.js";
 import TabBar from "./TabBar.vue";
 import DataTable from "./DataTable.vue";
+import { toRaw } from "vue";
+import Util from "../model/Util.js";
 
 const empty = { isLoading: false, processing: false, loaded: 0, total: 0 };
-
-let percent = (dividend, divisor) => 
-  ((dividend / divisor) * 100).toFixed(2);
 
 export default {
   components: {
@@ -152,6 +173,7 @@ export default {
   },
   data: () => {
     return {
+      Util,
       queries: {
         default: DefaultQueries.groups(),
         selected: 0,
@@ -160,38 +182,7 @@ export default {
       data: {},
       values: {
         selected: 0,
-        options: [{
-          label: "Display counts",
-          slug: "counts",
-          impl: (row, idx, rows) => row 
-        }, {
-          label: "Display % of rows",
-          slug: "percentage-of-rows",
-          impl: (row, idx, rows) => 
-            row
-              .map((cell, i) => (i === 0)
-                ? cell
-                : percent(cell, row[row.length-1])
-              )
-        }, {
-          label: "Display % of columns",
-          slug: "percentage-of-columns",
-          impl: (row, idx, rows) => 
-            row
-              .map((cell, i) => (i === 0)
-                ? cell
-                : percent(cell, rows[rows.length-1][i])
-              )
-        }, {
-          label: "Display % of total",
-          slug: "percentage-of-total",
-          impl: (row, idx, rows) => 
-            row
-              .map((cell, i) => (i === 0)
-                ? cell
-                : percent(cell, rows[rows.length-1][row.length-1])
-              )
-        }]
+        options: Util.options()
       },
     };
   },
@@ -200,13 +191,9 @@ export default {
       return Math.round((this.loading.loaded / this.loading.total) * 100);
     },
     headings() {
-      return ["Value"]
-        .concat(
-          this.queries.default[this.queries.selected].members.map(
-            (e) => e.label
-          )
-        )
-        .concat(["#"]);
+      return Util.headings(
+        this.queries.default[this.queries.selected]
+      );
     },
   },
   watch: {
@@ -248,67 +235,17 @@ export default {
 
       Statistics.query(
         type,
-        this.queries.default[this.queries.selected],
-        this.feature,
+        {
+          [this.feature]: [toRaw(this.queries.default[this.queries.selected])],
+        },
         (data) => {
           this.loading.processing = false;
-          this.data = data;
+          if (!this.data[data.group]) {
+            this.data[data.group] = {};
+          }
+          this.data[data.group][data.feature] = data.data;
         }
       );
-    },
-    table() {
-      if (Object.keys(this.data).length === 0) {
-        return;
-      }
-
-      let rows = Object.values(this.data)
-        .map((e) => Object.keys(e.data[this.feature]))
-        .reduce((acc, val) => [...new Set(acc.concat(val))], [])
-        .map((e) => {
-          let v = Object.values(this.data).map((el) =>
-            el.data[this.feature][e] ? el.data[this.feature][e] : 0
-          );
-          return [e, ...v];
-        });
-
-      rows.forEach((row) => row.push(Statistics.sum(row.slice(1))));
-
-      rows.push(
-        this.headings.map((col, idx) =>
-          idx === 0 ? "#" : Statistics.sum(rows.map((e) => e[idx]))
-        )
-      );
-
-      rows = rows.map(this.values.options[this.values.selected].impl);
-
-      return rows;
-    },
-    download() {
-      let csv = [this.headings]
-        .concat(this.table())
-        .map((row) => {
-          return row
-            .map((h) => '"' + h.toString().replace(/"/g, '\\"') + '"')
-            .join(",");
-        })
-        .join("\n");
-
-      browser.downloads.download({
-        filename:
-          this.dataTag +
-          "/" +
-          this.feature +
-          "/" +
-          this.feature +
-          "." +
-          this.values.options[this.values.selected].slug +
-          "-" +
-          this.queries.default[this.queries.selected].label +
-          ".csv",
-        url: URL.createObjectURL(
-          new Blob([csv], { type: "data:application/csv;charset=utf-8" })
-        ),
-      });
     },
   },
 };
