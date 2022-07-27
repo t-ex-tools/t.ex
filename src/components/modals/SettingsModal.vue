@@ -83,18 +83,18 @@
 </template>
 
 <script>
-import config from "../../model/config/Settings.js";
+import model from "../../model/index.js";
 import { toRaw } from "vue";
 
 export default {
   data: () => {
     return {
       values: {},
-      settings: config,
+      settings: model.Settings,
     };
   },
   mounted() {
-    browser.storage.local.get("settings").then((res) => {
+    model.Storage.get("settings").then((res) => {
       this.values = (res.settings) ? res.settings : {};
     });
   },
@@ -115,7 +115,7 @@ export default {
       }
 
       const cfg = { settings: toRaw(this.values) };
-      browser.storage.local.set(cfg)
+      model.Storage.set(cfg)
         .then(() => browser.runtime.sendMessage(cfg));
 
       this.emitter.emit("settings", cfg);

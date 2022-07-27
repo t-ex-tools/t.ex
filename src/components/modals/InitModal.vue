@@ -133,7 +133,7 @@ export default {
     };
   },
   mounted() {    
-    browser.storage.local.get(["indexes"])
+    model.Storage.get(["indexes"])
       .then((res) => {
         this.setIndexes(res.indexes);
       });
@@ -141,7 +141,7 @@ export default {
     const self = this;
     let elem = document.getElementById("init-modal");
     elem.addEventListener("show.bs.modal", function() {
-      browser.storage.local.get(["indexes"])
+      model.Storage.get(["indexes"])
         .then((res) => {
           self.setIndexes(res.indexes);
         });
@@ -168,7 +168,7 @@ export default {
         tag: this.boundaries.dataTag,
         length: i.length
       });        
-      model.Data.setIndexes(i);
+      model.Data.setIndexes(i); // TODO: state change
     },
   },
 };

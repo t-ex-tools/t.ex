@@ -5,6 +5,7 @@ import FeatureExtractor from "./features/FeatureExtractor.js";
 import Settings from "./config/Settings.js";
 import Statistics from "./data/Statistics.js";
 import Util from "./data/Util.js";
+import Storage from "./storage/Storage.js";
 
 export default {
   Crawler,
@@ -13,5 +14,6 @@ export default {
   FeatureExtractor,
   Settings,
   Statistics,
-  Util
+  Util,
+  Storage
 };

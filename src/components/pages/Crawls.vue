@@ -242,7 +242,7 @@ export default {
     }
   },
   mounted() {
-    browser.storage.local.get(["crawls", "lists", "settings"])
+    model.Storage.get(["crawls", "lists", "settings"])
       .then((res) => {
         this.crawls = (res.crawls) ? res.crawls.reverse() : [];
         this.lists = (res.lists) ? res.lists : [];

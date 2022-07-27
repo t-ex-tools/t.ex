@@ -1,5 +1,6 @@
 import Util from "./Util.js";
 import config from "../config/Settings.js";
+import Storage from "../storage/Storage.js";
 
 var Data = (() => {
   let indexes = [];
@@ -15,7 +16,7 @@ var Data = (() => {
     js: () => settings.jsChunkSize
   };
 
-  browser.storage.local.get(["settings"])
+  Storage.get(["settings"])
     .then((res) => {
       if (res.settings) {
         Object
@@ -43,7 +44,7 @@ var Data = (() => {
       let total = indexes.length;
 
       for (let i = 0; i * settings.chunksAtOnce < indexes.length; i++) {
-        browser.storage.local
+        Storage
           .get(
             indexes.slice(
               i * settings.chunksAtOnce,
@@ -87,7 +88,7 @@ var Data = (() => {
         });
 
       for (let i = 0; i * settings.chunksAtOnce < indexes.length; i++) {
-        browser.storage.local
+        Storage
           .get(
             indexes.slice(
               i * settings.chunksAtOnce,

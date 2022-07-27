@@ -83,8 +83,6 @@
 </template>
 
 <script>
-import model from "../model/index.js";
-
 export default {
   props: {
     headings: {
@@ -98,7 +96,6 @@ export default {
   },
   data: () => {
     return {
-      Statistics: model.Statistics,
       view: {
         page: 0,
         window: 15,

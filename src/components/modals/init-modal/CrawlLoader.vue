@@ -31,6 +31,8 @@
 </template>
 
 <script>
+import model from "../../../model/index.js";
+
 export default {
   emits: ["update-limit"],
   data: () => {
@@ -57,13 +59,12 @@ export default {
   },
   methods: {
     load: function() {
-      browser.storage.local.get("crawls")
+      model.Storage.get("crawls")
       .then((res) => {
         this.crawls = (res.crawls) ? res.crawls : [];
       });
     },
     updateLimit: function () {
-      // TODO: this.crawls[this.selected] might be undefined
       this.$emit("update-limit", {
         lower: this.crawls[this.selected].startedAt,
         upper: this.crawls[this.selected].doneAt,

@@ -26,7 +26,7 @@ var Crawler = (() => {
 
   return {
     getSettings: (callback) => {
-      browser.storage.local.get("settings")
+      Storage.get("settings")
         .then((res) => {
           if (res.settings) {
             Object
@@ -136,11 +136,11 @@ var Crawler = (() => {
       window.dispatchEvent(new CustomEvent("crawler:log", { detail: { log: { ...log } } }));
     },
     saveLog: function (l) {
-      browser.storage.local.get("crawls")
+      Storage.get("crawls")
         .then((res) => {
           let crawls = (res.crawls) ? res.crawls : [];
           crawls.push(l);
-          browser.storage.local.set({ crawls: crawls });
+          Storage.set({ crawls: crawls });
         });
     },
   };

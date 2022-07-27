@@ -216,7 +216,7 @@ export default {
     },
   },
   mounted() {
-    browser.storage.local.get("lists").then((res) => {
+    model.Storage.get("lists").then((res) => {
       this.lists.all = res.lists ? Object.values(res.lists) : [];
     });
   },
@@ -245,7 +245,7 @@ export default {
       }
     },
     store(msg) {
-      browser.storage.local.set({ lists: toRaw(this.lists.all) }).then(() => {
+      model.Storage.set({ lists: toRaw(this.lists.all) }).then(() => {
         this.alert.message = msg;
         this.alert.visible = true;
         setTimeout(() => (this.alert.visible = false), 2500);
