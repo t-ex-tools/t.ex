@@ -139,12 +139,10 @@
 </template>
 
 <script>
-import Statistics from "../model/Statistics.js";
-import DefaultQueries from "../model/DefaultQueries.js";
+import model from "../model/index.js";
 import TabBar from "./TabBar.vue";
 import DataTable from "./DataTable.vue";
 import { toRaw } from "vue";
-import Util from "../model/Util.js";
 
 const empty = { isLoading: false, processing: false, loaded: 0, total: 0 };
 
@@ -173,16 +171,16 @@ export default {
   },
   data: () => {
     return {
-      Util,
+      Util: model.Util,
       queries: {
-        default: DefaultQueries.groups(),
+        default: model.Queries.groups(),
         selected: 0,
       },
       loading: { ...empty },
       data: {},
       values: {
         selected: 0,
-        options: Util.options()
+        options: model.Util.options()
       },
     };
   },
@@ -191,7 +189,7 @@ export default {
       return Math.round((this.loading.loaded / this.loading.total) * 100);
     },
     headings() {
-      return Util.headings(
+      return model.Util.headings(
         this.queries.default[this.queries.selected]
       );
     },
@@ -233,7 +231,7 @@ export default {
     query() {
       let type = this.feature.split(".")[0];
 
-      Statistics.query(
+      model.Statistics.query(
         type,
         {
           [this.feature]: [toRaw(this.queries.default[this.queries.selected])],

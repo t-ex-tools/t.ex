@@ -1,7 +1,7 @@
-import FeatureExtractor from "../FeatureExtractor.js";
+import FeatureExtractor from "./FeatureExtractor.js";
 import HeaderFeatures from "./HeaderFeatures.js"
 import ResponseFeatures from "./ResponseFeatures.js";
-import Statistics from "../Statistics.js";
+import Statistics from "../data/Statistics.js";
 
 var CookieFeatures = (() => {
 

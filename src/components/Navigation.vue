@@ -49,13 +49,13 @@
 </template>
 
 <script>
-import FeatureExtractor from "../model/FeatureExtractor.js";
-import StaticRoutes from "../model/StaticRoutes.js";
+import model from "../model/index.js";
+import StaticRoutes from "./StaticRoutes.js";
 
 export default {
   data: () => {
     return {
-      FeatureExtractor: FeatureExtractor,
+      FeatureExtractor: model.FeatureExtractor,
       staticRoutes: StaticRoutes
     };
   },

@@ -1,5 +1,5 @@
 import Util from "./Util.js";
-import config from "./Settings.js";
+import config from "../config/Settings.js";
 
 var Data = (() => {
   let indexes = [];

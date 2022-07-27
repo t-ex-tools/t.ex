@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import Data from "../../model/Data.js";
+import model from "../../model/index.js";
 
 export default {
   props: {
@@ -135,7 +135,7 @@ export default {
   },
   methods: {
     init() {
-      Data.chunks((chunks, loaded, total) => {
+      model.Data.chunks((chunks, loaded, total) => {
         this.loading.isLoading = true;
         this.loading.loaded = loaded;
         this.loading.total = total;

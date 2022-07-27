@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import config from "../../model/Settings.js";
+import config from "../../model/config/Settings.js";
 import { toRaw } from "vue";
 
 export default {

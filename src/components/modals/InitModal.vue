@@ -103,7 +103,7 @@
 import LimitSlider from "./init-modal/LimitSlider.vue";
 import CrawlLoader from "./init-modal/CrawlLoader.vue";
 import { markRaw } from "vue";
-import Data from "../../model/Data.js";
+import model from "../../model/index.js";
 
 export default {
   components: {
@@ -168,7 +168,7 @@ export default {
         tag: this.boundaries.dataTag,
         length: i.length
       });        
-      Data.setIndexes(i);
+      model.Data.setIndexes(i);
     },
   },
 };

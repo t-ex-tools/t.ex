@@ -71,7 +71,7 @@
                         Description
                       </th>
                       <th
-                        v-for="q, j in DefaultQueries.groups()"
+                        v-for="q, j in Queries.groups()"
                         :key="j"
                         scope="col"
                         class="text-center"
@@ -97,7 +97,7 @@
                           {{ feature.subtitle }}
                         </td>
                         <td
-                          v-for="q, k in DefaultQueries.groups()"
+                          v-for="q, k in Queries.groups()"
                           :key="k"
                         >
                           <div class="form-check form-switch">
@@ -195,13 +195,9 @@
 </template>
 
 <script>
-import FeatureExtractor from "../../model/FeatureExtractor.js";
+import model from "../../model/index.js";
 import LoadingModal from "../modals/LoadingModal.vue";
-import Data from "../../model/Data.js";
-import Util from "../../model/Util.js";
-import DefaultQueries from "../../model/DefaultQueries.js";
 import { toRaw } from "vue";
-import Statistics from "../../model/Statistics.js";
 
 export default {
   components: {
@@ -220,8 +216,8 @@ export default {
   data: () => {
     return {
       suffix: "export",
-      FeatureExtractor,
-      DefaultQueries,
+      FeatureExtractor: model.FeatureExtractor,
+      Queries: model.Queries,
       labels: {
         types: {
           http: "HTTP/S requests & responses",
@@ -244,7 +240,7 @@ export default {
     types() {
       return [
         ...new Set(
-          FeatureExtractor.features().map((f) => f.split(".").shift())
+          model.FeatureExtractor.features().map((f) => f.split(".").shift())
         ),
       ];
     },
@@ -254,7 +250,7 @@ export default {
     FeatureExtractor
       .features()
       .filter((feature) => feature.startsWith("http"))
-      .forEach((feature) => this.queries[feature] = DefaultQueries.groups());
+      .forEach((feature) => this.queries[feature] = Queries.groups());
     console.log(Object.values(this.queries).length);
     */
     const self = this;
@@ -283,7 +279,7 @@ export default {
       }
     },
     groups(type) {
-      return FeatureExtractor.navigation().filter(
+      return model.FeatureExtractor.navigation().filter(
         (f) => f.featureGroup[0].path.split(".").shift() === type
       );
     },
@@ -307,7 +303,7 @@ export default {
       }
     },
     statistics() {
-      Statistics.query(
+      model.Statistics.query(
         this.types[this.selected],
         toRaw(this.queries),
         (info) => {
@@ -321,20 +317,20 @@ export default {
             this.data[info.query][info.group] = { [info.feature]: info.data };
           }
           
-          let query = DefaultQueries.groups().find((q) => q.id === info.query);
+          let query = model.Queries.groups().find((q) => q.id === info.query);
           if (info.group !== query.members.length - 1) {
             return;
           }
 
-          let headings = Util.headings(query); 
+          let headings = model.Util.headings(query); 
           
-          Util
+          model.Util
             .options()
             .forEach((option) => {
-              Util.download(
-                Util.csv(
+              model.Util.download(
+                model.Util.csv(
                   headings,
-                  Util.table(
+                  model.Util.table(
                     headings,
                     this.data[info.query],
                     info.feature,
@@ -357,7 +353,7 @@ export default {
       let batch = [];
       let n = 0;
 
-      Data.stream(type, (chunk, loaded, total) => {
+      model.Data.stream(type, (chunk, loaded, total) => {
         this.view.loaded = loaded;
         this.view.total = total;
 
@@ -384,7 +380,7 @@ export default {
         }
 
         batch = batch.concat(chunk);
-        if (this.memoryLimit <= Util.memorySizeOf(batch) || loaded === total) {
+        if (this.memoryLimit <= model.Util.memorySizeOf(batch) || loaded === total) {
           let filename = this.dataTag + 
             "/" + 
             type + 

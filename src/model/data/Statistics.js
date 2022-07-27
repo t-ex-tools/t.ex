@@ -1,4 +1,4 @@
-import FeatureExtractor from "./FeatureExtractor.js";
+import FeatureExtractor from "../features/FeatureExtractor.js";
 import Data from "./Data.js";
 import StatisticsTmpStorage from "./StatisticsTmpStorage.js";
 

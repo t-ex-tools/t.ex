@@ -1,10 +1,10 @@
-import BodyFeatures from "./features/BodyFeatures.js";
-import CookieFeatures from "./features/CookieFeatures.js";
-import HeaderFeatures from "./features/HeaderFeatures.js";
-import RequestFeatures from "./features/RequestFeatures.js";
-import UrlFeatures from "./features/UrlFeatures.js";
-import JsFeatures from "./features/JsFeatures.js";
-import ResponseFeatures from "./features/ResponseFeatures.js";
+import BodyFeatures from "./BodyFeatures.js";
+import CookieFeatures from "./CookieFeatures.js";
+import HeaderFeatures from "./HeaderFeatures.js";
+import RequestFeatures from "./RequestFeatures.js";
+import UrlFeatures from "./UrlFeatures.js";
+import JsFeatures from "./JsFeatures.js";
+import ResponseFeatures from "./ResponseFeatures.js";
 
 var FeatureExtractor = (() => {
 

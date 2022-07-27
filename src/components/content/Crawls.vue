@@ -194,7 +194,7 @@
 
 <script>
 import ConfirmModal from "../modals/ConfirmModal.vue";
-import Crawler from "../../model/Crawler.js";
+import model from "../../model/index.js";
 
 export default {
   components: {
@@ -202,7 +202,7 @@ export default {
   },
   data: () => {
     return {
-      Crawler,
+      Crawler: model.Crawler,
       crawls: [],
       crawl: {
         tag: "",

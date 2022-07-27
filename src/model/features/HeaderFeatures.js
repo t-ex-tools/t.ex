@@ -1,5 +1,5 @@
-import FeatureExtractor from "../FeatureExtractor.js";
-import Statistics from "../Statistics.js";
+import FeatureExtractor from "./FeatureExtractor.js";
+import Statistics from "../data/Statistics.js";
 
 var HeaderFeatures = (() => {
 

@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import Data from "../../model/Data.js";
+import model from "../../model/index.js";
 
 export default {
   data: () => {
@@ -53,7 +53,7 @@ export default {
     }
   },
   mounted() {
-    Data.blocklists((lists) => this.lists = lists);
+    model.Data.blocklists((lists) => this.lists = lists);
   }
 }
 </script>

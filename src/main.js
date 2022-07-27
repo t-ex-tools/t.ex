@@ -4,12 +4,12 @@ import "bootstrap"
 import "bootstrap-icons/font/bootstrap-icons.css"
 import { createRouter, createWebHashHistory } from "vue-router"
 
-import StaticRoutes from "./model/StaticRoutes.js"
-import FeatureExtractor from "./model/FeatureExtractor.js";
+import StaticRoutes from "./components/StaticRoutes.js"
+import model from "./model/index.js";
 import Base from "./components/Base.vue";
 import { markRaw } from "vue";
 
-import config from "./model/Settings.js";
+import config from "./model/config/Settings.js";
 import mitt from "mitt";
 
 browser.storage.local.get("settings")
@@ -20,8 +20,8 @@ browser.storage.local.get("settings")
   });
 
 const routes = StaticRoutes.concat(
-  FeatureExtractor.features().map((f) => {
-    let featureInfo = FeatureExtractor.info(f);
+  model.FeatureExtractor.features().map((f) => {
+    let featureInfo = model.FeatureExtractor.info(f);
     return {
       path: "/" + f,
       label: featureInfo.title,
