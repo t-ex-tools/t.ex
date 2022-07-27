@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import model from "../model/index.js";
+import model from "../../model/index.js";
 import StaticRoutes from "./StaticRoutes.js";
 
 export default {

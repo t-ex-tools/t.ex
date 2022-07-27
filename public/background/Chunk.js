@@ -1,4 +1,3 @@
-import LZString from "../js/lz-string.min.js";
 import config from "../js/Settings.js";
 
 var Chunk = (() => {

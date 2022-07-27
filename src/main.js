@@ -4,9 +4,9 @@ import "bootstrap"
 import "bootstrap-icons/font/bootstrap-icons.css"
 import { createRouter, createWebHashHistory } from "vue-router"
 
-import StaticRoutes from "./components/StaticRoutes.js"
+import StaticRoutes from "./components/navigation/StaticRoutes.js"
 import model from "./model/index.js";
-import Base from "./components/Base.vue";
+import Base from "./components/pages/Base.vue";
 import { markRaw } from "vue";
 
 import config from "./model/config/Settings.js";

@@ -12,7 +12,7 @@
           <div class="row g-0">
             <div class="col-md-1">
               <img
-                src="@/assets/icon-data-collection.svg"
+                src="@/assets/images/icon-data-collection.svg"
                 class="img-fluid p-1"
                 alt=""
               >
@@ -43,7 +43,7 @@
           <div class="row g-0">
             <div class="col-md-1">
               <img
-                src="@/assets/icon-data-labeling.svg"
+                src="@/assets/images/icon-data-labeling.svg"
                 class="img-fluid"
                 alt=""
               >
@@ -72,7 +72,7 @@
           <div class="row g-0">
             <div class="col-md-1">
               <img
-                src="@/assets/icon-data-inspection.svg"
+                src="@/assets/images/icon-data-inspection.svg"
                 class="img-fluid"
                 alt=""
               >
@@ -103,7 +103,7 @@
           <div class="row g-0">
             <div class="col-md-1">
               <img
-                src="@/assets/icon-data-export.svg"
+                src="@/assets/images/icon-data-export.svg"
                 class="img-fluid p-1"
                 alt=""
               >

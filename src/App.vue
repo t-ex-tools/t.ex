@@ -35,8 +35,8 @@
 import InitModal from "./components/modals/InitModal.vue";
 import SettingsModal from "./components/modals/SettingsModal.vue";
 
-import NavBar from "./components/NavBar.vue";
-import Navigation from "./components/Navigation.vue";
+import NavBar from "./components/navigation/NavBar.vue";
+import Navigation from "./components/navigation/Navigation.vue";
 
 export default {
   name: "App",

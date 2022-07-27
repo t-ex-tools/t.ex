@@ -139,9 +139,9 @@
 </template>
 
 <script>
-import model from "../model/index.js";
-import TabBar from "./TabBar.vue";
-import DataTable from "./DataTable.vue";
+import model from "../../model/index.js";
+import TabBar from "../TabBar.vue";
+import DataTable from "../DataTable.vue";
 import { toRaw } from "vue";
 
 const empty = { isLoading: false, processing: false, loaded: 0, total: 0 };

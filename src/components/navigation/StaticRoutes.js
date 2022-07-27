@@ -1,9 +1,9 @@
-import WebsiteLists from "../components/content/WebsiteLists.vue";
-import Overview from "../components/content/Overview.vue";
-import Blocklists from "../components/content/Blocklists.vue";
-import Crawls from "../components/content/Crawls.vue";
-import DataSet from "../components/content/DataSet.vue";
-import Export from "../components/content/Export.vue";
+import WebsiteLists from "../pages/WebsiteLists.vue";
+import Overview from "../pages/Overview.vue";
+import Blocklists from "../pages/Blocklists.vue";
+import Crawls from "../pages/Crawls.vue";
+import DataSet from "../pages/DataSet.vue";
+import Export from "../pages/Export.vue";
 import { markRaw } from "vue";
 
 export default [

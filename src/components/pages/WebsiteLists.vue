@@ -171,7 +171,7 @@
 import WebsiteListsModal from "../modals/WebsiteListsModal.vue";
 import ConfirmModal from "../modals/ConfirmModal.vue";
 import { toRaw } from "vue";
-import websiteLists from "../../assets/website-lists.json";
+import websiteLists from "../../assets/data/website-lists.json";
 
 export default {
   components: {

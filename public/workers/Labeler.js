@@ -1,6 +1,6 @@
 self.importScripts(
   "../js/labeler-core.var.js",
-  "./lib/lz-string.min.js",
+  "../js/lz-string.min.js",
   "./chunks/ChunksTmpStorage.js",
   "./chunks/ChunksHandler.js",
   "./chunks/ChunksPreprocessor.js",
