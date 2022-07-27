@@ -19,7 +19,11 @@ var FeatureExtractor = (() => {
   ];
 
   let extractLengths = (array, keyOrValue) => 
-    array.map((e) => e[keyOrValue].length);
+    array.map((e) => 
+      (e[keyOrValue] && e[keyOrValue].length) 
+        ? e[keyOrValue].length 
+        : 0
+      );
 
   const features = subClasses
     .map((e) => e.obj)

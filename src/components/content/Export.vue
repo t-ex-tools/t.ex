@@ -132,7 +132,43 @@
       </div>
     </div>
 
-    <div class="row mt-3">
+    <div
+      v-for="(type, index) in types"
+      :key="index"
+      class="row mt-2"
+    >
+      <div class="col">
+        <button
+          class="btn btn-outline-primary float-end"
+          type="button"
+          :disabled="!dataLoaded"
+          data-bs-toggle="modal"
+          :data-bs-target="'#loading-modal-' + suffix"
+          @click="download(false, type)"
+        >
+          <i class="bi bi-download me-2" />
+          <small>Export {{ type.toUpperCase() }}</small>
+        </button>
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <div class="col">
+        <button
+          class="btn btn-outline-primary float-end"
+          type="button"
+          :disabled="features.length === 0 || !dataLoaded"
+          data-bs-toggle="modal"
+          :data-bs-target="'#loading-modal-' + suffix"
+          @click="download(true, types[selected])"
+        >
+          <i class="bi bi-download me-2" />
+          <small>Export {{ features.length }} features</small>
+        </button>
+      </div>
+    </div>
+
+    <div class="row mt-2">
       <div class="col">
         <button
           class="btn btn-outline-primary float-end"
@@ -146,38 +182,7 @@
           <small>
             Export statistics
           </small>
-        </button>
-
-        <button
-          class="btn btn-outline-primary float-end me-2"
-          type="button"
-          :disabled="features.length === 0 || !dataLoaded"
-          data-bs-toggle="modal"
-          :data-bs-target="'#loading-modal-' + suffix"
-          @click="download(true)"
-        >
-          <i class="bi bi-download me-2" />
-          <small>Export {{ features.length }} features</small>
-        </button>
-
-        <button
-          v-for="(type, index) in types"
-          :key="index"
-          class="btn btn-outline-primary float-end me-2"
-          type="button"
-          :disabled="!dataLoaded"
-          data-bs-toggle="modal"
-          :data-bs-target="'#loading-modal-' + suffix"
-          @click="
-            () => {
-              selected = index;
-              download(false);
-            }
-          "
-        >
-          <i class="bi bi-download me-2" />
-          <small>Export {{ labels.types[type] }}</small>
-        </button>
+        </button>       
       </div>
     </div>
 
@@ -231,6 +236,7 @@ export default {
       features: [],
       queries: {},
       data: {},
+      option: 0,
       memoryLimit: 250 * 1000000,
     };
   },
@@ -244,6 +250,13 @@ export default {
     },
   },
   mounted() {
+    /*
+    FeatureExtractor
+      .features()
+      .filter((feature) => feature.startsWith("http"))
+      .forEach((feature) => this.queries[feature] = DefaultQueries.groups());
+    console.log(Object.values(this.queries).length);
+    */
     const self = this;
     let c = document.getElementById("types");
     c.addEventListener("show.bs.collapse", function (e) {
@@ -298,8 +311,6 @@ export default {
         this.types[this.selected],
         toRaw(this.queries),
         (info) => {
-          let query = DefaultQueries.groups().find((q) => q.id === info.query);
-          
           if (info.loaded !== info.total) {
             return
           }
@@ -310,7 +321,7 @@ export default {
             this.data[info.query][info.group] = { [info.feature]: info.data };
           }
           
-          
+          let query = DefaultQueries.groups().find((q) => q.id === info.query);
           if (info.group !== query.members.length - 1) {
             return;
           }
@@ -337,18 +348,11 @@ export default {
                 query.label
               )
             });
-
-          /*
-          * TODO:
-          * 1. Data to Table
-          * 2. Table different representations (e.g. % of total)
-          * 3. Download each table
-          */
         }
       )
     },
-    download(transformed) {
-      let type = this.types[this.selected];
+    download(transformed, type) {
+      // let type = this.types[this.selected];
 
       let batch = [];
       let n = 0;

@@ -13,7 +13,8 @@ var Statistics = (() => {
 
       chunk.forEach((d, i, array) => {
         let x = FeatureExtractor.extract(info.feature, d);
-        if (typeof x === "object") {
+
+        if (typeof x === "object" && x.length > 0) {
           x.forEach((e, j, arr) => {
             let kv = FeatureExtractor.encode(e);
             stats[info.query][info.group][info.feature].put(kv);
@@ -55,12 +56,12 @@ var Statistics = (() => {
             .filter((query) => {
               if (stats[query.id][0][feature]) {
                 Object.keys(stats[query.id])
-                  .forEach((gi) => {
+                  .forEach((g, i) => {
                     handler({
                       feature: feature,
                       query: query.id,
-                      group: gi,
-                      data: stats[query.id][gi][feature],
+                      group: i,
+                      data: stats[query.id][i][feature],
                       loaded: 1,
                       total: 1
                     })
@@ -98,7 +99,9 @@ var Statistics = (() => {
               .forEach((query) => {
                 query.members.forEach((g, i) => {
 
-                  stats[query.id][i][feature] = new StatisticsTmpStorage();
+                  if (!stats[query.id][i][feature]) {
+                    stats[query.id][i][feature] = new StatisticsTmpStorage();
+                  }
 
                   let c = chunk.filter(g.filter);
                   let info = {

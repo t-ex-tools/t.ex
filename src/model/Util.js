@@ -134,7 +134,17 @@ var Util = (() => {
     download(payload, ext, tag, feature, slug, label) {
       browser.downloads.download({
         filename:
-          tag + "/" + feature + "/" + feature + "." + slug + "-" + label + "." + ext,
+          tag.replaceAll("/", "-") + 
+          "/" + 
+          feature + 
+          "/" + 
+          feature + 
+          "." + 
+          slug + 
+          "-" + 
+          label + 
+          "." + 
+          ext,
         url: URL.createObjectURL(
           new Blob([ payload ], { type: "data:application/csv;charset=utf-8" })
         ),

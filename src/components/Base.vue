@@ -239,7 +239,6 @@ export default {
           [this.feature]: [toRaw(this.queries.default[this.queries.selected])],
         },
         (data) => {
-          this.loading.processing = false;
           if (!this.data[data.group]) {
             this.data[data.group] = {};
           }

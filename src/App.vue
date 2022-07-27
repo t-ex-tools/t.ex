@@ -38,8 +38,6 @@ import SettingsModal from "./components/modals/SettingsModal.vue";
 import NavBar from "./components/NavBar.vue";
 import Navigation from "./components/Navigation.vue";
 
-window.location.hash = "#/";
-
 export default {
   name: "App",
   components: {
