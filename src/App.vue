@@ -38,6 +38,8 @@ import SettingsModal from "./components/modals/SettingsModal.vue";
 import NavBar from "./components/navigation/NavBar.vue";
 import Navigation from "./components/navigation/Navigation.vue";
 
+import model from "./model/index.js";
+
 export default {
   name: "App",
   components: {
@@ -56,6 +58,8 @@ export default {
     loaded() {
       return this.length > 0;
     }
+  },
+  mounted() {
   },
   methods: {
     setLoaded(data) {

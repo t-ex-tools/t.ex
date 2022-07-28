@@ -6,6 +6,9 @@ import Settings from "./config/Settings.js";
 import Statistics from "./data/Statistics.js";
 import Util from "./data/Util.js";
 import Storage from "./storage/Storage.js";
+import WebsiteList from "./classes/WebsiteList.js";
+import Crawl from "./classes/Crawl.js";
+import Setting from "./classes/Setting.js";
 
 export default {
   Crawler,
@@ -15,5 +18,8 @@ export default {
   Settings,
   Statistics,
   Util,
-  Storage
+  Storage,
+  WebsiteList,
+  Crawl,
+  Setting
 };

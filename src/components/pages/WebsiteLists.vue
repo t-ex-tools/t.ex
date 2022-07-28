@@ -172,6 +172,7 @@ import WebsiteListsModal from "../modals/WebsiteListsModal.vue";
 import ConfirmModal from "../modals/ConfirmModal.vue";
 import { toRaw } from "vue";
 import websiteLists from "../../assets/data/website-lists.json";
+import model from "../../model/index.js";
 
 export default {
   components: {
@@ -216,9 +217,7 @@ export default {
     },
   },
   mounted() {
-    model.Storage.get("lists").then((res) => {
-      this.lists.all = res.lists ? Object.values(res.lists) : [];
-    });
+    model.WebsiteList.all((lists) => this.lists.all = lists);
   },
   methods: {
     select: function (index) {
@@ -230,26 +229,24 @@ export default {
     save(list) {
       if (this.lists.selected) {
         let index = this.lists.all.indexOf(this.lists.selected);
-        this.lists.all[index] = list;
+        model.WebsiteList.set(index, list, (lists) =>  this.lists.all = lists);
       } else {
-        this.lists.all.push(list);
+        model.WebsiteList.add(list, (lists) =>  this.lists.all = lists);
       }
-      this.store("Website list successfully saved.");
+      this.notify("Website list successfully saved.");
     },
     rm() {
       let index = this.lists.all.indexOf(this.lists.selected);
-      this.lists.all.splice(index, 1);
-      this.store("Website list successfully deleted.");
+      model.WebsiteList.remove(index, (lists) =>  this.lists.all = lists);
+      this.notify("Website list successfully deleted.");
       if (!this.first && this.last) {
         this.view.page--;
       }
     },
-    store(msg) {
-      model.Storage.set({ lists: toRaw(this.lists.all) }).then(() => {
-        this.alert.message = msg;
-        this.alert.visible = true;
-        setTimeout(() => (this.alert.visible = false), 2500);
-      });
+    notify(msg) {
+      this.alert.message = msg;
+      this.alert.visible = true;
+      setTimeout(() => (this.alert.visible = false), 2500);
     },
   },
 };

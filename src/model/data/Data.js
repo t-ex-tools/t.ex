@@ -1,37 +1,31 @@
 import Util from "./Util.js";
-import config from "../config/Settings.js";
 import Storage from "../storage/Storage.js";
+import Setting from "../classes/Setting.js";
 
 var Data = (() => {
   let indexes = [];
   let labelers = [new Worker("../workers/Labeler.js")];
-  let settings = {
-    numberOfWorkers: config.numberOfWorkers.default,
-    chunksAtOnce: config.chunksAtOnce.default,
-    chunkSize: config.chunkSize.default,
-    jsChunkSize: config.chunkSize.default
-  };
+  let settings = {};
   let approx = {
     http: () => settings.chunkSize,
     js: () => settings.jsChunkSize
   };
 
-  Storage.get(["settings"])
-    .then((res) => {
-      if (res.settings) {
-        Object
-          .keys(settings)
-          .forEach((k) =>
-            settings[k] = (res.settings.hasOwnProperty(k))
-              ? res.settings[k]
-              : settings[k]
-          );
-      }
+  Setting.get(
+    [
+      "numberOfWorkers", 
+      "chunksAtOnce", 
+      "chunkSize", 
+      "jsChunkSize"
+    ],
+    (cfg) => {
+      settings = cfg;
 
       for (let i = 1; i < settings.numberOfWorkers; i++) {
         labelers[i] = new Worker("../workers/Labeler.js");
       }
-    });
+    }
+  );
 
   return {
 

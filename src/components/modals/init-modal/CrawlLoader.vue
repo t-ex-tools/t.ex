@@ -59,9 +59,8 @@ export default {
   },
   methods: {
     load: function() {
-      model.Storage.get("crawls")
-      .then((res) => {
-        this.crawls = (res.crawls) ? res.crawls : [];
+      model.Crawl.all((crawls) => {
+        this.crawls = crawls;
       });
     },
     updateLimit: function () {

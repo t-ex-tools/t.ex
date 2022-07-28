@@ -242,12 +242,9 @@ export default {
     }
   },
   mounted() {
-    model.Storage.get(["crawls", "lists", "settings"])
-      .then((res) => {
-        this.crawls = (res.crawls) ? res.crawls.reverse() : [];
-        this.lists = (res.lists) ? res.lists : [];
-        this.settings = (res.settings) ? res.settings : {};
-      });
+    model.Setting.all((settings) => this.settings = settings);
+    model.WebsiteList.all((lists) => this.lists = lists);
+    model.Crawl.all((crawls) => this.crawls = crawls.reverse());
 
     this.emitter.on("settings", (cfg) => {
       this.settings = cfg.settings;

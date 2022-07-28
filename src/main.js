@@ -9,15 +9,12 @@ import model from "./model/index.js";
 import Base from "./components/pages/Base.vue";
 import { markRaw } from "vue";
 
-import config from "./model/config/Settings.js";
 import mitt from "mitt";
 
-model.Storage.get("settings")
-  .then((res) => {
-    if (res.settings && res.settings.hasOwnProperty("darkMode")) {
-      config.darkMode.handler(res.settings.darkMode);
-    }
-  });
+model.Setting.get(
+  ["darkMode"],
+  (settings) => model.Setting.config().darkMode.handler(settings.darkMode)
+);
 
 const routes = StaticRoutes.concat(
   model.FeatureExtractor.features().map((f) => {

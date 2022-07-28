@@ -168,7 +168,7 @@ export default {
         tag: this.boundaries.dataTag,
         length: i.length
       });        
-      model.Data.setIndexes(i); // TODO: state change
+      model.Data.setIndexes(i); // TODO: state change not good
     },
   },
 };

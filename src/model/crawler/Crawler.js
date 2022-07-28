@@ -1,44 +1,23 @@
-import config from "../config/Settings.js";
-
-const empty = {
-  tag: "",
-  list: "",
-  startedAt: 0,
-  doneAt: 0,
-  tabsOpen: 0,
-  tabsOpened: 0,
-  tabsCompleted: 0,
-  tabsToFinish: 0,
-  tabsNotResponding: 0,
-  version: browser.runtime.getManifest().version,
-};
+import Crawl from "../classes/Crawl.js";
+import Setting from "../classes/Setting.js";
 
 var Crawler = (() => {
   let urls = [];
-  let log = { ...empty };
-  let settings = {
-    tabsAtOnce: config.tabsAtOnce.default,
-    tabTtl: config.tabTtl.default
-  }
+  let log = Crawl.log();
+  let settings = {};
 
   let onCreatedRef;
   let onRemovedRef;
 
   return {
     getSettings: (callback) => {
-      Storage.get("settings")
-        .then((res) => {
-          if (res.settings) {
-            Object
-              .keys(settings)
-              .forEach((k) => 
-                settings[k] = (res.settings.hasOwnProperty(k)) 
-                ? res.settings[k] 
-                : settings[k]
-              );
-          }
+      Setting.get(
+        ["tabsAtOnce", "tabTtl"],
+        (cfg) => {
+          settings = cfg;
           callback();
-        });
+        }
+      );
     },
     start: function (tag, list) {
       this.getSettings(() => {
@@ -73,9 +52,13 @@ var Crawler = (() => {
           { recording: false, flush: true }
         ).then((id) => {
           log.doneAt = id;
-          this.saveLog({ ...log });
-          this.emit();
-          log = { ...empty };
+          Crawl.add(
+            { ...log }, 
+            () => {
+              this.emit();
+              log = Crawl.log();
+            }
+          );
         });
 
       browser.tabs.onCreated.removeListener(onCreatedRef);
@@ -134,14 +117,6 @@ var Crawler = (() => {
     },
     emit: function () {
       window.dispatchEvent(new CustomEvent("crawler:log", { detail: { log: { ...log } } }));
-    },
-    saveLog: function (l) {
-      Storage.get("crawls")
-        .then((res) => {
-          let crawls = (res.crawls) ? res.crawls : [];
-          crawls.push(l);
-          Storage.set({ crawls: crawls });
-        });
     },
   };
 })();

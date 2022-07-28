@@ -90,13 +90,11 @@ export default {
   data: () => {
     return {
       values: {},
-      settings: model.Settings,
+      settings: model.Setting.config(),
     };
   },
   mounted() {
-    model.Storage.get("settings").then((res) => {
-      this.values = (res.settings) ? res.settings : {};
-    });
+    model.Setting.all((settings) => this.values = settings);
   },
   methods: {
     set(evt) {
@@ -110,15 +108,18 @@ export default {
       
       this.values[evt.target.name] = n;
 
-      if (config[evt.target.name].handler) {
-        config[evt.target.name].handler(n);
+      if (model.Settings[evt.target.name].handler) {
+        model.Settings[evt.target.name].handler(n);
       }
 
-      const cfg = { settings: toRaw(this.values) };
-      model.Storage.set(cfg)
-        .then(() => browser.runtime.sendMessage(cfg));
-
-      this.emitter.emit("settings", cfg);
+      model.Setting
+        .save(
+          toRaw(this.values),
+          (settings) => {
+            browser.runtime.sendMessage(settings);
+            this.emitter.emit("settings", settings);
+          }
+        );
     },
   },
 };
