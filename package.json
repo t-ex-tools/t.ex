@@ -1,67 +1,29 @@
 {
-  "name": "t.ex-mv3",
+  "name": "t.ex",
   "version": "3.2.0",
-  "private": true,
+  "description": "T.EX is a Web extension for Firefox and Chromium-based browsers to enable data collection, inspection, analysis, and visualization to be used in research.",
+  "main": "index.js",
   "scripts": {
-    "preserve:mv3": "make-dir dist/js dist/css && npm run mv3:manifest && npm run cp:files",
-    "serve:mv3": "vue-cli-service build --watch --no-clean",
-    "build:mv3": "vue-cli-service build && npm run mv3:manifest && npm run cp:files",
-    "preserve:mv2": "make-dir dist/js dist/css && npm run mv2:manifest && npm run cp:files",
-    "serve:mv2": "vue-cli-service build --watch --no-clean",
-    "build:mv2": "vue-cli-service build && npm run mv2:manifest && npm run cp:files",
-    "lint": "vue-cli-service lint",
-    "mv3:manifest": "ncp ./manifest.mv3.json dist/manifest.json",
-    "mv2:manifest": "ncp ./manifest.mv2.json dist/manifest.json",
-    "cp:files": "npm run cp:webext && npm run cp:webext:map && npm run cp:css:dark && npm run cp:css:dark:map && npm run cp:css:light && npm run cp:css:light:map && npm run cp:cfg && npm run cp:lblcr",
-    "cp:webext": "ncp node_modules/webextension-polyfill/dist/browser-polyfill.min.js dist/js/browser-polyfill.min.js",
-    "cp:webext:map": "ncp node_modules/webextension-polyfill/dist/browser-polyfill.min.js.map dist/js/browser-polyfill.min.js.map",
-    "cp:css:dark": "ncp node_modules/bootstrap-dark-5/dist/css/bootstrap-night.css dist/css/bootstrap-night.css",
-    "cp:css:dark:map": "ncp node_modules/bootstrap-dark-5/dist/css/bootstrap-night.css.map dist/css/bootstrap-night.css.map",
-    "cp:css:light": "ncp node_modules/bootstrap/dist/css/bootstrap.min.css dist/css/bootstrap.min.css",
-    "cp:css:light:map": "ncp node_modules/bootstrap/dist/css/bootstrap.min.css.map dist/css/bootstrap.min.css.map",
-    "cp:cfg": "ncp src/model/config/Settings.js dist/js/Settings.js",
-    "cp:lblcr": "ncp ./labeler-core/dist/labeler-core.var.js dist/js/labeler-core.var.js"
+    "build": "npm run build:t.ex-gui && npm run build:labeler-core && npm run build:t.ex-tension",
+    "build:labeler-core": "npm run build --prefix labeler-core",
+    "build:t.ex-gui": "npm run build --prefix t.ex-gui",
+    "build:t.ex-tension": "npm run build --prefix t.ex-tension",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.tu-berlin.de/philip-raschke/t.ex.git"
   },
   "dependencies": {
-    "bootstrap": "^5.1.3",
-    "bootstrap-dark-5": "^1.1.3",
-    "bootstrap-icons": "^1.8.1",
-    "core-js": "^3.6.5",
-    "mitt": "^3.0.0",
-    "tldjs": "^2.3.1",
-    "validator": "^13.7.0",
-    "vue": "^3.0.0",
-    "vue-router": "^4.0.12"
+    "labeler-core": "file:./labeler-core",
+    "t.ex-gui": "file:./t.ex-gui",
+    "t.ex-tension": "file:./t.ex-tension"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "@vue/compiler-sfc": "^3.0.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^7.0.0",
-    "make-dir-cli": "^3.0.0",
-    "ncp": "^2.0.0",
-    "webextension-polyfill": "^0.9.0"
+    "copy-webpack-plugin": "^11.0.0",
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2"
   },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/vue3-essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+  "author": "",
+  "license": "ISC"
 }
