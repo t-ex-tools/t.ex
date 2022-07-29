@@ -1,3 +1,9 @@
 [submodule "labeler-core"]
 	path = labeler-core
 	url = git@github.com:t-ex-tools/labeler-core.git
+[submodule "t.ex-gui"]
+	path = t.ex-gui
+	url = https://github.com/t-ex-tools/t.ex-gui.git
+[submodule "t.ex-tension"]
+	path = t.ex-tension
+	url = https://github.com/t-ex-tools/t.ex-tension.git
