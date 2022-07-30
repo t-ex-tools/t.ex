@@ -4,29 +4,22 @@ const CopyPlugin = require("copy-webpack-plugin");
 module.exports = (env) => {
 
   let config = {
+    entry: "./index.js",
     mode: "production",
+    output: {
+      filename: "index.js",
+      path: path.resolve(__dirname, "dist"),
+    },
     plugins: [
       new CopyPlugin({
         patterns: [{
-            from: "node_modules/webextension-polyfill/dist/browser-polyfill.min.js",
-            to: "js/browser-polyfill.min.js"
-          }, {
-            from: "node_modules/webextension-polyfill/dist/browser-polyfill.min.js.map",
-            to: "js/browser-polyfill.min.js.map"
-          }, {
-            from: "node_modules/bootstrap-dark-5/dist/css/bootstrap-night.css",
-            to: "css/bootstrap-night.css"
-          }, {
-            from: "node_modules/bootstrap-dark-5/dist/css/bootstrap-night.css.map",
-            to: "css/bootstrap-night.css.map"
-          }, {
-            from: "node_modules/bootstrap-dark-5/dist/css/bootstrap.min.css",
-            to: "css/bootstrap.mincss"
-          }, {
-            from: "node_modules/bootstrap-dark-5/dist/css/bootstrap.min.css.map",
-            to: "css/bootstrap.min.css.map"
-          }
-        ],
+          from: "t.ex-tension/dist"
+        }, {
+          from: "labeler-core/dist/labeler-core.var.js", 
+          to: "js/"
+        }, {
+          from: "t.ex-gui/dist"
+        }],
       })
     ]
   };

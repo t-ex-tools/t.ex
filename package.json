@@ -4,25 +4,33 @@
   "description": "T.EX is a Web extension for Firefox and Chromium-based browsers to enable data collection, inspection, analysis, and visualization to be used in research.",
   "main": "index.js",
   "scripts": {
-    "build": "npm run build:t.ex-gui && npm run build:labeler-core && npm run build:t.ex-tension",
+    "postinstall": "npm run install:labeler-core && npm run install:t.ex-gui && npm run install:t.ex-tension ",
+    "install:labeler-core": "npm install --prefix labeler-core",
+    "install:t.ex-gui": "npm install --prefix t.ex-gui",
+    "install:t.ex-tension": "npm install --prefix t.ex-tension",
+
+    "prebuild": "npm run build:t.ex-gui && npm run build:labeler-core && npm run build:t.ex-tension",
+    "build": "npx webpack --config webpack.config.js",
+    
     "build:labeler-core": "npm run build --prefix labeler-core",
     "build:t.ex-gui": "npm run build --prefix t.ex-gui",
     "build:t.ex-tension": "npm run build --prefix t.ex-tension",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    
+    "dev": "concurrently \"npm run dev:t.ex-gui\" \"npm run dev:labeler-core\" \"npm run dev:t.ex-tension\" \"npx webpack --watch --config webpack.config.js\"",
+
+    "dev:labeler-core": "npm run dev --prefix labeler-core",
+    "dev:t.ex-gui": "npm run dev --prefix t.ex-gui",
+    "dev:t.ex-tension": "npm run dev --prefix t.ex-tension"
   },
   "repository": {
     "type": "git",
     "url": "https://git.tu-berlin.de/philip-raschke/t.ex.git"
   },
-  "dependencies": {
-    "labeler-core": "file:./labeler-core",
-    "t.ex-gui": "file:./t.ex-gui",
-    "t.ex-tension": "file:./t.ex-tension"
-  },
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
     "webpack": "^5.72.1",
-    "webpack-cli": "^4.9.2"
+    "webpack-cli": "^4.9.2",
+    "concurrently": "^7.3.0"
   },
   "author": "",
   "license": "ISC"
