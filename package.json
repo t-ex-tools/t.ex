@@ -16,6 +16,7 @@
     "build:t.ex-gui": "npm run build --prefix t.ex-gui",
     "build:t.ex-tension": "npm run build --prefix t.ex-tension",
     
+    "dev:only": "npx webpack --watch --config webpack.config.js",
     "dev": "concurrently \"npm run dev:t.ex-gui\" \"npm run dev:labeler-core\" \"npm run dev:t.ex-tension\" \"npx webpack --watch --config webpack.config.js\"",
 
     "dev:labeler-core": "npm run dev --prefix labeler-core",
