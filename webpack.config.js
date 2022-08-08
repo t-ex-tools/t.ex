@@ -3,12 +3,14 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = (env) => {
 
+  env.mode = (env.mode) ? env.mode : "development";
+
   let config = {
     entry: "./index.js",
-    mode: "development",
+    mode: env.mode,
     devtool: 'inline-source-map',
     optimization: {
-      minimize: false
+      minimize: (env.mode === "production")
     },
     output: {
       filename: "index.js",
