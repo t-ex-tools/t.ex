@@ -10,7 +10,7 @@
     "install:t.ex-tension": "npm install --prefix t.ex-tension",
 
     "prebuild": "npm run build:t.ex-gui && npm run build:labeler-core && npm run build:t.ex-tension",
-    "build": "npx webpack --config webpack.config.js --env mode='production'",
+    "build": "npx webpack --config webpack.config.js --env mode=production",
     
     "build:labeler-core": "npm run build --prefix labeler-core",
     "build:t.ex-gui": "npm run build --prefix t.ex-gui",
