@@ -6,7 +6,11 @@ T.EX is Web privacy measurement framework in form of a Web extension for Firefox
 
 ### Set up an development environment
 
-To use t.ex-Graph, you need to install Node.js (ideally v16+) and npm (ideally v8+). Use the following command to install the dependencies.
+Clone the respository and all its submodules with the following command:
+
+```git clone --recurse-submodules https://github.com/t-ex-tools/t.ex.git```
+
+To use t.ex, you need to install Node.js (ideally v16+) and npm (ideally v8+). Use the following command to install the dependencies.
 
 ```npm install```
 
