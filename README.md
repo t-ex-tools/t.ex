@@ -40,7 +40,7 @@ The build is placed in the folder ```dist/```.
 
 ### Install a build
 
-The following steps also work with a self-build version of T.EX. Simply follow the steps from **Step 3** onwards and chose the ```dist/``` folder in **Step 5**.
+The following steps also work with a self-build version of T.EX. Simply follow the steps from **Step 3** onwards and chose the ```dist/``` folder in **Step 6** (**Step 5** for Firefox).
 
 #### Chrome and Chromium-based browsers
 
@@ -95,7 +95,7 @@ You can import the state of an existing T.EX installation to your instance of T.
 
 3. Enter ```about:debugging#/runtime/this-firefox``` in the address bar. 
 
-4. Remember the **Internal UUID** assigned to T.EX (see figure below): 
+4. Remember the **Internal UUID** assigned to T.EX: 
 
 5. Enter ```about:config``` in the address bar. 
 
