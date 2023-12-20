@@ -6,13 +6,31 @@ T.EX is Web privacy measurement framework in form of a Web extension for Firefox
 
 ### Set up an development environment
 
-To use t.ex-Graph, you need to install Node.js (ideally v16+) and npm (ideally v8+). Use the following command to install the dependencies.
+Clone the respository and all its submodules with the following command:
+
+```git clone --recurse-submodules https://github.com/t-ex-tools/t.ex.git```
+
+or
+
+```git clone --recurse-submodules git@github.com:t-ex-tools/t.ex.git```
+
+To use t.ex, you need to install Node.js (ideally v16+) and npm (ideally v8+). Use the following command to install the dependencies.
 
 ```npm install```
 
 Afterwards you can start the development environment with:
 
 ```npm run dev```
+
+**NOTE:** The errors below will be logged. However, the development environment is successfully set up eventually. The reason for this error is that the submodules have to be built first. The build process of the main repository, which finishes first, is started at the same time as the build processes of the submodules. This circumstance causes the errors below. Changes to the builds of the submodules are detected by the main repository and included in its ```dist/``` folder. This way, the errors *vanish* whenever a submodule is finished building. Unfortunately, all processes must be executed concurrently as ```npx webpack``` does not exit if the ```--watch``` flag is set.
+
+```
+[.] ERROR in unable to locate '/path/to/t.ex/t.ex-tension/dist' glob
+[.] 
+[.] ERROR in unable to locate '/path/to/t.ex/labeler-core/dist/labeler-core.var.js' glob
+[.] 
+[.] ERROR in unable to locate '/path/to/t.ex/t.ex-gui/dist/**/*' glob
+```
 
 To build T.EX on your own use the following command:
 
@@ -22,7 +40,7 @@ The build is placed in the folder ```dist/```.
 
 ### Install a build
 
-The following steps also work with a self-build version of T.EX. Simply follow the steps from **Step 3** onwards and chose the ```dist/``` folder in **Step 5**.
+The following steps also work with a self-build version of T.EX. Simply follow the steps from **Step 3** onwards and chose the ```dist/``` folder in **Step 6** (**Step 5** for Firefox).
 
 #### Chrome and Chromium-based browsers
 
@@ -77,7 +95,7 @@ You can import the state of an existing T.EX installation to your instance of T.
 
 3. Enter ```about:debugging#/runtime/this-firefox``` in the address bar. 
 
-4. Remember the **Internal UUID** assigned to T.EX (see figure below): 
+4. Remember the **Internal UUID** assigned to T.EX: 
 
 5. Enter ```about:config``` in the address bar. 
 
