@@ -1,7 +1,7 @@
 # T.EX - The Transparency EXtension
 
 ![Build Status](https://github.com/t-ex-tools/t.ex/actions/workflows/node.js.yml/badge.svg)
-[![GitHub version](https://badge.fury.io/gh/t-ex-tools%2Ft.ex%2F.svg)](https://badge.fury.io/gh/t-ex-tools%2Ft.ex%2F)
+[![GitHub version](https://badge.fury.io/gh/t-ex-tools%2Ft.ex%2F.svg)](https://github.com/t-ex-tools/t.ex/releases/tag/v3.2.0)
 
 T.EX is Web privacy measurement framework in form of a Web extension for Firefox and Chromium-based browsers to enable data collection, inspection, analysis, and visualization to be used in research.
 
